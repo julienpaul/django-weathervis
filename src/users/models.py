@@ -71,7 +71,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     EMAIL_FIELD = "email"
-    USERNAME_FIELD = "username"
+    USERNAME_FIELD = (
+        "username"  # check also ACCOUNT_AUTHENTICATION_METHOD in settings.py
+    )
     REQUIRED_FIELDS = ["email"]  # USERNAME_FIELD & Password are required by default.
 
     class Meta:

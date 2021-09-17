@@ -45,6 +45,8 @@ DATABASES = {
     "default": env.db("DATABASE_URL", default="postgres:///weathervis"),
 }
 DATABASES["default"]["ATOMIC_REQUESTS"] = True
+#
+DEFAULT_AUTO_FIELD = "django.db.models.UUIDField"
 
 # URLS
 # ------------------------------------------------------------------------------
@@ -193,6 +195,7 @@ FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 
 # http://django-crispy-forms.readthedocs.io/en/latest/install.html#template-packs
 CRISPY_TEMPLATE_PACK = "bootstrap4"
+CRISPY_FAIL_SILENTLY = not DEBUG
 
 # FIXTURES
 # ------------------------------------------------------------------------------
@@ -258,7 +261,7 @@ LOGGING = {
 # ------------------------------------------------------------------------------
 ACCOUNT_ALLOW_REGISTRATION = env.bool("DJANGO_ACCOUNT_ALLOW_REGISTRATION", True)
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
-ACCOUNT_AUTHENTICATION_METHOD = "username"
+ACCOUNT_AUTHENTICATION_METHOD = "username"  # check also USERNAME_FIELD in models.User
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 ACCOUNT_EMAIL_REQUIRED = True
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
