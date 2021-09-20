@@ -1,6 +1,11 @@
+# Stdlib imports
 import pytest
+
+# Core Django imports
 from django.urls import resolve, reverse
 
+# Third-party app imports
+# Imports from my apps
 from src.users.models import User
 
 pytestmark = pytest.mark.django_db

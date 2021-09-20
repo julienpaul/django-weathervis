@@ -28,6 +28,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(_("Name of User"), blank=True, max_length=255)
     first_name = None  # type: ignore
     last_name = None  # type: ignore
+    bio = models.TextField(_("User biography"), blank=True)
 
     username_validator = ASCIIUsernameValidator()
 

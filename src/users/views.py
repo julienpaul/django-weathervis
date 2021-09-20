@@ -9,6 +9,7 @@ from django.views.generic import DetailView, RedirectView, UpdateView
 
 # Third-party app imports
 # Imports from my apps
+from .forms import UserUpdateForm
 
 User = get_user_model()
 
@@ -26,7 +27,8 @@ user_detail_view = UserDetailView.as_view()
 class UserUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
 
     model = User
-    fields = ["name"]
+    form_class = UserUpdateForm
+    template_name = "users/user_form.html"
     success_message = _("Information successfully updated")
 
     def get_success_url(self):

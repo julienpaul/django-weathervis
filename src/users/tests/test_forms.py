@@ -1,10 +1,15 @@
 """
 Module for all Form Tests.
 """
+# Stdlib imports
 import pytest
+
+# Core Django imports
 from django.utils.translation import gettext_lazy as _
 
-from src.users.forms import UserCreationForm
+# Third-party app imports
+# Imports from my apps
+from src.users.forms import UserCreationForm, UserUpdateForm
 from src.users.models import User
 
 pytestmark = pytest.mark.django_db
@@ -111,3 +116,19 @@ class TestUserCreationForm:
         assert form.errors["email"][0] == _(
             "A user with that email address already exists."
         )
+
+
+class TestUserUpdateForm:
+    """
+    Test class for all tests related to the UserUpdateForm
+    """
+
+    def test_init_helper(self):
+        """
+        GIVEN class UserUpdateForm
+        WHEN  initialised an instance
+        THEN  instance should have attribute 'helper' and 'helper.layout'
+        """
+        form = UserUpdateForm()
+        assert hasattr(form, "helper")
+        assert hasattr(form.helper, "layout")

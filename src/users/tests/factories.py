@@ -1,8 +1,14 @@
+# Stdlib imports
 from typing import Any, Sequence
 
+# Core Django imports
 from django.contrib.auth import get_user_model
+
+# Third-party app imports
 from factory import Faker, Trait, post_generation
 from factory.django import DjangoModelFactory
+
+# Imports from my apps
 
 
 class UserFactory(DjangoModelFactory):

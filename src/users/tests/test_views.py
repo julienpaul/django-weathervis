@@ -1,4 +1,7 @@
+# Stdlib imports
 import pytest
+
+# Core Django imports
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import AnonymousUser
@@ -8,10 +11,19 @@ from django.http import HttpRequest
 from django.test import RequestFactory
 from django.urls import reverse
 
-from src.users.forms import UserChangeForm
+# Third-party app imports
+from pytest_django.asserts import assertContains, assertTemplateUsed
+
+# Imports from my apps
+from src.users.forms import UserUpdateForm
 from src.users.models import User
 from src.users.tests.factories import UserFactory
-from src.users.views import UserRedirectView, UserUpdateView, user_detail_view
+from src.users.views import (
+    UserRedirectView,
+    UserUpdateView,
+    user_detail_view,
+    user_update_view,
+)
 
 pytestmark = pytest.mark.django_db
 
@@ -58,12 +70,62 @@ class TestUserUpdateView:
         view.request = request
 
         # Initialize the form
-        form = UserChangeForm()
+        form = UserUpdateForm()
         form.cleaned_data = []
         view.form_valid(form)
 
         messages_sent = [m.message for m in messages.get_messages(request)]
         assert messages_sent == ["Information successfully updated"]
+
+    def test_contains_form(self, user: User, client):
+        url = reverse("users:update")
+        client.force_login(user)
+        response = client.get(url)
+
+        form = response.context.get("form")
+
+        assert isinstance(form, UserUpdateForm)
+
+    def test_form_buttons(self, user: User, client):
+        """ """
+        url = reverse("users:update")
+        client.force_login(user)
+        response = client.get(url)
+
+        assertContains(response, 'input type="submit"', 1)
+        assertContains(response, 'input type="button"', 1)
+
+    def test_csrf(self, user: User, rf: RequestFactory):
+        request = rf.get("/fake-url/")
+        request.user = UserFactory()
+
+        response = user_update_view(request)
+
+        assertContains(response, "csrfmiddlewaretoken")
+
+    def test_template(self, user: User, client):
+        url = reverse("users:update")
+        client.force_login(user)
+        response = client.get(url)
+        assertTemplateUsed(response, "users/user_form.html")
+
+    def test_authenticated(self, user: User, rf: RequestFactory):
+        request = rf.get("/fake-url/")
+        request.user = UserFactory()
+
+        response = user_update_view(request, username=user.username)
+
+        assert response.status_code == 200
+
+    def test_not_authenticated(self, user: User, rf: RequestFactory):
+        request = rf.get("/fake-url/")
+        request.user = AnonymousUser()
+
+        response = user_update_view(request, username=user.username)
+        login_url = reverse(settings.LOGIN_URL)
+
+        assert response.status_code == 302
+        assert response.url == f"{login_url}?next=/fake-url/"
 
 
 class TestUserRedirectView:
@@ -95,3 +157,31 @@ class TestUserDetailView:
 
         assert response.status_code == 302
         assert response.url == f"{login_url}?next=/fake-url/"
+
+    def test_template(self, user: User, client):
+        url = reverse("users:detail", kwargs={"username": user.username})
+        client.force_login(user)
+        response = client.get(url)
+        assertTemplateUsed(response, "users/user_detail.html")
+
+    def test_contains_buttons(self, user: User, client):
+        """
+        GIVEN one user
+        WHEN  accessing his own profil
+        THEN  should see 2 buttons
+        """
+        url = reverse("users:detail", kwargs={"username": user.username})
+        client.force_login(user)
+        response = client.get(url)
+        assertContains(response, 'role="button"', 2)
+
+    def test_contains_no_buttons(self, user: User, user2: User, client):
+        """
+        GIVEN two users
+        WHEN  one accesses the profile of the second
+        THEN  he should not see any button
+        """
+        url = reverse("users:detail", kwargs={"username": user2.username})
+        client.force_login(user)
+        response = client.get(url)
+        assertContains(response, 'role="button"', 0)

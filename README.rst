@@ -10,7 +10,10 @@ django weathervis website
      :target: https://github.com/ambv/black
      :alt: Black code style
 
-:License: GPLv3
+.. |GPLv3 license| image:: https://img.shields.io/badge/License-GPLv3-blue.svg
+   :target: http://perso.crans.org/besson/LICENSE.html
+.. |GitHub release| image:: https://img.shields.io/github/release/julienpaul/django-weathervis.svg
+   :target: https://github.com/julienpaul/django-weathervis/releases/
 
 Settings
 --------
