@@ -27,6 +27,22 @@ repos:
         args: ['--config=setup.cfg']
         additional_dependencies: [flake8-isort]
 
+  - repo: local
+    hooks:
+      - id: tests
+        name: pytest
+        entry: coverage run -m pytest
+        language: python
+        pass_filenames: false
+        always_run: true
+      - id: coverage
+        name: coverage
+        entry: coverage report -m
+        language: python
+        pass_filenames: false
+        always_run: true
+        verbose: true
+
 # sets up .pre-commit-ci.yaml to ensure pre-commit dependencies stay up to date
 ci:
     autoupdate_schedule: weekly
