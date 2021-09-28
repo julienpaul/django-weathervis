@@ -1,5 +1,11 @@
+# Stdlib imports
 import pytest
 
+# Core Django imports
+# Third-party app imports
+# Imports from my app
+from src.organisations.models import Organisation
+from src.organisations.tests.factories import OrganisationFactory
 from src.users.models import User
 from src.users.tests.factories import UserFactory
 
@@ -17,3 +23,13 @@ def user() -> User:
 @pytest.fixture
 def user2() -> User:
     return UserFactory()
+
+
+@pytest.fixture
+def staff() -> User:
+    return UserFactory(staff=True)
+
+
+@pytest.fixture
+def organisation() -> Organisation:
+    return OrganisationFactory()

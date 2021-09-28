@@ -11,6 +11,7 @@ from django.utils.translation import gettext_lazy as _
 
 # Third-party app imports
 # Imports from my apps
+from src.organisations.models import Organisation
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -29,6 +30,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     first_name = None  # type: ignore
     last_name = None  # type: ignore
     bio = models.TextField(_("User biography"), blank=True)
+    organisation = models.ForeignKey(
+        Organisation,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="users",
+    )
 
     username_validator = ASCIIUsernameValidator()
 
@@ -80,6 +88,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     class Meta:
         verbose_name = _("user")
         verbose_name_plural = _("users")
+
+    def __str__(self):
+        return self.name
 
     def __getitem__(self, key):
         return getattr(self, key)

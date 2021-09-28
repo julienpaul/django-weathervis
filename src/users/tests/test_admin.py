@@ -37,7 +37,8 @@ class TestUserAdmin:
         GIVEN an admin user
         WHEN  connecting to the add page
          and  adding a new user
-        THEN  status should be 200
+        THEN  should be redirect to list page
+         with status code 302
          and  new user should have been added
         """
         url = reverse("admin:users_user_add")

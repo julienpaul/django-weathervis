@@ -1,11 +1,13 @@
 # Stdlib imports
 # Core Django imports
-from crispy_forms.bootstrap import Field
+from crispy_forms.bootstrap import Field, FieldWithButtons, StrictButton
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Button, ButtonHolder, Layout, Submit
+from crispy_forms.layout import Button, ButtonHolder, Hidden, Layout, Submit
 from django import forms
 from django.contrib.auth import forms as admin_forms
 from django.contrib.auth import get_user_model
+from django.urls import reverse_lazy
+from django.utils.http import urlencode
 
 # Third-party app imports
 # Imports from my apps
@@ -30,7 +32,7 @@ class UserUpdateForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ["username", "name", "bio"]
+        fields = ["username", "name", "bio", "organisation"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -43,7 +45,19 @@ class UserUpdateForm(forms.ModelForm):
     def _init_helper_layout(self):
         """initialise crispy layout"""
         self.helper.layout = Layout(
+            Hidden("next", "{{ request.GET.path }}"),
             Field("name"),
+            FieldWithButtons(
+                "organisation",
+                StrictButton(
+                    "<i class='bi bi-plus-lg'></i>",
+                    css_class="btn-success",
+                    onclick='window.location.href = "{}?{}";'.format(
+                        reverse_lazy("organisations:list"),
+                        urlencode({"next": reverse_lazy(self.current_url)}),
+                    ),
+                ),
+            ),
             ButtonHolder(
                 Submit("submit", "Submit", css_class="btn-success"),
                 Button(

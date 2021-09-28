@@ -16,6 +16,12 @@
       </p>
       {% endif %}
 
+      {% if object.organisation %}
+      <p>
+        <div class="text-secondary">Organisation</div>{{ object.organisation }}
+      </p>
+      {% endif %}
+
       {% if object.email %}
       <p>
         <div class="text-secondary">E-mail</div>{{ object.email }}
@@ -27,6 +33,7 @@
         <div class="text-secondary">Bio</div>{{ object.bio|linebreaksbr }}
       </p>
       {% endif %}
+
     </div>
   </div>
 

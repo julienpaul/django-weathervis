@@ -1,6 +1,3 @@
-"""
-Module for all Form Tests.
-"""
 # Stdlib imports
 import pytest
 
@@ -13,6 +10,12 @@ from src.users.forms import UserCreationForm, UserUpdateForm
 from src.users.models import User
 
 pytestmark = pytest.mark.django_db
+
+
+class TestUserChangeForm:
+    """
+    Test class for all tests related to the UserChangeForm
+    """
 
 
 class TestUserCreationForm:
@@ -69,6 +72,10 @@ class TestUserCreationForm:
             "A user with that username already exists."
         )
 
+    @pytest.mark.skip(reason="test not implemented yet")
+    def test_username_length_validation_error_msg(self):
+        pass
+
     def test_email_validation_error_msg(self, user: User):
         """
         Tests UserCreation Form's unique validator functions correctly by testing:
@@ -123,7 +130,7 @@ class TestUserUpdateForm:
     Test class for all tests related to the UserUpdateForm
     """
 
-    def test_init_helper(self):
+    def test_init_helper_layout(self):
         """
         GIVEN class UserUpdateForm
         WHEN  initialised an instance
@@ -132,3 +139,30 @@ class TestUserUpdateForm:
         form = UserUpdateForm()
         assert hasattr(form, "helper")
         assert hasattr(form.helper, "layout")
+
+    @pytest.mark.skip(reason="test not implemented yet")
+    def test_cripsy_form_inputs(self):
+        """
+        GIVEN class UserUpdateForm with a cripsy form
+        WHEN  displaying the layout through a view instance
+        THEN  the inputs should appear on the view
+        """
+        pass
+
+    @pytest.mark.skip(reason="test not implemented yet")
+    def test_cripsy_form_buttons(self):
+        """
+        GIVEN class UserUpdateForm with a cripsy form
+        WHEN  displaying the layout through a view instance
+        THEN  the buttons should appear on the view
+        """
+        pass
+
+    @pytest.mark.skip(reason="test not implemented yet")
+    def test_cripsy_form_redirect(self):
+        """
+        GIVEN class UserUpdateForm with a cripsy form
+        WHEN  clicking on the button display on the view
+        THEN  should be redirect to
+        """
+        pass

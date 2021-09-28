@@ -70,12 +70,22 @@ class TestUserUpdateView:
         view.request = request
 
         # Initialize the form
-        form = UserUpdateForm()
+        data = {
+            "username": "another-username",
+            "name": "another name",
+            "bio": "another blabla",
+        }
+        form = UserUpdateForm(data)
         form.cleaned_data = []
         view.form_valid(form)
 
+        assert form.is_valid()
         messages_sent = [m.message for m in messages.get_messages(request)]
         assert messages_sent == ["Information successfully updated"]
+
+    @pytest.mark.skip(reason="not implemented yet")
+    def test_form_invalid(self, user: User, rf: RequestFactory):
+        pass
 
     def test_contains_form(self, user: User, client):
         url = reverse("users:update")
@@ -97,7 +107,7 @@ class TestUserUpdateView:
 
     def test_csrf(self, user: User, rf: RequestFactory):
         request = rf.get("/fake-url/")
-        request.user = UserFactory()
+        request.user = user
 
         response = user_update_view(request)
 
@@ -168,18 +178,22 @@ class TestUserDetailView:
         """
         GIVEN one user
         WHEN  accessing his own profil
-        THEN  should see 2 buttons
+        THEN  should see 2 buttons (info and email)
         """
         url = reverse("users:detail", kwargs={"username": user.username})
         client.force_login(user)
         response = client.get(url)
         assertContains(response, 'role="button"', 2)
+        assertContains(response, "My Info", 1)
+        assertContains(response, 'href="/users/~update/"', 1)
+        assertContains(response, "E-Mail", 1)
+        assertContains(response, 'href="/accounts/email/"', 1)
 
     def test_contains_no_buttons(self, user: User, user2: User, client):
         """
         GIVEN two users
         WHEN  one accesses the profile of the second
-        THEN  he should not see any button
+        THEN  he should not be able to access submit button
         """
         url = reverse("users:detail", kwargs={"username": user2.username})
         client.force_login(user)
