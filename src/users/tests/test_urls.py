@@ -27,3 +27,8 @@ def test_update():
 def test_redirect():
     assert reverse("users:redirect") == "/users/~redirect/"
     assert resolve("/users/~redirect/").view_name == "users:redirect"
+
+
+def test_upgrade_request():
+    assert reverse("users:upgrade_request") == "/users/~upgrade/request/"
+    assert resolve("/users/~upgrade/request/").view_name == "users:upgrade_request"

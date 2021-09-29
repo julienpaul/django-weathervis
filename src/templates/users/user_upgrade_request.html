@@ -1,0 +1,20 @@
+{% extends "account/base.html" %}
+
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block head_title %}{% translate "Upgrade Request" %}{% endblock %}
+
+{% block inner %}
+<h1>{% translate "Upgrade Request" %}</h1>
+
+<!-- autocomplete="off" do not see history of form submit -->
+<form method="post" action="{% url 'users:upgrade_request' %}" autocomplete="off">
+  {% csrf_token %}
+  {% crispy form %}
+</form>
+<!--
+<p>{% blocktranslate %}Your request to upgrade your account has been sent.<br/>
+You will get an answer as soon as possible. {% endblocktranslate %}</p>
+-->
+{% endblock %}

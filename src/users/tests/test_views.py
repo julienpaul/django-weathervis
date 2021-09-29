@@ -7,6 +7,7 @@ from django.contrib import messages
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.messages.middleware import MessageMiddleware
 from django.contrib.sessions.middleware import SessionMiddleware
+from django.core import mail
 from django.http import HttpRequest
 from django.test import RequestFactory
 from django.urls import reverse
@@ -15,14 +16,16 @@ from django.urls import reverse
 from pytest_django.asserts import assertContains, assertTemplateUsed
 
 # Imports from my apps
-from src.users.forms import UserUpdateForm
+from src.users.forms import UserUpdateForm, UserUpgradeForm
 from src.users.models import User
 from src.users.tests.factories import UserFactory
 from src.users.views import (
     UserRedirectView,
     UserUpdateView,
+    UserUpgradeFormView,
     user_detail_view,
     user_update_view,
+    user_upgrade_request_view,
 )
 
 pytestmark = pytest.mark.django_db
@@ -183,11 +186,13 @@ class TestUserDetailView:
         url = reverse("users:detail", kwargs={"username": user.username})
         client.force_login(user)
         response = client.get(url)
-        assertContains(response, 'role="button"', 2)
+        assertContains(response, 'role="button"', 3)
         assertContains(response, "My Info", 1)
         assertContains(response, 'href="/users/~update/"', 1)
         assertContains(response, "E-Mail", 1)
         assertContains(response, 'href="/accounts/email/"', 1)
+        assertContains(response, "Upgrade", 1)
+        assertContains(response, 'href="/users/~upgrade/request/"', 1)
 
     def test_contains_no_buttons(self, user: User, user2: User, client):
         """
@@ -199,3 +204,80 @@ class TestUserDetailView:
         client.force_login(user)
         response = client.get(url)
         assertContains(response, 'role="button"', 0)
+
+
+class TestUserUpgradeFormView:
+    def test_authenticated(self, user: User, rf: RequestFactory):
+        request = rf.get("/fake-url/")
+        request.user = UserFactory()
+
+        response = user_upgrade_request_view(request)
+
+        assert response.status_code == 200
+
+    def test_not_authenticated(self, user: User, rf: RequestFactory):
+        request = rf.get("/fake-url/")
+        request.user = AnonymousUser()
+
+        response = user_upgrade_request_view(request)
+        login_url = reverse(settings.LOGIN_URL)
+
+        assert response.status_code == 302
+        assert response.url == f"{login_url}?next=/fake-url/"
+
+    def test_csrf(self, user: User, rf: RequestFactory):
+        request = rf.get("/fake-url/")
+        request.user = UserFactory()
+
+        response = user_upgrade_request_view(request)
+
+        assertContains(response, "csrfmiddlewaretoken")
+
+    def test_contains_form(self, user: User, client):
+        url = reverse("users:upgrade_request")
+        client.force_login(user)
+        response = client.get(url)
+
+        form = response.context.get("form")
+
+        assert isinstance(form, UserUpgradeForm)
+
+    def test_success_url(self, user: User, rf: RequestFactory):
+        view = UserUpgradeFormView()
+        request = rf.get("/fake-url")
+        request.user = user
+
+        view.request = request
+
+        # assert view.success_url == f"/users/~upgrade/request/done"
+        assert view.success_url == "/users/~redirect/"
+
+    def test_get_initial(self, user: User, client):
+        url = reverse("users:upgrade_request")
+        client.force_login(user)
+        response = client.get(url)
+
+        assertContains(response, f"{user.name}")
+        assertContains(response, f"{user.organisation}")
+
+    @pytest.mark.skip(reason="test not working yet")
+    def test_form_valid(self, user: User, client):  # rf: RequestFactory):
+        # Arrange
+        form_data = {
+            "organisation": "another organisation",
+            "motivation": "something",
+        }
+
+        form = UserUpgradeForm(data=form_data)
+        assert form.is_valid
+
+        # The default implementation for form_valid() simply redirects to the success_url.
+        user.organisation = ""
+        url = reverse("users:upgrade_request")
+        client.force_login(user)
+        client.post(url, data=form_data)
+
+        # Assert
+        assert len(mail.outbox) == 1
+        new = User.objects.get(id=user.id)
+        assert new.organisation == "another organisation"

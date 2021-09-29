@@ -52,4 +52,47 @@
   {% endif %}
 
 </div>
-{% endblock content %}
+<hr>
+<!-- Permission list -->
+<div class="container">
+
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="form-group row">
+        <div class="col-sm-2 text-secondary">Permission</div>
+        <div class="col-sm-10">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="defaultCheck1" disabled checked>
+            <label class="form-check-label" for="defaultCheck1">
+              can see weathervis plots
+            </label>
+          </div>
+          <div class="form-check">
+            {% if perms.users.change_user %}
+            <input class="form-check-input" type="checkbox" value="" id="defaultCheck2" disabled checked>
+            {% else %}
+            <input class="form-check-input" type="checkbox" value="" id="defaultCheck2" disabled>
+            {% endif %}
+            <label class="form-check-label" for="defaultCheck2">
+              can add weathervis site
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% if object == request.user %}
+  <!-- Action buttons -->
+  <p>
+    <div class="row">
+      <div class="col-sm-12">
+        <!-- Your Stuff: Custom user template urls -->
+        <a class="btn btn-secondary" href="{% url 'users:upgrade_request' %}" role="button">Upgrade</a>
+      </div>
+    </div>
+  </p>
+  <!-- End Action buttons -->
+  {% endif %}
+  <!-- End Permission list -->
+  {% endblock content %}
