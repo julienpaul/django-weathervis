@@ -1,5 +1,6 @@
 # Stdlib imports
 import pytest
+from crispy_forms.layout import Layout
 
 # Core Django imports
 from django.utils.translation import gettext_lazy as _
@@ -139,6 +140,7 @@ class TestUserUpdateForm:
         form = UserUpdateForm()
         assert hasattr(form, "helper")
         assert hasattr(form.helper, "layout")
+        assert isinstance(form.helper.layout, Layout)
 
     @pytest.mark.skip(reason="test not implemented yet")
     def test_cripsy_form_inputs(self):

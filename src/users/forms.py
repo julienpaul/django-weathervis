@@ -1,7 +1,6 @@
 # Stdlib imports
 # Core Django imports
 from crispy_forms.bootstrap import Field, FieldWithButtons, StrictButton
-from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Button, ButtonHolder, Hidden, Layout, Submit
 from django import forms
 from django.contrib.auth import forms as admin_forms
@@ -10,7 +9,8 @@ from django.urls import reverse_lazy
 from django.utils.http import urlencode
 
 # Third-party app imports
-# Imports from my apps
+# Imports from my app
+from src.utils.mixins import CrispyMixin
 
 User = get_user_model()
 
@@ -26,21 +26,13 @@ class UserCreationForm(admin_forms.UserCreationForm):
         fields = ("username", "email")
 
 
-class UserUpdateForm(forms.ModelForm):
+class UserUpdateForm(CrispyMixin, forms.ModelForm):
     submit_label = "Update"
     current_url = "users:update"
 
     class Meta:
         model = User
         fields = ["username", "name", "bio", "organisation"]
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # init crispy helper
-        self.helper = FormHelper()
-        self._init_helper_layout()
-        # customize it
-        self._custom_helper()
 
     def _init_helper_layout(self):
         """initialise crispy layout"""

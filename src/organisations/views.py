@@ -12,6 +12,8 @@ from django.views.generic import CreateView, DeleteView, ListView
 
 # Third-party app imports
 # Imports from my apps
+from src.utils.mixins import SuccessURLAllowedHostsMixin
+
 from .forms import OrganisationForm
 from .models import Organisation
 
@@ -21,7 +23,7 @@ from .models import Organisation
 # TODO: see alphabetic pagination for list organisation
 #  https://djangosnippets.org/snippets/1364/
 #  https://djangosnippets.org/snippets/2732/
-# numeric pagination
+#       see numeric pagination
 #  https://augusto.to/django-pagination/
 #  https://simpleisbetterthancomplex.com/tutorial/2016/08/03/how-to-paginate-with-django.html
 
@@ -39,7 +41,6 @@ class OrganisationView(LoginRequiredMixin, View):
 organisation_view = OrganisationView.as_view()
 
 
-# class OrganisationListView(LoginRequiredMixin, SuccessMessageMixin, ListView):
 class OrganisationListView(ListView):
     model = Organisation
     context_object_name = "organisations"
@@ -50,16 +51,6 @@ class OrganisationListView(ListView):
         context = super().get_context_data(**kwargs)
         context["form"] = OrganisationForm()
         return context
-
-
-# organisation_list_view = OrganisationListView.as_view()
-
-
-class SuccessURLAllowedHostsMixin:
-    success_url_allowed_hosts = set()
-
-    def get_success_url_allowed_hosts(self):
-        return {self.request.get_host(), *self.success_url_allowed_hosts}
 
 
 class OrganisationCreateView(
@@ -117,9 +108,6 @@ class OrganisationCreateView(
             if not url_is_safe:
                 next_page = self.request.path
         return next_page
-
-
-# organisation_create_view = OrganisationCreateView.as_view()
 
 
 class OrganisationDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
