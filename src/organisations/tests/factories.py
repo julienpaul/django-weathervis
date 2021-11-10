@@ -1,11 +1,11 @@
-from factory import Faker
+from factory import Faker as FactoryFaker
 from factory.django import DjangoModelFactory
 
 from src.organisations.models import Organisation
 
 
 class OrganisationFactory(DjangoModelFactory):
-    name = Faker("company")
+    name = FactoryFaker("company")
 
     class Meta:
         model = Organisation
