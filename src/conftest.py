@@ -8,6 +8,8 @@ from src.organisations.models import Organisation
 from src.organisations.tests.factories import OrganisationFactory
 from src.users.models import User
 from src.users.tests.factories import UserFactory
+from src.weather_forecast.models import WeatherForecastBorder
+from src.weather_forecast.tests.factories import WeatherForecastBorderFactory
 
 
 @pytest.fixture(autouse=True)
@@ -33,3 +35,8 @@ def staff() -> User:
 @pytest.fixture
 def organisation() -> Organisation:
     return OrganisationFactory()
+
+
+@pytest.fixture
+def weatherForecastBorder() -> WeatherForecastBorder:
+    return WeatherForecastBorderFactory()

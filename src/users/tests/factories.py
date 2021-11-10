@@ -5,7 +5,8 @@ from typing import Any, Sequence
 from django.contrib.auth import get_user_model
 
 # Third-party app imports
-from factory import Faker, SubFactory, Trait, post_generation
+from factory import Faker as FactoryFaker
+from factory import SubFactory, Trait, post_generation
 from factory.django import DjangoModelFactory
 
 # Imports from my apps
@@ -14,9 +15,9 @@ from src.organisations.tests.factories import OrganisationFactory
 
 class UserFactory(DjangoModelFactory):
 
-    username = Faker("user_name")
-    email = Faker("email")
-    name = Faker("name")
+    username = FactoryFaker("user_name")
+    email = FactoryFaker("email")
+    name = FactoryFaker("name")
     organisation = SubFactory(OrganisationFactory)
     is_staff = False
     is_superuser = False
@@ -26,7 +27,7 @@ class UserFactory(DjangoModelFactory):
         password = (
             extracted
             if extracted
-            else Faker(
+            else FactoryFaker(
                 "password",
                 length=42,
                 special_chars=True,

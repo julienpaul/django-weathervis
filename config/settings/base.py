@@ -42,9 +42,12 @@ LOCALE_PATHS = [str(ROOT_DIR / "locale")]
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
 
 DATABASES = {
-    "default": env.db("DATABASE_URL", default="postgres:///weathervis"),
+    "default": env.db("DATABASE_URL", default="postgis:///weathervis"),
 }
 DATABASES["default"]["ATOMIC_REQUESTS"] = True
+DATABASES["default"]["DISABLE_SERVER_SIDE_CURSORS"] = True
+DATABASES["default"]["TEST"] = {"TEMPLATE": "template_postgis"}
+
 #
 DEFAULT_AUTO_FIELD = "django.db.models.UUIDField"
 
@@ -67,6 +70,7 @@ DJANGO_APPS = [
     # "django.contrib.humanize", # Handy template tags
     "django.contrib.admin",
     "django.forms",
+    "django.contrib.gis",
 ]
 THIRD_PARTY_APPS = [
     "crispy_forms",
@@ -78,6 +82,7 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     "src.users.apps.UsersConfig",
     "src.organisations.apps.OrganisationsConfig",
+    "src.weather_forecast.apps.WeatherForecastConfig",
     # Your stuff: custom apps go here
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
