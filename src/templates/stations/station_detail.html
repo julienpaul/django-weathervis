@@ -1,0 +1,29 @@
+{% extends 'stations/station_base.html' %}
+{% load i18n %}
+
+{% block title %}
+Station detail
+{% endblock title %}
+
+{% block header %}
+{% translate "Stations: " %}{{station.name}}
+{% endblock header %}
+
+{% block row %}
+<div class="col">
+  <!-- TODO create card -->
+  Name: {{station.name}}
+  <br>
+  Coordinates: {{station.latitude}}&deg;N | {{station.longitude}}&deg;E | {{station.altitude}}m<br>
+  Station id: {{station.station_id}}<br>
+  WMO id: {{station.wmo_id}}<br>
+  Description: {{station.desctiption}}<br>
+  <hr>
+  Margin: {{station.margin}}
+</div>
+<div class="col">
+  <a class="btn btn-primary" href="{% url 'stations:list' %}" role="button">
+    back to list
+  </a>
+</div>
+{% endblock row %}

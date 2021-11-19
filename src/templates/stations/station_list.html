@@ -1,0 +1,59 @@
+{% extends 'stations/station_base.html' %}
+{% load static %}
+
+{% block row %}
+<div class="col">
+  {% if object_list %}
+  {% for station in page_obj %}
+  <div class="input-group mb-3">
+    <input type="text" placeholder="{{ station.name }}">
+    <div class="input-group-append">
+      <a class="btn btn-primary" href="{% url 'stations:detail' slug=station.slug %}" role="button">
+        <!-- <i class="bi bi-x-lg"></i> -->
+        <i class="bi bi-eye"></i>
+      </a>
+      <a class="btn btn-success" href="{% url 'stations:update' slug=station.slug %}" role="button">
+        <i class="bi bi-pencil"></i>
+      </a>
+      <a class="btn btn-danger" href="{% url 'stations:delete' slug=station.slug %}" role="button">
+        <i class="bi bi-trash"></i>
+      </a>
+    </div>
+  </div>
+  {% endfor %}
+  <hr>
+  {% if is_paginated %}
+  <div class="pagination">
+    <span class="step-links">
+      {% if page_obj.has_previous %}
+      <a href="?page=1">&laquo; first</a>
+      <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+      {% else %}
+      <a href="#" class="disabled">&laquo; first</a>
+      <a href="#" class="disabled">previous</a>
+      {% endif %}
+
+      <span class="current">
+        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+      </span>
+
+      {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}">next</a>
+      <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+      {% else %}
+      <a href="#" class="disabled">next</a>
+      <a href="#" class="disabled">last &raquo;</a>
+      {% endif %}
+    </span>
+  </div>
+  {% endif %}
+  {% else %}
+  <h4> No Station yet.</h4>
+  {% endif %}
+</div>
+<div class="col">
+  <a class="btn btn-primary" href="{% url 'stations:create' %}" role="button">
+    Add Station
+  </a>
+</div>
+{% endblock row %}

@@ -1,0 +1,25 @@
+{% extends 'stations/station_base.html' %}
+{% load crispy_forms_tags %}
+{% load i18n %}
+
+{% block title %}
+Station create
+{% endblock title %}
+
+{% block header %}
+{% translate "Create Station: " %}
+{% endblock header %}
+
+{% block row %}
+<div class="col">
+  {% csrf_token %}
+  {% crispy form %}
+</div>
+<!--
+<div class="col">
+    <a class="btn btn-primary" href="{% url 'stations:list' %}" role="button">
+        back to list
+    </a>
+</div>
+-->
+{% endblock row %}

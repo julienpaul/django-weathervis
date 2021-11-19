@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}
+Stations
+{% endblock title %}
+
+{% block content %}
+<h1>
+  {% block header %}
+  {% translate "Stations:" %}
+  {% endblock header %}
+</h1>
+<div class="container">
+  <hr>
+  <div class="row">
+    {{ map|safe }}
+  </div>
+  <hr>
+  <div class="row">
+    {% block row %}
+    {% endblock row %}
+  </div>
+</div>
+{% endblock content %}

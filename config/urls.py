@@ -25,6 +25,14 @@ urlpatterns = [
         "organisations/",
         include("src.organisations.urls", namespace="organisations"),
     ),
+    path(
+        "stations/",
+        include("src.stations.urls", namespace="stations"),
+    ),
+    path(
+        "margins/",
+        include("src.margins.urls", namespace="margins"),
+    ),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 

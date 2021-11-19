@@ -1,0 +1,21 @@
+{% extends "stations/station_base.html" %}
+
+{% load i18n %}
+
+{% block title %}
+Station
+{% endblock title %}
+
+{% block header %}
+{% translate "Delete Station:" %} {{ object }}
+{% endblock header %}
+
+{% block row %}
+<div class="col">
+  <form method="post">{% csrf_token %}
+    <h3>Are you sure you want to delete Station "{{ object }}"?</h3>
+    <input type="submit" class="btn btn-danger" value="Confirm">
+    <a class="btn btn-primary" href="{% url 'stations:list' %}" role="button">Cancel</a>
+  </form>
+</div>
+{% endblock row %}

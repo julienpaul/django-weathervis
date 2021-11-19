@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load i18n %}
+
+{% block title %}Margins{% endblock %}
+
+{% block content %}
+<h1>Delete Margin</h1>
+<form method="post">{% csrf_token %}
+  <p>Are you sure you want to delete "{{ object }}"?</p>
+  <input type="submit" class="btn btn-danger" value="Confirm">
+  <a class="btn btn-primary" href="{% url 'margins:list' %}" role="button">Cancel</a>
+</form>
+{% endblock content %}
