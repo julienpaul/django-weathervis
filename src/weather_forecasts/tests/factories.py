@@ -7,17 +7,26 @@ from faker import Faker
 
 # Third-party app imports
 # Imports from my app
-from src.weather_forecast.models import WeatherForecastBorder
+from src.weather_forecasts.models import WeatherForecastBorder
 
 
 class WeatherForecastBorderFactory(DjangoModelFactory):
+    class Meta:
+        model = WeatherForecastBorder
+
     def _create_geom():
         """initialise a Polygon geometry"""
         fake = Faker()
 
         points_list = []
         for _ in range(3):
-            points_list.append(fake.latlng())
+            # coords: lat, lon
+            coords = [float(x) for x in fake.latlng()]
+            # coords: lon, lat
+            coords.reverse()
+            # coords: lon, lat, alt
+            coords.append(fake.pyfloat(positive=True, max_value=99999))
+            points_list.append(coords)
 
         # add first point again, to close polygon
         points_list.append(points_list[0])
@@ -26,6 +35,3 @@ class WeatherForecastBorderFactory(DjangoModelFactory):
 
     name = FactoryFaker("company")
     geom = _create_geom()
-
-    class Meta:
-        model = WeatherForecastBorder

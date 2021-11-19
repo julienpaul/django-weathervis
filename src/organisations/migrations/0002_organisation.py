@@ -9,19 +9,38 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('organisations', '0001_postgres_extensions'),
+        ("organisations", "0001_postgres_extensions"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Organisation',
+            name="Organisation",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', django.contrib.postgres.fields.citext.CICharField(error_messages={'unique': 'An organisation with that name already exists.'}, help_text='Required. 150 characters or fewer. Case insensitive.', max_length=150, unique=True, verbose_name='name')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "name",
+                    django.contrib.postgres.fields.citext.CICharField(
+                        error_messages={
+                            "unique": "An organisation with that name already exists."
+                        },
+                        help_text="Required. 150 characters or fewer. Case insensitive.",
+                        max_length=150,
+                        unique=True,
+                        verbose_name="name",
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
             ],
             options={
-                'ordering': ['name'],
+                "ordering": ["name"],
             },
         ),
     ]

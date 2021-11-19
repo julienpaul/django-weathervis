@@ -17,3 +17,8 @@ a.disabled {
   pointer-events: none;
   cursor: default;
 }
+
+.navbar-brand {
+  font-family: 'Fuggles', cursive;
+  font-size: xx-large;
+}

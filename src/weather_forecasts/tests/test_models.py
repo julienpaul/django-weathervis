@@ -4,7 +4,7 @@ import pytest
 # Core Django imports
 # Third-party app imports
 # Imports from my apps
-from src.weather_forecast.models import WeatherForecastBorder
+from src.weather_forecasts.models import WeatherForecastBorder
 
 pytestmark = pytest.mark.django_db
 

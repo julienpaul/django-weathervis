@@ -43,7 +43,7 @@ class TestUserUpdateView:
     def dummy_get_response(self, request: HttpRequest):
         return None
 
-    def test_get_success_url(self, user: User, rf: RequestFactory):
+    def test_get_success_url(self, rf: RequestFactory, user: User):
         view = UserUpdateView()
         request = rf.get("/fake-url/")
         request.user = user
@@ -52,7 +52,7 @@ class TestUserUpdateView:
 
         assert view.get_success_url() == f"/users/@{user.username}/"
 
-    def test_get_object(self, user: User, rf: RequestFactory):
+    def test_get_object(self, rf: RequestFactory, user: User):
         view = UserUpdateView()
         request = rf.get("/fake-url/")
         request.user = user
@@ -61,7 +61,7 @@ class TestUserUpdateView:
 
         assert view.get_object() == user
 
-    def test_form_valid(self, user: User, rf: RequestFactory):
+    def test_form_valid(self, rf: RequestFactory, user: User):
         view = UserUpdateView()
         request = rf.get("/fake-url/")
 
@@ -80,17 +80,18 @@ class TestUserUpdateView:
         }
         form = UserUpdateForm(data)
         form.cleaned_data = []
-        view.form_valid(form)
 
         assert form.is_valid()
+        view.form_valid(form)
+
         messages_sent = [m.message for m in messages.get_messages(request)]
         assert messages_sent == ["Information successfully updated"]
 
     @pytest.mark.skip(reason="not implemented yet")
-    def test_form_invalid(self, user: User, rf: RequestFactory):
+    def test_form_invalid(self, rf: RequestFactory, user: User):
         pass
 
-    def test_contains_form(self, user: User, client):
+    def test_contains_form(self, client, user: User):
         url = reverse("users:update")
         client.force_login(user)
         response = client.get(url)
@@ -99,7 +100,7 @@ class TestUserUpdateView:
 
         assert isinstance(form, UserUpdateForm)
 
-    def test_form_buttons(self, user: User, client):
+    def test_form_buttons(self, client, user: User):
         """ """
         url = reverse("users:update")
         client.force_login(user)
@@ -116,7 +117,7 @@ class TestUserUpdateView:
 
         assertContains(response, "csrfmiddlewaretoken")
 
-    def test_template(self, user: User, client):
+    def test_template(self, client, user: User):
         url = reverse("users:update")
         client.force_login(user)
         response = client.get(url)
@@ -130,7 +131,7 @@ class TestUserUpdateView:
 
         assert response.status_code == 200
 
-    def test_not_authenticated(self, user: User, rf: RequestFactory):
+    def test_not_authenticated(self, rf: RequestFactory, user: User):
         request = rf.get("/fake-url/")
         request.user = AnonymousUser()
 
@@ -142,7 +143,7 @@ class TestUserUpdateView:
 
 
 class TestUserRedirectView:
-    def test_get_redirect_url(self, user: User, rf: RequestFactory):
+    def test_get_redirect_url(self, rf: RequestFactory, user: User):
         view = UserRedirectView()
         request = rf.get("/fake-url")
         request.user = user
@@ -153,7 +154,7 @@ class TestUserRedirectView:
 
 
 class TestUserDetailView:
-    def test_authenticated(self, user: User, rf: RequestFactory):
+    def test_authenticated(self, rf: RequestFactory, user: User):
         request = rf.get("/fake-url/")
         request.user = UserFactory()
 
@@ -161,7 +162,7 @@ class TestUserDetailView:
 
         assert response.status_code == 200
 
-    def test_not_authenticated(self, user: User, rf: RequestFactory):
+    def test_not_authenticated(self, rf: RequestFactory, user: User):
         request = rf.get("/fake-url/")
         request.user = AnonymousUser()
 
@@ -171,13 +172,13 @@ class TestUserDetailView:
         assert response.status_code == 302
         assert response.url == f"{login_url}?next=/fake-url/"
 
-    def test_template(self, user: User, client):
+    def test_template(self, client, user: User):
         url = reverse("users:detail", kwargs={"username": user.username})
         client.force_login(user)
         response = client.get(url)
         assertTemplateUsed(response, "users/user_detail.html")
 
-    def test_contains_buttons(self, user: User, client):
+    def test_contains_buttons(self, client, user: User):
         """
         GIVEN one user
         WHEN  accessing his own profil
@@ -194,7 +195,7 @@ class TestUserDetailView:
         assertContains(response, "Upgrade", 1)
         assertContains(response, 'href="/users/~upgrade/request/"', 1)
 
-    def test_contains_no_buttons(self, user: User, user2: User, client):
+    def test_contains_no_buttons(self, client, user: User, user2: User):
         """
         GIVEN two users
         WHEN  one accesses the profile of the second
@@ -207,7 +208,7 @@ class TestUserDetailView:
 
 
 class TestUserUpgradeFormView:
-    def test_authenticated(self, user: User, rf: RequestFactory):
+    def test_authenticated(self, rf: RequestFactory):
         request = rf.get("/fake-url/")
         request.user = UserFactory()
 
@@ -215,7 +216,7 @@ class TestUserUpgradeFormView:
 
         assert response.status_code == 200
 
-    def test_not_authenticated(self, user: User, rf: RequestFactory):
+    def test_not_authenticated(self, rf: RequestFactory):
         request = rf.get("/fake-url/")
         request.user = AnonymousUser()
 
@@ -225,7 +226,7 @@ class TestUserUpgradeFormView:
         assert response.status_code == 302
         assert response.url == f"{login_url}?next=/fake-url/"
 
-    def test_csrf(self, user: User, rf: RequestFactory):
+    def test_csrf(self, rf: RequestFactory):
         request = rf.get("/fake-url/")
         request.user = UserFactory()
 
@@ -233,7 +234,7 @@ class TestUserUpgradeFormView:
 
         assertContains(response, "csrfmiddlewaretoken")
 
-    def test_contains_form(self, user: User, client):
+    def test_contains_form(self, client, user: User):
         url = reverse("users:upgrade_request")
         client.force_login(user)
         response = client.get(url)
@@ -261,7 +262,7 @@ class TestUserUpgradeFormView:
         assertContains(response, f"{user.organisation}")
 
     @pytest.mark.skip(reason="test not working yet")
-    def test_form_valid(self, user: User, client):  # rf: RequestFactory):
+    def test_form_valid(self, client, user: User):
         # Arrange
         form_data = {
             "organisation": "another organisation",

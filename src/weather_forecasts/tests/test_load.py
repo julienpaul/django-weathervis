@@ -9,14 +9,14 @@ import yaml
 from faker import Faker
 
 # Imports from my apps
-from src.weather_forecast import load
-from src.weather_forecast.models import WeatherForecastBorder
+from src.weather_forecasts import load
+from src.weather_forecasts.models import WeatherForecastBorder
 
 pytestmark = pytest.mark.django_db
 # TODO: use smaller data/create small fake data to speed up tests
 
 
-def fake_geonc(tmp_path, lat_name="lat", lon_name="lon"):
+def fake_geonc(tmp_path, lat_name="lat", lon_name="lon", alt_name="alt"):
     """
     create dummy netcdf file with 1D longitude and latitude.
 
@@ -28,18 +28,21 @@ def fake_geonc(tmp_path, lat_name="lat", lon_name="lon"):
     _tmp = tmp_path / "test.nc"
 
     fake = Faker()
-    lat, lon = [], []
+    lat, lon, alt = [], [], []
     for _ in range(3):
         lon.append(fake.longitude())
         lat.append(fake.latitude())
+        alt.append(fake.pyfloat(positive=True, max_value=99999))
     #
     lon = np.array(lon, dtype="float")
     lat = np.array(lat, dtype="float")
+    alt = np.array(alt, dtype="float")
 
     ds = xr.Dataset(
         coords={
             lon_name: (["x"], lon),
             lat_name: (["y"], lat),
+            alt_name: (["z"], alt),
         },
     )
     ds.to_netcdf(path=_tmp, format="NETCDF4_CLASSIC")
@@ -292,20 +295,20 @@ def test__check_param_raises_no_exception():
         assert False, f"'load._check_param()' raised an exception {exc}"
 
 
-def test_run_yaml(tmp_path):
+def test_upload_yaml(tmp_path):
     """
     GIVEN an invalid yaml input file
-    WHEN  running run
+    WHEN  running up
     THEN  raise Exception
-     with error message starting with 'Something goes wrong when loading extra parameters file'
+     with error message starting with 'Something goes wrong when uploading extra parameters file'
     """
     _tmp = None
     with pytest.raises(Exception) as execinfo:
-        load.run(_tmp)
+        load.up(_tmp)
 
     # check error message
     assert str(execinfo.value).startswith(
-        "Something goes wrong when loading extra parameters"
+        "Something goes wrong when uploading extra parameters"
     )
 
     dict = {"data": "something"}
@@ -317,30 +320,30 @@ def test_run_yaml(tmp_path):
         load.run(_tmp)
 
 
-def test_run_raises_no_exception():
+def test_upload_raises_no_exception():
     """
     GIVEN an valid yaml input file
-    WHEN  running run
+    WHEN  running up
     THEN  raise no Exception
     """
     """
     Assert your python code raises no exception.
     """
     try:
-        load.run()
+        load.up()
     except Exception as exc:
         assert False, f"'load.run()' raised an exception {exc}"
 
 
 @pytest.mark.skip(reason="useless ??")
-def test_run_yaml_success():
+def test_upload_yaml_success():
     """
     GIVEN an valid yaml input file
-    WHEN  running run
+    WHEN  running up
     THEN  'geojosn' file(s) created on load.weather_forecast_data_path
      and  element(s) added to the database
     """
-    load.run()
+    load.up()
     fparam_ = load.weather_forecast_path / "data.yaml"
     with open(fparam_, "r") as stream:
         try:
