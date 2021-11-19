@@ -131,7 +131,7 @@ see [qgis.org download](https://qgis.org/en/site/forusers/download.html)
 
     Create the 'weathervis' database
 
-    5.1. Create a PostGIS database template (as superuser)
+    5.1. Create a PostGIS database template
 
     > Note: you may need to run those command as superuser `sudo -u postgres`
 
@@ -150,9 +150,9 @@ see [qgis.org download](https://qgis.org/en/site/forusers/download.html)
         /usr/share/postgresql/13/contrib/postgis-3.1/legacy.sql
 
         # Enable users to alter spatial tables.
-        $ sudo -u postgres psql -d template_postgis -c "GRANT ALL ON geometry_columns TO PUBLIC;"
-        $ sudo -u postgres psql -d template_postgis -c "GRANT ALL ON geography_columns TO PUBLIC;"
-        $ sudo -u postgres psql -d template_postgis -c "GRANT ALL ON spatial_ref_sys TO PUBLIC;"
+        $ (sudo -u postgres) psql -d template_postgis -c "GRANT ALL ON geometry_columns TO PUBLIC;"
+        $ (sudo -u postgres) psql -d template_postgis -c "GRANT ALL ON geography_columns TO PUBLIC;"
+        $ (sudo -u postgres) psql -d template_postgis -c "GRANT ALL ON spatial_ref_sys TO PUBLIC;"
 
 
     5.2. Finally create the 'weathervis' database with PostGIS support:
