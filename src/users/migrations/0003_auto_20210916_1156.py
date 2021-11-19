@@ -8,18 +8,32 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('users', '0002_postgres_extensions'),
+        ("users", "0002_postgres_extensions"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='user',
-            name='email',
-            field=django.contrib.postgres.fields.citext.CIEmailField(error_messages={'unique': 'A user with that email address already exists.'}, max_length=254, unique=True, verbose_name='email address'),
+            model_name="user",
+            name="email",
+            field=django.contrib.postgres.fields.citext.CIEmailField(
+                error_messages={
+                    "unique": "A user with that email address already exists."
+                },
+                max_length=254,
+                unique=True,
+                verbose_name="email address",
+            ),
         ),
         migrations.AlterField(
-            model_name='user',
-            name='username',
-            field=django.contrib.postgres.fields.citext.CICharField(error_messages={'unique': 'A user with that username already exists.'}, help_text='Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only. Case insensitive.', max_length=150, unique=True, validators=[django.contrib.auth.validators.ASCIIUsernameValidator()], verbose_name='username'),
+            model_name="user",
+            name="username",
+            field=django.contrib.postgres.fields.citext.CICharField(
+                error_messages={"unique": "A user with that username already exists."},
+                help_text="Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only. Case insensitive.",
+                max_length=150,
+                unique=True,
+                validators=[django.contrib.auth.validators.ASCIIUsernameValidator()],
+                verbose_name="username",
+            ),
         ),
     ]

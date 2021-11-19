@@ -14,6 +14,7 @@ from django.urls import reverse
 # Third-party app imports
 from pytest_django.asserts import assertContains, assertTemplateUsed
 
+# Imports from my apps
 from src.organisations.forms import OrganisationForm
 from src.organisations.models import Organisation
 from src.organisations.views import (
@@ -22,8 +23,6 @@ from src.organisations.views import (
     OrganisationView,
     organisation_view,
 )
-
-# Imports from my apps
 from src.users.models import User
 
 
@@ -32,7 +31,7 @@ class TestOrganisationView:
     def dummy_get_response(self, request: HttpRequest):
         return None
 
-    def test_get_authenticated(self, user: User, rf: RequestFactory):
+    def test_get_authenticated(self, rf: RequestFactory, user: User):
         request = rf.get("/fake-url/")
         request.user = user
 
@@ -43,7 +42,7 @@ class TestOrganisationView:
         response = OrganisationView.as_view()(request)
         assert response.status_code == 200
 
-    def test_get_not_authenticated(self, user: User, rf: RequestFactory):
+    def test_get_not_authenticated(self, rf: RequestFactory):
         request = rf.get("/fake-url/")
         request.user = AnonymousUser()
 
@@ -53,13 +52,13 @@ class TestOrganisationView:
         assert response.status_code == 302
         assert response.url == f"{login_url}?next=/fake-url/"
 
-    def test_get_template(self, user: User, client):
+    def test_get_template(self, client, user: User):
         url = reverse("organisations:list")
         client.force_login(user)
         response = client.get(url)
         assertTemplateUsed(response, "organisations/organisation_list.html")
 
-    def test_post_authenticated(self, user: User, rf: RequestFactory):
+    def test_post_authenticated(self, rf: RequestFactory, user: User):
         request = rf.post("/fake-url/")
         # Add the session/message middleware to the request
         SessionMiddleware(self.dummy_get_response).process_request(request)
@@ -70,7 +69,7 @@ class TestOrganisationView:
 
         assert response.status_code == 200
 
-    def test_post_not_authenticated(self, user: User, rf: RequestFactory):
+    def test_post_not_authenticated(self, rf: RequestFactory):
         request = rf.post("/fake-url/")
         request.user = AnonymousUser()
 
@@ -80,7 +79,7 @@ class TestOrganisationView:
         assert response.status_code == 302
         assert response.url == f"{login_url}?next=/fake-url/"
 
-    def test_post_template(self, user: User, client):
+    def test_post_template(self, client, user: User):
         url = reverse("organisations:list")
         client.force_login(user)
         response = client.post(url)
@@ -89,13 +88,13 @@ class TestOrganisationView:
 
 @pytest.mark.django_db
 class TestOrganisationListView:
-    def test_template(self, user: User, client):
+    def test_template(self, client, user: User):
         url = reverse("organisations:list")
         client.force_login(user)
         response = client.get(url)
         assertTemplateUsed(response, "organisations/organisation_list.html")
 
-    def test_context_data(self, user: User, rf: RequestFactory):
+    def test_context_data(self, rf: RequestFactory, user: User):
         """
         GIVEN a GET request of an instance of OrganisationView, and a user
         WHEN  displaying the list view
@@ -113,7 +112,7 @@ class TestOrganisationListView:
         assert isinstance(response.context_data["form"], OrganisationForm)
 
     @pytest.mark.skip(reason="test not implemented yet")
-    def test_delete_button(self, staff: User, organisation: Organisation, client):
+    def test_delete_button(self, client, staff: User, organisation: Organisation):
         """
         GIVEN one organistion, and a staff member
         WHEN  display the list view
@@ -127,7 +126,7 @@ class TestOrganisationListView:
         assertContains(response, 'class="btn btn-danger"', 1)
 
     @pytest.mark.skip(reason="test not implemented yet")
-    def test_no_delete_button(self, user: User, organisation: Organisation, client):
+    def test_no_delete_button(self, client, user: User, organisation: Organisation):
         """
         GIVEN one organistion, and a user (not in staff)
         WHEN  display the list view
@@ -161,15 +160,16 @@ class TestOrganisationCreateView:
     def dummy_get_response(self, request: HttpRequest):
         return None
 
-    def test_template(self, user: User, client):
+    def test_template(self, client, user: User):
         url = reverse("organisations:list")
         client.force_login(user)
         response = client.post(url)
         assertTemplateUsed(response, "organisations/organisation_list.html")
 
-    def test_context_data(self, user: User, rf: RequestFactory):
+    def test_context_data(self, rf: RequestFactory, user: User):
         """
-        GIVEN a POST request of an instance of OrganisationView, and a user
+        GIVEN a POST request of an instance of OrganisationView,
+          and a user (with an organisation)
         WHEN  displaying the list view
         THEN  context dictionnary should contain key 'organisations' and 'form'
         """
@@ -187,7 +187,7 @@ class TestOrganisationCreateView:
         assert "form" in response.context_data
         assert isinstance(response.context_data["form"], OrganisationForm)
 
-    def test_context_form(self, user: User, organisation: Organisation, client):
+    def test_context_form(self, client, user: User, organisation: Organisation):
         url = reverse("organisations:list")
         client.force_login(user)
         response = client.get(url)
@@ -196,7 +196,7 @@ class TestOrganisationCreateView:
 
         assert isinstance(form, OrganisationForm)
 
-    def test_csrf(self, user: User, rf: RequestFactory):
+    def test_csrf(self, rf: RequestFactory, user: User):
         request = rf.get("/fake-url/")
         request.user = user
 
@@ -204,7 +204,7 @@ class TestOrganisationCreateView:
 
         assertContains(response, "csrfmiddlewaretoken")
 
-    def test_form_buttons(self, user: User, client):
+    def test_form_buttons(self, client, user: User):
         """ """
         url = reverse("organisations:list")
         client.force_login(user)
@@ -212,7 +212,7 @@ class TestOrganisationCreateView:
 
         assertContains(response, 'input type="submit"', 1)
 
-    def test_form_valid(self, user: User, rf: RequestFactory):
+    def test_form_valid(self, rf: RequestFactory, user: User):
         """
         GIVEN an instance of OrganisationCreateView
           and a user (with an organisation)
@@ -242,7 +242,7 @@ class TestOrganisationCreateView:
         messages_sent = [m.message for m in messages.get_messages(request)]
         assert messages_sent == ["Organisation 'another company' successfully added"]
 
-    def test_form_invalid(self, user: User, rf: RequestFactory):
+    def test_form_invalid(self, rf: RequestFactory, user: User):
         """
         GIVEN an instance of OrganisationCreateView
           and a user (with an organisation)
@@ -273,7 +273,7 @@ class TestOrganisationCreateView:
         assert messages_sent == ["An organisation with that name already exists."]
 
     @pytest.mark.skip(reason="test not implemented yet")
-    def test_get_next_page(self, user: User, rf: RequestFactory):
+    def test_get_next_page(self, rf: RequestFactory, user: User):
         """
         GIVEN an instance of OrganisationCreateView,
           and a user (with an organisation)
@@ -291,7 +291,7 @@ class TestOrganisationCreateView:
         pass
 
     @pytest.mark.skip(reason="test not implemented yet")
-    def test_success_url(self, user: User, rf: RequestFactory):
+    def test_success_url(self, rf: RequestFactory, user: User):
         """
         GIVEN an instance of OrganisationCreateView,
           and a user (with an organisation)
@@ -321,7 +321,7 @@ class TestOrganisationDeleteView:
     def dummy_get_response(self, request: HttpRequest):
         return None
 
-    def test_template(self, user: User, client):
+    def test_template(self, client, user: User):
         """
         GIVEN an instance of OrganisationDeleteView,
           and a user (with an organisation)
@@ -334,7 +334,7 @@ class TestOrganisationDeleteView:
         response = client.get(url)
         assertTemplateUsed(response, "organisations/organisation_confirm_delete.html")
 
-    def test_success_message(self, user: User, rf: RequestFactory):
+    def test_success_message(self, rf: RequestFactory, user: User):
         """
         GIVEN an instance of OrganisationDeleteView,
           and a user (with an organisation)
@@ -356,7 +356,7 @@ class TestOrganisationDeleteView:
             f"Organisation '{organisation.name}' successfully removed"
         ]
 
-    def test_delete_from_db(self, user: User, client):
+    def test_delete_from_db(self, client, user: User):
         """
         GIVEN an instance of OrganisationDeleteView,
           and a user (with an organisation)
@@ -370,7 +370,7 @@ class TestOrganisationDeleteView:
 
         assert Organisation.objects.count() == 0
 
-    def test_redirect_client(self, user: User, client):
+    def test_redirect_client(self, client, user: User):
         """
         GIVEN an instance of OrganisationDeleteView,
           and a user (with an organisation)
@@ -389,7 +389,7 @@ class TestOrganisationDeleteView:
         assert redirect_url == f"{success_url}"
         assert redirect_status_code == 302
 
-    def test_redirect(self, user: User, rf: RequestFactory):
+    def test_redirect(self, rf: RequestFactory, user: User):
         """
         GIVEN an instance of OrganisationDeleteView,
           and a user (with an organisation)
@@ -411,7 +411,7 @@ class TestOrganisationDeleteView:
         assert response.url == f"{success_url}"
 
     @pytest.mark.skip(reason="test not implemented yet")
-    def test_redirect_error(self, user: User, rf: RequestFactory):
+    def test_redirect_error(self, rf: RequestFactory, user: User):
         """
         GIVEN
         WHEN
@@ -419,7 +419,7 @@ class TestOrganisationDeleteView:
         """
         pass
 
-    def test_get_not_authenticated(self, user: User, rf: RequestFactory):
+    def test_get_not_authenticated(self, rf: RequestFactory, user: User):
         request = rf.get("/fake-url/")
         request.user = AnonymousUser()
 
@@ -430,7 +430,7 @@ class TestOrganisationDeleteView:
         assert response.url == f"{login_url}?next=/fake-url/"
 
     @pytest.mark.skip(reason="test not implemented yet")
-    def test_user_permission(self, user: User, rf: RequestFactory):
+    def test_user_permission(self, rf: RequestFactory, user: User):
         """
         GIVEN
         WHEN

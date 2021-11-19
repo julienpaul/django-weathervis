@@ -8,8 +8,8 @@ from src.organisations.models import Organisation
 from src.organisations.tests.factories import OrganisationFactory
 from src.users.models import User
 from src.users.tests.factories import UserFactory
-from src.weather_forecast.models import WeatherForecastBorder
-from src.weather_forecast.tests.factories import WeatherForecastBorderFactory
+from src.weather_forecasts.models import WeatherForecastBorder
+from src.weather_forecasts.tests.factories import WeatherForecastBorderFactory
 
 
 @pytest.fixture(autouse=True)

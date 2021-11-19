@@ -13,7 +13,7 @@ class WeatherForecastBorder(models.Model):
     #
     name = models.CharField(max_length=50)
     # GeoDjango-specific: a geometry field (MultiPolygonField)
-    geom = models.MultiPolygonField(srid=4326)
+    geom = models.MultiPolygonField(dim=3, srid=4326)
     #
     created_at = models.DateTimeField(auto_now_add=True)
     # created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)

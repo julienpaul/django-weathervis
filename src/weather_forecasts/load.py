@@ -107,8 +107,8 @@ def _check_param(dict_, fparam_):
                 )
 
 
-def run(fparam_=weather_forecast_path / "data.yaml"):
-    """load and save shape file of weather forecast models"""
+def up(fparam_=weather_forecast_path / "data.yaml"):
+    """upload and save shape file of weather forecast models"""
     try:
         # read parameters configuration file yaml
         with open(fparam_, "r") as stream:
@@ -122,7 +122,7 @@ def run(fparam_=weather_forecast_path / "data.yaml"):
 
     except Exception as exc:
         raise Exception(
-            f"Something goes wrong when loading extra parameters file -{fparam_}-. {exc}"
+            f"Something goes wrong when uploading extra parameters file -{fparam_}-. {exc}"
         )
 
     for key, val in param["data"].items():

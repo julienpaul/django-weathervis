@@ -82,7 +82,7 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     "src.users.apps.UsersConfig",
     "src.organisations.apps.OrganisationsConfig",
-    "src.weather_forecast.apps.WeatherForecastConfig",
+    "src.weather_forecasts.apps.WeatherForecastsConfig",
     # Your stuff: custom apps go here
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps

@@ -14,13 +14,19 @@ from src.organisations.tests.factories import OrganisationFactory
 
 
 class UserFactory(DjangoModelFactory):
+    class Meta:
+        model = get_user_model()
+        django_get_or_create = ["username"]
 
-    username = FactoryFaker("user_name")
-    email = FactoryFaker("email")
-    name = FactoryFaker("name")
-    organisation = SubFactory(OrganisationFactory)
-    is_staff = False
-    is_superuser = False
+    class Params:
+        staff = Trait(
+            is_staff=True,
+            is_superuser=False,
+        )
+        superuser = Trait(
+            is_staff=True,
+            is_superuser=True,
+        )
 
     @post_generation
     def password(self, create: bool, extracted: Sequence[Any], **kwargs):
@@ -38,16 +44,9 @@ class UserFactory(DjangoModelFactory):
         )
         self.set_password(password)
 
-    class Meta:
-        model = get_user_model()
-        django_get_or_create = ["username"]
-
-    class Params:
-        staff = Trait(
-            is_staff=True,
-            is_superuser=False,
-        )
-        superuser = Trait(
-            is_staff=True,
-            is_superuser=True,
-        )
+    username = FactoryFaker("user_name")
+    email = FactoryFaker("email")
+    name = FactoryFaker("name")
+    organisation = SubFactory(OrganisationFactory)
+    is_staff = False
+    is_superuser = False
