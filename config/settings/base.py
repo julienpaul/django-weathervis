@@ -82,7 +82,7 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     "src.users.apps.UsersConfig",
     "src.organisations.apps.OrganisationsConfig",
-    "src.weather_forecasts.apps.WeatherForecastsConfig",
+    "src.model_grids.apps.ModelGridsConfig",
     "src.stations.apps.StationsConfig",
     "src.margins.apps.MarginsConfig",
     # Your stuff: custom apps go here

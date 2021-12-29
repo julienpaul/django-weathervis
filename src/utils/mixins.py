@@ -7,9 +7,9 @@ from crispy_forms.layout import Layout
 from folium.plugins import MarkerCluster, MiniMap, MousePosition
 
 # Imports from my app
+from src.model_grids.models import ModelGrid
 from src.stations.models import Station
 from src.utils.util import degree_sign as deg
-from src.weather_forecasts.models import WeatherForecastBorder
 
 # TODO LogoutIfNotStaffMixin
 # see https://stackoverflow.com/questions/44341391/django-class-based-view-logout-user-if-not-staff
@@ -194,7 +194,7 @@ class DrawMapMixin:
                 "dashArray": "5, 5",
             }
 
-        forecats = WeatherForecastBorder.objects.all()
+        forecats = ModelGrid.objects.all()
         for forecast in forecats:
             poly = forecast.geom
             geo_j = folium.GeoJson(

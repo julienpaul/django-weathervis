@@ -7,12 +7,12 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("weather_forecasts", "0001_initial"),
+        ("model_grids", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name="weatherforecastborder",
+            model_name="modelgrid",
             name="geom",
             field=django.contrib.gis.db.models.fields.MultiPolygonField(
                 dim=3, srid=4326

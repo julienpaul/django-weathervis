@@ -18,9 +18,9 @@ from django.utils.http import urlencode
 
 # Third-party app imports
 # Imports from my apps
+from src.model_grids.models import ModelGrid
 from src.utils.mixins import CrispyMixin
 from src.utils.util import degree_sign as deg
-from src.weather_forecasts.models import WeatherForecastBorder
 
 from .models import Station
 
@@ -106,7 +106,7 @@ class StationForm(CrispyMixin, forms.ModelForm):
         alt = float(cleaned_data.get("altitude", 0))
         point = geoPoint(lon, lat, alt)
 
-        forecasts = WeatherForecastBorder.objects.all()
+        forecasts = ModelGrid.objects.all()
 
         if len(forecasts) == 0:
             raise ValidationError(
@@ -124,5 +124,5 @@ class StationForm(CrispyMixin, forms.ModelForm):
 
         if not valid:
             raise ValidationError(
-                "Station is not inside any WeatherForecastBorder registered.",
+                "Station is not inside any ModelGrid registered.",
             )

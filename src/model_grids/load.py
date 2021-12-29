@@ -12,15 +12,15 @@ from django.contrib.gis.utils import LayerMapping
 # Imports from my apps
 from src.utils.util import is_url
 
-from .models import WeatherForecastBorder
+from .models import ModelGrid
 
-weather_forecast_border_mapping = {
+model_grid_mapping = {
     "name": "NAME",
     "geom": "MULTIPOLYGON",
 }
 
-weather_forecast_path = Path(__file__).resolve().parent
-weather_forecast_data_path = weather_forecast_path / "data"
+model_grid_path = Path(__file__).resolve().parent
+model_grid_data_path = model_grid_path / "data"
 
 
 def _setup_border(name_, ncfile_):
@@ -63,8 +63,8 @@ def _setup_border(name_, ncfile_):
         # create json file
         feature_collection = geojson.FeatureCollection(features)
 
-        output = weather_forecast_data_path / (name_ + ".geojson")
-        weather_forecast_data_path.mkdir(parents=True, exist_ok=True)
+        output = model_grid_data_path / (name_ + ".geojson")
+        model_grid_data_path.mkdir(parents=True, exist_ok=True)
         with open(output, "w") as f:
             geojson.dump(feature_collection, f)
 
@@ -77,14 +77,14 @@ def _save(name_, verbose=True):
     if not name_:
         raise TypeError(f"Invalid type for argument name_ -{type(name_)}-")
 
-    geojson = weather_forecast_data_path / (name_ + ".geojson")
+    geojson = model_grid_data_path / (name_ + ".geojson")
     if not geojson.exists():
         raise OSError(f"Geojson file {geojson} does not exist")
 
     lm = LayerMapping(
-        WeatherForecastBorder,
+        ModelGrid,
         str(geojson),
-        weather_forecast_border_mapping,
+        model_grid_mapping,
         transform=False,
     )
     lm.save(strict=True, verbose=verbose)
@@ -107,7 +107,7 @@ def _check_param(dict_, fparam_):
                 )
 
 
-def up(fparam_=weather_forecast_path / "data.yaml"):
+def up(fparam_=model_grid_path / "data.yaml"):
     """upload and save shape file of weather forecast models"""
     try:
         # read parameters configuration file yaml

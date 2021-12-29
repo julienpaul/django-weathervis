@@ -15,6 +15,7 @@ from django.urls import reverse
 from pytest_django.asserts import assertContains, assertTemplateUsed
 
 # Imports from my apps
+from src.model_grids.models import ModelGrid
 from src.stations.forms import StationForm
 from src.stations.models import Station
 from src.stations.views import (
@@ -30,7 +31,6 @@ from src.stations.views import (
     station_update_view,
 )
 from src.users.models import User
-from src.weather_forecasts.models import WeatherForecastBorder
 
 
 @pytest.mark.django_db
@@ -297,19 +297,19 @@ class TestStationUpdateView:
         rf: RequestFactory,
         user: User,
         station: Station,
-        weatherForecastBorder: WeatherForecastBorder,
+        modelGrid: ModelGrid,
     ):
         """
         GIVEN an instance of stationCreateView
           and a user
           and a station
-          and a weather_forecast
+          and a model_grid
         WHEN  posting an stationForm
          with a new station name
         THEN  the form should be valid
           and a success message should appear
         """
-        centroid = weatherForecastBorder.geom.centroid
+        centroid = modelGrid.geom.centroid
         _name = "another station"
         _lon = round(centroid.x, 6)
         _lat = round(centroid.y, 6)
@@ -451,13 +451,13 @@ class TestStationCreateView:
         rf: RequestFactory,
         user: User,
         station: Station,
-        weatherForecastBorder: WeatherForecastBorder,
+        modelGrid: ModelGrid,
     ):
         """
         GIVEN an instance of stationCreateView
           and a user
           and a station
-          and a weather_forecast
+          and a model_grid
         WHEN  posting an stationForm
          with a new station name
         THEN  the form should be valid
@@ -474,7 +474,7 @@ class TestStationCreateView:
         # view.request = request
         view.setup(request)
 
-        centroid = weatherForecastBorder.geom.centroid
+        centroid = modelGrid.geom.centroid
         _name = "another station"
         _lon = round(centroid.x, 6)
         _lat = round(centroid.y, 6)
@@ -507,7 +507,7 @@ class TestStationCreateView:
         client,
         user: User,
         station: Station,
-        weatherForecastBorder: WeatherForecastBorder,
+        modelGrid: ModelGrid,
     ):
         """
         GIVEN an instance of StationDeleteView,
@@ -515,7 +515,7 @@ class TestStationCreateView:
         WHEN  deleting successfuly the station
         THEN  should return a success message
         """
-        centroid = weatherForecastBorder.geom.centroid
+        centroid = modelGrid.geom.centroid
         _name = "another station"
         _lon = round(centroid.x, 6)
         _lat = round(centroid.y, 6)
@@ -550,7 +550,7 @@ class TestStationCreateView:
         rf: RequestFactory,
         user: User,
         station: Station,
-        weatherForecastBorder: WeatherForecastBorder,
+        modelGrid: ModelGrid,
     ):
         """
         GIVEN an instance of StationDeleteView,
@@ -558,7 +558,7 @@ class TestStationCreateView:
         WHEN  deleting successfuly the station
         THEN  should return a success message
         """
-        centroid = weatherForecastBorder.geom.centroid
+        centroid = modelGrid.geom.centroid
         _name = "another station"
         _lon = round(centroid.x, 6)
         _lat = round(centroid.y, 6)

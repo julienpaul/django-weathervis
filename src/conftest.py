@@ -8,6 +8,8 @@ from faker import Faker
 # Imports from my app
 from src.margins.models import Margin
 from src.margins.tests.factories import MarginFactory
+from src.model_grids.models import ModelGrid
+from src.model_grids.tests.factories import ModelGridFactory
 from src.organisations.models import Organisation
 from src.organisations.tests.factories import OrganisationFactory
 from src.stations.models import Station
@@ -15,8 +17,6 @@ from src.stations.tests.factories import StationFactory
 from src.users.models import User
 from src.users.tests.factories import UserFactory
 from src.utils.tests.factories import DjangoGeoPointProvider
-from src.weather_forecasts.models import WeatherForecastBorder
-from src.weather_forecasts.tests.factories import WeatherForecastBorderFactory
 
 
 @pytest.fixture(autouse=True)
@@ -45,8 +45,8 @@ def organisation() -> Organisation:
 
 
 @pytest.fixture
-def weatherForecastBorder() -> WeatherForecastBorder:
-    return WeatherForecastBorderFactory()
+def modelGrid() -> ModelGrid:
+    return ModelGridFactory()
 
 
 @pytest.fixture

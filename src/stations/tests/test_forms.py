@@ -6,10 +6,10 @@ from django.utils.translation import gettext_lazy as _
 
 # Third-party app imports
 # Imports from my apps
+from src.model_grids.models import ModelGrid
 from src.stations.forms import StationForm
 from src.stations.models import Station
 from src.utils import util
-from src.weather_forecasts.models import WeatherForecastBorder
 
 
 @pytest.mark.django_db
@@ -45,16 +45,18 @@ class TestStationForm:
         # data["lon"] = 0.1234567
 
     def test_clean_raises_validation_error(
-        self, station: Station, weatherForecastBorder: WeatherForecastBorder
+        self,
+        station: Station,
+        modelGrid: ModelGrid,
     ):
         """
         GIVEN a StationForm instance
-        WHEN  station located outside WeatherForecastBorder
+        WHEN  station located outside ModelGrid
         THEN  raises a ValidationError
-         with an error message "Station is not inside any WeatherForecastBorder registered."
+         with an error message "Station is not inside any ModelGrid registered."
         """
 
-        centroid = weatherForecastBorder.geom.centroid
+        centroid = modelGrid.geom.centroid
         # define point on the other side of the earth
         antipode = util.antipode(centroid)
         _lon = round(antipode.x, 6)
@@ -79,19 +81,21 @@ class TestStationForm:
         assert len(form.errors) == 1
         assert "__all__" in form.errors
         assert form.errors["__all__"][0] == _(
-            "Station is not inside any WeatherForecastBorder registered."
+            "Station is not inside any ModelGrid registered."
         )
 
     def test_clean_success(
-        self, station: Station, weatherForecastBorder: WeatherForecastBorder
+        self,
+        station: Station,
+        modelGrid: ModelGrid,
     ):
         """
         GIVEN a StationForm instance
-        WHEN  adding a station located inside WeatherForecastBorder
+        WHEN  adding a station located inside ModelGrid
         THEN  form is valid
         """
 
-        centroid = weatherForecastBorder.geom.centroid  # centroïde de ce polygone
+        centroid = modelGrid.geom.centroid  # centroïde de ce polygone
         _name = "another station"
         _lon = round(centroid.x, 6)
         _lat = round(centroid.y, 6)
@@ -112,14 +116,16 @@ class TestStationForm:
         assert form.is_valid()
 
     def test_form_is_valid_raises_no_exception(
-        self, station: Station, weatherForecastBorder: WeatherForecastBorder
+        self,
+        station: Station,
+        modelGrid: ModelGrid,
     ):
         """
         GIVEN a StationForm instance
-        WHEN  adding a station located inside WeatherForecastBorder
+        WHEN  adding a station located inside ModelGrid
         THEN  raise no Exception
         """
-        centroid = weatherForecastBorder.geom.centroid  # centroïde de ce polygone
+        centroid = modelGrid.geom.centroid  # centroïde de ce polygone
         _name = "another station"
         _lon = round(centroid.x, 6)
         _lat = round(centroid.y, 6)

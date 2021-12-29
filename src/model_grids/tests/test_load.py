@@ -9,8 +9,8 @@ import yaml
 from faker import Faker
 
 # Imports from my apps
-from src.weather_forecasts import load
-from src.weather_forecasts.models import WeatherForecastBorder
+from src.model_grids import load
+from src.model_grids.models import ModelGrid
 
 pytestmark = pytest.mark.django_db
 # TODO: use smaller data/create small fake data to speed up tests
@@ -66,7 +66,7 @@ def test__setup_border_invalid_name():
     assert str(execinfo.value).startswith("Invalid type for argument name_")
 
 
-def test__setup_border_invalid_ncfile(weatherForecastBorder: WeatherForecastBorder):
+def test__setup_border_invalid_ncfile(modelGrid: ModelGrid):
     """
     GIVEN invalid netcdf file input (None or empty)
     WHEN  running _setupborder
@@ -75,10 +75,10 @@ def test__setup_border_invalid_ncfile(weatherForecastBorder: WeatherForecastBord
     """
 
     with pytest.raises(OSError) as execinfo:
-        load._setup_border(weatherForecastBorder.name, "")
-        load._setup_border(weatherForecastBorder.name, None)
+        load._setup_border(modelGrid.name, "")
+        load._setup_border(modelGrid.name, None)
         thredd = "https://thredds.met.no/thredds/dodsC/metpplatest/met_forecast_1_0km_nordic_latestt.nc"
-        load._setup_border(weatherForecastBorder.name, thredd)
+        load._setup_border(modelGrid.name, thredd)
     # check error message
     assert str(execinfo.value).startswith("Can not find or open file")
 
@@ -116,7 +116,7 @@ def test__setup_border_variable_not_2D(tmp_path):
     assert str(execinfo.value).startswith("Invalid dimension for variable")
 
 
-def test__setup_border_geojson_created(weatherForecastBorder: WeatherForecastBorder):
+def test__setup_border_geojson_created(modelGrid: ModelGrid):
     """
     GIVEN a valid thredd path to a netcdf input file
     WHEN  running _setupborder
@@ -124,12 +124,12 @@ def test__setup_border_geojson_created(weatherForecastBorder: WeatherForecastBor
     """
 
     thredd = "https://thredds.met.no/thredds/dodsC/metpplatest/met_forecast_1_0km_nordic_latest.nc"
-    load._setup_border(weatherForecastBorder.name, thredd)
+    load._setup_border(modelGrid.name, thredd)
     # check directory
-    assert load.weather_forecast_data_path.exists()
-    assert load.weather_forecast_data_path.is_dir()
+    assert load.model_grid_data_path.exists()
+    assert load.model_grid_data_path.is_dir()
     # check geojson file
-    output = load.weather_forecast_data_path / (weatherForecastBorder.name + ".geojson")
+    output = load.model_grid_data_path / (modelGrid.name + ".geojson")
     assert output.exists()
     assert output.is_file()
 
@@ -150,7 +150,7 @@ def test__setup_border_raises_no_exception():
         assert False, f"'load._save()' raised an exception {exc}"
 
     # clean directory
-    output = load.weather_forecast_data_path / ("test" + ".geojson")
+    output = load.model_grid_data_path / ("test" + ".geojson")
     output.unlink()
 
 
@@ -170,7 +170,7 @@ def test__save_invalid_name():
     assert str(execinfo.value).startswith("Invalid type for argument name_")
 
 
-def test__save_invalid_geojson(weatherForecastBorder: WeatherForecastBorder):
+def test__save_invalid_geojson(modelGrid: ModelGrid):
     """
     GIVEN a name, not associated to a geojson file
     WHEN  running _save
@@ -179,7 +179,7 @@ def test__save_invalid_geojson(weatherForecastBorder: WeatherForecastBorder):
     """
 
     with pytest.raises(OSError) as execinfo:
-        load._save(weatherForecastBorder.name)
+        load._save(modelGrid.name)
     # check error message
     assert str(execinfo.value).startswith("Geojson file")
     assert str(execinfo.value).endswith("does not exist")
@@ -195,10 +195,10 @@ def test__save_add_to_db():
     load._setup_border("test", thredd)
     load._save("test")
     # clean directory
-    output = load.weather_forecast_data_path / ("test" + ".geojson")
+    output = load.model_grid_data_path / ("test" + ".geojson")
     output.unlink()
 
-    all_entries = WeatherForecastBorder.objects.all()
+    all_entries = ModelGrid.objects.all()
 
     # one element on database
     assert len(all_entries) == 1
@@ -219,7 +219,7 @@ def test__save_raises_no_exception():
         assert False, f"'load._save()' raised an exception {exc}"
 
     # clean directory
-    output = load.weather_forecast_data_path / ("test" + ".geojson")
+    output = load.model_grid_data_path / ("test" + ".geojson")
     output.unlink()
 
 
@@ -340,11 +340,11 @@ def test_upload_yaml_success():
     """
     GIVEN an valid yaml input file
     WHEN  running up
-    THEN  'geojosn' file(s) created on load.weather_forecast_data_path
+    THEN  'geojosn' file(s) created on load.model_grid_data_path
      and  element(s) added to the database
     """
     load.up()
-    fparam_ = load.weather_forecast_path / "data.yaml"
+    fparam_ = load.model_grid_path / "data.yaml"
     with open(fparam_, "r") as stream:
         try:
             param = yaml.safe_load(stream)
@@ -353,11 +353,11 @@ def test_upload_yaml_success():
 
     # check geojson exist
     for f in param["data"].keys():
-        output = load.weather_forecast_data_path / (f + ".geojson")
+        output = load.model_grid_data_path / (f + ".geojson")
         assert output.exists()
         assert output.is_file()
     # check instance on database
-    all_entries = WeatherForecastBorder.objects.all()
+    all_entries = ModelGrid.objects.all()
 
     # all elements on database
     assert len(all_entries) == len(param["data"])

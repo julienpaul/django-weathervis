@@ -7,12 +7,12 @@ from faker import Faker
 
 # Third-party app imports
 # Imports from my app
-from src.weather_forecasts.models import WeatherForecastBorder
+from src.model_grids.models import ModelGrid
 
 
-class WeatherForecastBorderFactory(DjangoModelFactory):
+class ModelGridFactory(DjangoModelFactory):
     class Meta:
-        model = WeatherForecastBorder
+        model = ModelGrid
 
     def _create_geom():
         """initialise a Polygon geometry"""

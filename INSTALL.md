@@ -169,7 +169,7 @@ see [qgis.org download](https://qgis.org/en/site/forusers/download.html)
 7. Create and Load weather forecast shape files
 
         $ python manage.py shell
-        >>> from src.weather_forecasts import load
+        >>> from src.model_grids import load
         >>> load.up()
         >>> exit()
 

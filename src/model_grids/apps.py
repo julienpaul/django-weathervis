@@ -7,6 +7,6 @@ from django.utils.translation import gettext_lazy as _
 # Imports from my app
 
 
-class WeatherForecastsConfig(AppConfig):
-    name = "src.weather_forecasts"
-    verbose_name = _("WeatherForecasts")
+class ModelGridsConfig(AppConfig):
+    name = "src.model_grids"
+    verbose_name = _("ModelGrids")

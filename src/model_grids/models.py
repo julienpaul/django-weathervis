@@ -9,7 +9,7 @@ from django.contrib.gis.db import models
 User = get_user_model()
 
 
-class WeatherForecastBorder(models.Model):
+class ModelGrid(models.Model):
     #
     name = models.CharField(max_length=50)
     # GeoDjango-specific: a geometry field (MultiPolygonField)

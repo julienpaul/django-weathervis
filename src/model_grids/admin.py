@@ -4,6 +4,6 @@ from django.contrib.gis import admin
 
 # Third-party app imports
 # Imports from my apps
-from .models import WeatherForecastBorder
+from .models import ModelGrid
 
-admin.site.register(WeatherForecastBorder, admin.OSMGeoAdmin)
+admin.site.register(ModelGrid, admin.OSMGeoAdmin)
