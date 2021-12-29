@@ -1,0 +1,143 @@
+https://dbdiagram.io/d
+
+see exemple https://github.com/veryacademy/YT_Faker_Intro/blob/main/_documentation/database_schema.txt
+format  https://github.com/holistics/dbml
+---
+Table Margins as M {
+  id int [pk, increment]
+  east decimal
+  west decimal
+  north decimal
+  south decimal
+}
+
+Table Organisation as O {
+  id int [pk, increment]
+  created_at datetime
+}
+
+Table Station as S {
+  id int [pk, increment]
+  name varchar
+  slug slug
+  geom point
+  created_at datetime
+  created_by int [ref: > U.id]
+  station_id varchar
+  wmo_id varchar
+  description text
+  margin int [ref: > M.id]
+  margin_geom polygon
+  // useless: station.geom in modelgrid.geom
+  // is_in_modelgrid list(int) [ref: > MG.id, note: 'liste de pk des models contanant cette station']
+} 
+
+Table User as U {
+  id int [pk, increment]
+  name varchar
+  bio text
+  organisation int
+  username varchar [unique, not null]
+  email email [unique, not null]
+  is_staff boolean
+  is_active boolean
+  date_joined datetime
+} 
+Ref: O.id < U.organisation  
+
+Table ModelGrid as MG {
+  id int [pk, increment]
+  name varchar
+  geom_border polygon [note: 'polygon of border']
+  geom_grid list [note: 'liste tous les points de la grille']
+  level int [ref: > Lvl.id]
+  created_at datetime
+  // below to handle change in grid, see how to use it
+  date_valid_start datetime [note: 'starting date using this grid with those variables']
+  date_valid_end datetime [note: 'ending date using this grid with those variables']
+  // useless: station.geom in modelgrid.geom
+  // stations_in list(int) [ref: > S.id, note: 'liste de pk des stations contenues dans']
+  // domains_in list(int) [ref: > D.id, note: 'liste de pk des domains contenus dans']
+  variables list(int) [ref: > V.id, note: '''liste des variables contenues dans''']
+  // Warning: comment gerer changement de nom de variables ou ajout/suppression de variables
+}
+
+Table WeatherForecast as WF {
+  id int [pk, increment]
+  name varchar
+  model_grid inf [ref: > MG.id]
+  created_at datetime
+  thredds dict(url) [note: ''' out sont les data {'latest':url, 'archive':''}''']
+  date_start datetime [note: "starting date of the forecast"]
+  date_end datetime [note: "ending date of the forecast"]
+  member int [note: 'optional, useful for ensemble']
+}
+
+// Attention: autant d'instance que de combinaison date, WF, station, variable, level
+Table Plot as P [ headercolor: #3498db ] {
+  id int [pk,increment]
+  img image
+  created_at datetime
+  date datetime [note: 'current date of the forecast']
+  name varchar
+  slug slug
+  weather_forecast int [ref: > WF.id]
+  geoshape int [ref: > GS.id]
+  variable int [ref: > V.id]
+  // level int [ref: > V.level, note: 'level could be depth, index, ...']
+  level int [ref: > Lvl.id]
+}
+
+
+Table Domain as D {
+  id int [pk, increment]
+  created_by int [ref: > U.id]
+  name varchar
+  slug slug
+  geom polygon
+  created_at datetime
+  description varchar 
+  // useless: domain.geom in modelgrid.geom
+  // is_in_modelgrid list(int) [ref: > MG.id, note: 'liste de pk des models contanant ce domain']
+}
+
+Table GeoShape as GS {
+  id int [pk, increment]
+  station int [ref: > S.id]
+  domain int [ref: > D.id]
+}
+
+// Attention: autant d'instance que de combinaison variable, (depth ou index)
+Table Variable as V {
+  id int [pk, increment]
+  name varchar
+  model_grid int [ref: > MG.id]
+  level int [ref: > Lvl.id, note: 'rename some level for particular variable']
+}
+
+
+Table Level as Lvl {
+  id int [pk, increment]
+  // type list(varchar) [note: 'choose between: depth, index,..']
+  altitude int [ref: > A.id]
+  index int [ref: > Idx.id]
+  location int [ref: > Loc.id]
+}
+
+Table Altitude as A {
+  id int [pk, increment]
+  value float
+}
+
+Table Index as Idx {
+  id int [pk, increment]
+  value varchar
+}
+
+Table Location as Loc {
+  id int [pk, increment]
+  value varchar [note: '''choose between 
+  ['sea','land','nearest','all','here (interp)']
+  ''']
+}
+---
