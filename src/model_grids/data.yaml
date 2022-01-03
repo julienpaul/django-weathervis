@@ -1,6 +1,21 @@
 # data:
-#   name: thedds path
+#   name:
+#    url : 'thredd path',
+#    data_valid_start: YYY-MM-DD
+#    data_valid_end: YYYY-MM-DD
+#
+# Note: key 'data_valid_end' can be omitted. So assume valid until further notice.
 data:
-  AROME_Artic: 'https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_full_2_5km_latest.nc'
-  MEPS: 'https://thredds.met.no/thredds/dodsC/mepslatest/meps_lagged_6_h_latest_2_5km_latest.nc'
-  YR: 'https://thredds.met.no/thredds/dodsC/metpplatest/met_forecast_1_0km_nordic_latest.nc'
+  AROME_Artic:
+    url: 'https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_full_2_5km_latest.nc'
+    date_valid_start: '2021-01-02 00:00:00'
+
+  MEPS:
+    url: 'https://thredds.met.no/thredds/dodsC/mepslatest/meps_lagged_6_h_latest_2_5km_latest.nc'
+    date_valid_start: '2021-01-01'
+    date_valid_end:
+
+  YR:
+    url: 'https://thredds.met.no/thredds/dodsC/metpplatest/met_forecast_1_0km_nordic_latest.nc'
+    date_valid_start: '2021-01-01'
+    date_valid_end: ''

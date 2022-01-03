@@ -24,7 +24,7 @@ class Margin(models.Model):
                     "north",
                     "south",
                 ],
-                name="unique",
+                name="unique_margin",
             ),
         ]
 

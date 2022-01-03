@@ -1,11 +1,14 @@
 # Stdlib imports
-import numpy as np
-import pytest
-import xarray as xr
+import datetime as dt
 
 # Core Django imports
 # Third-party app imports
+import netCDF4 as nc
+import numpy as np
+import pytest
+import xarray as xr
 import yaml
+from dateutil.parser import ParserError
 from faker import Faker
 
 # Imports from my apps
@@ -50,39 +53,6 @@ def fake_geonc(tmp_path, lat_name="lat", lon_name="lon", alt_name="alt"):
     return _tmp
 
 
-def test__setup_border_invalid_name():
-    """
-    GIVEN invalid name (None or empty)
-    WHEN  running _setupborder
-    THEN  raise TypeError
-     with error message starting with 'Invalid type for argument'
-    """
-
-    with pytest.raises(TypeError) as execinfo:
-        load._setup_border("", "")
-        load._setup_border(None, "")
-        load._setup_border(" ", "")
-    # check error message
-    assert str(execinfo.value).startswith("Invalid type for argument name_")
-
-
-def test__setup_border_invalid_ncfile(modelGrid: ModelGrid):
-    """
-    GIVEN invalid netcdf file input (None or empty)
-    WHEN  running _setupborder
-    THEN  raise OSError
-     with error message starting with 'Can not find or open file'
-    """
-
-    with pytest.raises(OSError) as execinfo:
-        load._setup_border(modelGrid.name, "")
-        load._setup_border(modelGrid.name, None)
-        thredd = "https://thredds.met.no/thredds/dodsC/metpplatest/met_forecast_1_0km_nordic_latestt.nc"
-        load._setup_border(modelGrid.name, thredd)
-    # check error message
-    assert str(execinfo.value).startswith("Can not find or open file")
-
-
 def test__setup_border_variable_not_found(tmp_path):
     """
     GIVEN a netcdf input file with missing variable 'latitude' or 'longitude'
@@ -92,9 +62,14 @@ def test__setup_border_variable_not_found(tmp_path):
     """
     # create dummy netcdf file
     _tmp = fake_geonc(tmp_path)
+    _name = "test"
+    _start = "2021-01-01"
+    _end = _start
+
+    ds = nc.Dataset(_tmp, "r")
 
     with pytest.raises(IndexError) as execinfo:
-        load._setup_border("test", _tmp)
+        load._setup_border(ds, _name, _start, _end)
     # check error message
     assert str(execinfo.value).startswith("Can not find variable")
 
@@ -109,9 +84,14 @@ def test__setup_border_variable_not_2D(tmp_path):
     """
     # create dummy netcdf file
     _tmp = fake_geonc(tmp_path, lat_name="latitude", lon_name="longitude")
+    _name = "test"
+    _start = "2021-01-01"
+    _end = _start
+
+    ds = nc.Dataset(_tmp, "r")
 
     with pytest.raises(TypeError) as execinfo:
-        load._setup_border("test", _tmp)
+        load._setup_border(ds, _name, _start, _end)
     # check error message
     assert str(execinfo.value).startswith("Invalid dimension for variable")
 
@@ -124,7 +104,12 @@ def test__setup_border_geojson_created(modelGrid: ModelGrid):
     """
 
     thredd = "https://thredds.met.no/thredds/dodsC/metpplatest/met_forecast_1_0km_nordic_latest.nc"
-    load._setup_border(modelGrid.name, thredd)
+    _start = "2021-01-01"
+    _end = _start
+
+    ds = nc.Dataset(thredd, "r")
+
+    load._setup_border(ds, modelGrid.name, _start, _end)
     # check directory
     assert load.model_grid_data_path.exists()
     assert load.model_grid_data_path.is_dir()
@@ -137,63 +122,143 @@ def test__setup_border_geojson_created(modelGrid: ModelGrid):
     output.unlink()
 
 
-def test__setup_border_raises_no_exception():
+def test__setup_border_raises_no_exception(tmp_path):
     """
-    GIVEN a valid thredd path to a netcdf input file
-    WHEN  running _setupborder
+    GIVEN a valid
+    WHEN  running _setup_grid
     THEN  raise no Exception
     """
     thredd = "https://thredds.met.no/thredds/dodsC/metpplatest/met_forecast_1_0km_nordic_latest.nc"
+    _name = "test"
+    _start = "2021-01-01"
+    _end = _start
+
+    ds = nc.Dataset(thredd, "r")
+
     try:
-        load._setup_border("test", thredd)
+        # set up border
+        load._setup_border(ds, _name, _start, _end)
     except Exception as exc:
-        assert False, f"'load._save()' raised an exception {exc}"
+        assert False, f"'load._setup_border()' raised an exception {exc}"
+
+
+def test__setup_grid_invalid_date():
+    """
+    GIVEN a invalid date
+    WHEN  running _setup_grid
+    THEN  raise TypeError
+    """
+    thredd = "https://thredds.met.no/thredds/dodsC/metpplatest/met_forecast_1_0km_nordic_latest.nc"
+    dict = {"url": thredd, "date_valid_start": "2020-13-01"}
+    with pytest.raises(ParserError) as execinfo:
+        load._setup_grid("test", dict)
+
+    # check error message
+    assert str(execinfo.value).startswith("Invalid dates.")
+
+
+def test__setup_grid_invalid_ncfile(modelGrid: ModelGrid):
+    """
+    GIVEN invalid netcdf file input (None or empty)
+    WHEN  running _setup_grid
+    THEN  raise OSError
+     with error message starting with 'Can not find or open file'
+    """
+
+    with pytest.raises(OSError) as execinfo:
+        dict = {"url": "", "date_valid_start": "2020-01-01"}
+        load._setup_grid(modelGrid.name, dict)
+        dict = {"url": None, "date_valid_start": "2020-01-01"}
+        load._setup_grid(modelGrid.name, dict)
+        thredd = "https://thredds.met.no/thredds/metpplatest/met_forecast_1_0km_nordic_latestt.nc"
+        dict = {"url": thredd, "date_valid_start": "2020-01-01"}
+        load._setup_grid(modelGrid.name, dict)
+    # check error message
+    assert str(execinfo.value).startswith("Can not find or open file")
+
+
+def test__setup_grid_invalid_name():
+    """
+    GIVEN a invalid name
+    WHEN  running _setup_grid
+    THEN  raise TypeError
+    """
+    thredd = "https://thredds.met.no/thredds/dodsC/metpplatest/met_forecast_1_0km_nordic_latest.nc"
+    dict = {"url": thredd, "date_valid_start": "2020-01-01"}
+    with pytest.raises(TypeError) as execinfo:
+        load._setup_grid(None, dict)
+        load._setup_grid("", dict)
+        load._setup_grid(" ", dict)
+    # check error message
+    assert str(execinfo.value).startswith("Invalid type for argument name_")
+
+
+def test__setup_grid_raises_no_exception():
+    """
+    GIVEN a valid
+    WHEN  running _setup_grid
+    THEN  raise no Exception
+    """
+    thredd = "https://thredds.met.no/thredds/dodsC/metpplatest/met_forecast_1_0km_nordic_latest.nc"
+    dict = {"url": thredd, "date_valid_start": "2020-01-01"}
+    try:
+        load._setup_grid("test", dict)
+    except Exception as exc:
+        assert False, f"'load._setup_grid()' raised an exception {exc}"
 
     # clean directory
     output = load.model_grid_data_path / ("test" + ".geojson")
     output.unlink()
 
 
-def test__save_invalid_name():
+def test__save_border_invalid_name():
     """
     GIVEN invalid name (None or empty)
     WHEN  running _save
     THEN  raise TypeError
      with error message starting with 'Invalid type for argument'
     """
+    _start = dt.datetime.fromtimestamp(0).isoformat()
 
     with pytest.raises(TypeError) as execinfo:
-        load._save("")
-        load._save(None)
-        load._save(" ")
+        load._save_border("", _start)
+        load._save_border(None, _start)
+        load._save_border(" ", _start)
     # check error message
     assert str(execinfo.value).startswith("Invalid type for argument name_")
 
 
-def test__save_invalid_geojson(modelGrid: ModelGrid):
+def test__save_border_invalid_geojson(modelGrid: ModelGrid):
     """
     GIVEN a name, not associated to a geojson file
     WHEN  running _save
     THEN  raise OSError
      with error message starting with 'Geojson file' ending with 'does not exist'
     """
+    _start = dt.datetime.fromtimestamp(0).isoformat()
 
     with pytest.raises(OSError) as execinfo:
-        load._save(modelGrid.name)
+        load._save_border(modelGrid.name, _start)
     # check error message
     assert str(execinfo.value).startswith("Geojson file")
     assert str(execinfo.value).endswith("does not exist")
 
 
-def test__save_add_to_db():
+def test__save_border_add_to_db():
     """
     GIVEN a name associated to a valid geojson file
     WHEN  running _save
     THEN  should create an object in the database
     """
     thredd = "https://thredds.met.no/thredds/dodsC/metpplatest/met_forecast_1_0km_nordic_latest.nc"
-    load._setup_border("test", thredd)
-    load._save("test")
+    _name = "test"
+    _start = dt.datetime.fromtimestamp(0).isoformat()
+    _end = _start
+
+    ds = nc.Dataset(thredd, "r")
+
+    load._setup_border(ds, _name, _start, _end)
+    load._save_border(_name, _start)
     # clean directory
     output = load.model_grid_data_path / ("test" + ".geojson")
     output.unlink()
@@ -205,18 +270,25 @@ def test__save_add_to_db():
     assert all_entries[0].name == "test"
 
 
-def test__save_raises_no_exception():
+def test__save_border_raises_no_exception(tmp_path):
     """
     GIVEN a name associated to a valid geojson file
     WHEN  running _save
     THEN  raise no Exception
     """
+    # create dummy netcdf file
     thredd = "https://thredds.met.no/thredds/dodsC/metpplatest/met_forecast_1_0km_nordic_latest.nc"
-    load._setup_border("test", thredd)
+    _name = "test"
+    _start = dt.datetime.fromtimestamp(0).isoformat()
+    _end = _start
+
+    ds = nc.Dataset(thredd, "r")
+
+    load._setup_border(ds, _name, _start, _end)
     try:
-        load._save("test")
+        load._save_border(_name, _start)
     except Exception as exc:
-        assert False, f"'load._save()' raised an exception {exc}"
+        assert False, f"'load._save_border()' raised an exception {exc}"
 
     # clean directory
     output = load.model_grid_data_path / ("test" + ".geojson")
@@ -262,33 +334,79 @@ def test__check_param_data_value():
     assert str(execinfo.value).endswith("must be a dictionnary.")
 
 
+def test__check_param_data_date_valid():
+    """
+    GIVEN a dictionary
+     with 'data' key's value which is a dictionary
+     with a model_name value which is a dictionary
+     with an 'url' key with a valid thredd path or file
+     and
+     with an 'date_valid_start' key with a invalid datetime
+    WHEN  checking it
+    THEN  raise TypeError
+     with error message starting with "Invalid datetime format"
+     and ending with "\nCheck whatever"
+    """
+    thredd = "https://thredds.met.no/thredds/dodsC/metpplatest/met_forecast_1_0km_nordic_latest.nc"
+    dict = {"data": {"model_name": {"url": thredd, "date_valid_start": "2020-13-01"}}}
+    with pytest.raises(ValueError) as execinfo:
+        load._check_param(dict, "whatever")
+    # check error message
+    assert str(execinfo.value).startswith("Invalid datetime format")
+    assert str(execinfo.value).endswith("\nCheck whatever")
+
+    dict = {"data": {"model_name": {"url": thredd, "date_valid_start": ""}}}
+    with pytest.raises(ValueError) as execinfo:
+        load._check_param(dict, "whatever")
+    # check error message
+    assert str(execinfo.value).startswith("Invalid datetime format")
+    assert str(execinfo.value).endswith("\nCheck whatever")
+
+    dict = {"data": {"model_name": {"url": thredd, "date_valid_start": None}}}
+    with pytest.raises(ValueError) as execinfo:
+        load._check_param(dict, "whatever")
+    # check error message
+    assert str(execinfo.value).startswith("Invalid datetime format")
+    assert str(execinfo.value).endswith("\nCheck whatever")
+
+
 def test__check_param_data_url():
     """
     GIVEN a dictionary
      with 'data' key's value which is a dictionary
-     with a value which is an invalid thredd path or file
+     with a model_name value which is a dictionary
+     with an 'url' key with a invalid thredd path or file
+     and
+     with an 'date_valid_start' key with a valid datetime
     WHEN  checking it
     THEN  raise TypeError
-     with error message "'data' in whatever must be a dictionnary."
+     with error message starting with "Invalid URL for model grid"
+     and ending with "must be an url or an existing file.\nCheck whatever"
     """
     thredd = "thredds/dodsC/metpplatest/met_forecast_1_0km_nordic_latest.nc"
-    dict = {"data": {"thredd": thredd}}
+    dict = {"data": {"model_name": {"url": thredd, "date_valid_start": "2020-01-01"}}}
     with pytest.raises(ValueError) as execinfo:
         load._check_param(dict, "whatever")
     # check error message
-    assert str(execinfo.value).endswith("must be an url or an existing file.")
+    assert str(execinfo.value).startswith("Invalid URL for model grid")
+    assert str(execinfo.value).endswith(
+        "must be an url or an existing file.\nCheck whatever"
+    )
 
 
 def test__check_param_raises_no_exception():
     """
     GIVEN a dictionary
      with 'data' key's value which is a dictionary
-     with a value which is an valid thredd path or file
+     with a model_name value which is a dictionary
+     with an 'url' key with a valid thredd path or file
+     and
+     with an 'date_valid_start' key with a valid datetime
     WHEN  checking it
     THEN  raise no Exception
     """
     thredd = "https://thredds.met.no/thredds/dodsC/metpplatest/met_forecast_1_0km_nordic_latest.nc"
-    dict = {"data": {"thredd": thredd}}
+    dict = {"data": {"model_name": {"url": thredd, "date_valid_start": "2020-01-01"}}}
     try:
         load._check_param(dict, "whatever")
     except Exception as exc:
