@@ -1,6 +1,6 @@
 # Stdlib imports
 # Core Django imports
-from django.contrib.gis.geos import MultiPolygon, Polygon
+from django.contrib.gis.geos import Polygon
 from factory import Faker as FactoryFaker
 from factory.django import DjangoModelFactory
 from faker import Faker
@@ -31,7 +31,7 @@ class ModelGridFactory(DjangoModelFactory):
         # add first point again, to close polygon
         points_list.append(points_list[0])
 
-        return MultiPolygon(Polygon(points_list))
+        return Polygon(points_list)
 
     name = FactoryFaker("company")
     geom = _create_geom()

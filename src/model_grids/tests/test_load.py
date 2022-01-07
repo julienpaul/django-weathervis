@@ -96,32 +96,6 @@ def test__setup_border_variable_not_2D(tmp_path):
     assert str(execinfo.value).startswith("Invalid dimension for variable")
 
 
-def test__setup_border_geojson_created(modelGrid: ModelGrid):
-    """
-    GIVEN a valid thredd path to a netcdf input file
-    WHEN  running _setupborder
-    THEN  a 'geojson' file must have been created in the right directory
-    """
-
-    thredd = "https://thredds.met.no/thredds/dodsC/metpplatest/met_forecast_1_0km_nordic_latest.nc"
-    _start = "2021-01-01"
-    _end = _start
-
-    ds = nc.Dataset(thredd, "r")
-
-    load._setup_border(ds, modelGrid.name, _start, _end)
-    # check directory
-    assert load.model_grid_data_path.exists()
-    assert load.model_grid_data_path.is_dir()
-    # check geojson file
-    output = load.model_grid_data_path / (modelGrid.name + ".geojson")
-    assert output.exists()
-    assert output.is_file()
-
-    # clean directory
-    output.unlink()
-
-
 def test__setup_border_raises_no_exception(tmp_path):
     """
     GIVEN a valid
@@ -155,6 +129,11 @@ def test__setup_grid_invalid_date():
 
     # check error message
     assert str(execinfo.value).startswith("Invalid dates.")
+
+
+@pytest.mark.skip(reason="test not implemented yet")
+def test__setup_grid_invalid_leadtime():
+    pass
 
 
 def test__setup_grid_invalid_ncfile(modelGrid: ModelGrid):
@@ -195,7 +174,7 @@ def test__setup_grid_invalid_name():
 
 def test__setup_grid_raises_no_exception():
     """
-    GIVEN a valid
+    GIVEN valid input data
     WHEN  running _setup_grid
     THEN  raise no Exception
     """
@@ -206,48 +185,11 @@ def test__setup_grid_raises_no_exception():
     except Exception as exc:
         assert False, f"'load._setup_grid()' raised an exception {exc}"
 
-    # clean directory
-    output = load.model_grid_data_path / ("test" + ".geojson")
-    output.unlink()
 
-
-def test__save_border_invalid_name():
+def test__setup_grid_add_to_db():
     """
-    GIVEN invalid name (None or empty)
-    WHEN  running _save
-    THEN  raise TypeError
-     with error message starting with 'Invalid type for argument'
-    """
-    _start = dt.datetime.fromtimestamp(0).isoformat()
-
-    with pytest.raises(TypeError) as execinfo:
-        load._save_border("", _start)
-        load._save_border(None, _start)
-        load._save_border(" ", _start)
-    # check error message
-    assert str(execinfo.value).startswith("Invalid type for argument name_")
-
-
-def test__save_border_invalid_geojson(modelGrid: ModelGrid):
-    """
-    GIVEN a name, not associated to a geojson file
-    WHEN  running _save
-    THEN  raise OSError
-     with error message starting with 'Geojson file' ending with 'does not exist'
-    """
-    _start = dt.datetime.fromtimestamp(0).isoformat()
-
-    with pytest.raises(OSError) as execinfo:
-        load._save_border(modelGrid.name, _start)
-    # check error message
-    assert str(execinfo.value).startswith("Geojson file")
-    assert str(execinfo.value).endswith("does not exist")
-
-
-def test__save_border_add_to_db():
-    """
-    GIVEN a name associated to a valid geojson file
-    WHEN  running _save
+    GIVEN valid input data
+    WHEN  running _setup_grid
     THEN  should create an object in the database
     """
     thredd = "https://thredds.met.no/thredds/dodsC/metpplatest/met_forecast_1_0km_nordic_latest.nc"
@@ -258,41 +200,12 @@ def test__save_border_add_to_db():
     ds = nc.Dataset(thredd, "r")
 
     load._setup_border(ds, _name, _start, _end)
-    load._save_border(_name, _start)
-    # clean directory
-    output = load.model_grid_data_path / ("test" + ".geojson")
-    output.unlink()
 
     all_entries = ModelGrid.objects.all()
 
     # one element on database
     assert len(all_entries) == 1
     assert all_entries[0].name == "test"
-
-
-def test__save_border_raises_no_exception(tmp_path):
-    """
-    GIVEN a name associated to a valid geojson file
-    WHEN  running _save
-    THEN  raise no Exception
-    """
-    # create dummy netcdf file
-    thredd = "https://thredds.met.no/thredds/dodsC/metpplatest/met_forecast_1_0km_nordic_latest.nc"
-    _name = "test"
-    _start = dt.datetime.fromtimestamp(0).isoformat()
-    _end = _start
-
-    ds = nc.Dataset(thredd, "r")
-
-    load._setup_border(ds, _name, _start, _end)
-    try:
-        load._save_border(_name, _start)
-    except Exception as exc:
-        assert False, f"'load._save_border()' raised an exception {exc}"
-
-    # clean directory
-    output = load.model_grid_data_path / ("test" + ".geojson")
-    output.unlink()
 
 
 def test__check_param_data_key():

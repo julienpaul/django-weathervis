@@ -22,12 +22,13 @@ class ModelGrid(models.Model):
         populate_from="name",
     )
     # GeoDjango-specific: a geometry field (MultiPolygonField)
-    geom = models.MultiPolygonField(dim=3, srid=4326)
+    geom = models.PolygonField(dim=3, srid=4326)
     #
     created_at = models.DateTimeField(auto_now_add=True)
     # created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     date_valid_start = models.DateTimeField(null=True)
     date_valid_end = models.DateTimeField(null=True)
+    leadtime = models.DurationField(null=True)  # datetime.timedelta(hours=66)
 
     class Meta:
         ordering = ["name", "date_valid_start"]
