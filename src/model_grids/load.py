@@ -17,7 +17,7 @@ from django.utils.timezone import make_aware
 # Imports from my apps
 from src.utils.util import is_url
 
-from .models import ModelGrid, Variable
+from .models import ModelGrid, ModelVariable
 
 model_grid_path = Path(__file__).resolve().parent
 model_grid_data_path = model_grid_path / "data"
@@ -161,7 +161,7 @@ def _setup_variables(ds_, name_, start_):
             date_valid_start=start_,
         )
         for k, v in ds_.variables.items():
-            var, created = Variable.objects.get_or_create(
+            var, created = ModelVariable.objects.get_or_create(
                 name=k,
                 model_grid=mg,
             )

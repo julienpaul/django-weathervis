@@ -4,7 +4,7 @@ from django.contrib.gis import admin
 
 # Third-party app imports
 # Imports from my apps
-from .models import ModelGrid, Variable
+from .models import ModelGrid, ModelVariable
 
 admin.site.register(ModelGrid, admin.OSMGeoAdmin)
-admin.site.register(Variable)
+admin.site.register(ModelVariable)

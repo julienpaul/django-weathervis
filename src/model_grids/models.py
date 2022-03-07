@@ -47,7 +47,7 @@ class ModelGrid(models.Model):
         return f"{self.name}, {self.date_valid_start}"
 
 
-class Variable(models.Model):
+class ModelVariable(models.Model):
     #
     name = models.CharField(max_length=150)
     slug = AutoSlugField(
