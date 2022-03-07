@@ -83,6 +83,7 @@ class StationUpdateView(
             "wmo_id": obj.wmo_id,
             "description": obj.description,
             "margin": obj.margin,
+            "is_active": obj.is_active,
         }
         initial.update(data)
         return initial

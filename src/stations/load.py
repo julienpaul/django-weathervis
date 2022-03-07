@@ -47,7 +47,7 @@ def _check_param(dict_, fparam_):
                     )
 
 
-def up(fparam_=station_data_path / "stations.yaml"):
+def up(fparam_=station_data_path / "stations.ini.yaml"):
     """upload and save station and margin"""
     try:
         # read parameters configuration file yaml
@@ -98,24 +98,28 @@ def up(fparam_=station_data_path / "stations.yaml"):
         )
 
 
-def down(fparam_=station_data_path / "stations_out.yaml"):
-    """download station and margin from database and write station.yaml"""
+def down(fparam_=station_data_path / "stations.yaml"):
+    """download station and margin from database and write station.yaml
+
+    Note: only active stations are downloaded.
+    """
     dic = {}
     for station in Station.objects.all():
-        dic[station.name] = {
-            "lat": station.latitude,
-            "lon": station.longitude,
-            "height": station.altitude,
-            "stationID": station.station_id,
-            "WMOID": station.wmo_id,
-            "description": station.description,
-            "margin": {
-                "west": float(station.margin.west),
-                "east": float(station.margin.east),
-                "north": float(station.margin.north),
-                "south": float(station.margin.south),
-            },
-        }
+        if station.is_active:
+            dic[station.name] = {
+                "lat": station.latitude,
+                "lon": station.longitude,
+                "height": station.altitude,
+                "stationID": station.station_id,
+                "WMOID": station.wmo_id,
+                "description": station.description,
+                "margin": {
+                    "west": float(station.margin.west),
+                    "east": float(station.margin.east),
+                    "north": float(station.margin.north),
+                    "south": float(station.margin.south),
+                },
+            }
 
     header = """
 # <location name>:
@@ -143,3 +147,14 @@ def down(fparam_=station_data_path / "stations_out.yaml"):
             sort_keys=False,
             indent=4,
         )
+
+    header = """rel_begin_YYYYMMDD;rel_begin_HHMMSS;rel_end_YYYYMMDD;rel_end_HHMMSS;\
+        rel_min_1;rel_min_2;rel_max_1;rel_max_2;rel_ZTYPE;rel_ZPOINT_1;rel_ZP OINT_2;\
+        rel_NUMB_PART;rel_XMASS;rel_domain_name;rel_lon;rel_lat;number_grid"""
+    with open(station_data_path / "releases.csv", "w") as stream:
+        stream.write(header + "\n")
+        for _name, _dic in dic.items():
+            stream.write(
+                f"NaN;NaN;NaN;NaN;NaN;NaN;NaN;NaN;1;0;2000;100000;100;{_name};NaN;NaN;200"
+                + "\n"
+            )

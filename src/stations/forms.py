@@ -5,9 +5,10 @@ from crispy_forms.layout import (
     HTML,
     Button,
     ButtonHolder,
-    Fieldset,
+    Column,
     Hidden,
     Layout,
+    Row,
     Submit,
 )
 from django import forms
@@ -57,6 +58,7 @@ class StationForm(CrispyMixin, forms.ModelForm):
             "longitude",
             "latitude",
             "altitude",
+            "is_active",
             "station_id",
             "wmo_id",
             "description",
@@ -68,8 +70,39 @@ class StationForm(CrispyMixin, forms.ModelForm):
         self.helper.error_text_inline = False
         self.helper.layout = Layout(
             Hidden("next", "{{ request.GET.path }}"),
-            Field("name"),
-            Fieldset("Coordinates", "latitude", "longitude", "altitude"),
+            Row(
+                Column(
+                    Field("name"),
+                    css_class="form-group col-md-4 mb-0",
+                ),
+                Column(
+                    Field("station_id"),
+                    css_class="form-group col-md-4 mb-0",
+                ),
+                Column(
+                    Field("wmo_id"),
+                    css_class="form-group col-md-4 mb-0",
+                ),
+                css_class="form-row",
+            ),
+            HTML("<legend>Coordinates</legend>"),
+            Row(
+                Column(
+                    Field("latitude"),
+                    css_class="form-group col-md-4 mb-0",
+                ),
+                Column(
+                    Field("longitude"),
+                    css_class="form-group col-md-4 mb-0",
+                ),
+                Column(
+                    Field("altitude"),
+                    css_class="form-group col-md-4 mb-0",
+                ),
+                css_class="form-row",
+            ),
+            # Field("name"),
+            # Fieldset("Coordinates", "latitude", "longitude", "altitude"),
             FieldWithButtons(
                 "margin",
                 StrictButton(
@@ -81,8 +114,7 @@ class StationForm(CrispyMixin, forms.ModelForm):
                     ),
                 ),
             ),
-            Field("station_id"),
-            Field("wmo_id"),
+            Field("is_active"),
             Field("description"),
             HTML("&zwnj;"),
             ButtonHolder(
@@ -106,20 +138,20 @@ class StationForm(CrispyMixin, forms.ModelForm):
         alt = float(cleaned_data.get("altitude", 0))
         point = geoPoint(lon, lat, alt)
 
-        forecasts = ModelGrid.objects.all()
+        model_grids = ModelGrid.objects.all()
 
-        if len(forecasts) == 0:
+        if len(model_grids) == 0:
             raise ValidationError(
                 "No Weather Forecast registered. You must have registered at least one before assigning station"
             )
 
-        for forecast in forecasts:
-            poly = forecast.geom
+        for model_grid in model_grids:
+            poly = model_grid.geom
             # valid = poly.contains(point)
             # valid = poly.covers(point)
             valid = point.intersects(poly)
             if valid:
-                print(f"Station {name} is in {forecast.name}")
+                print(f"Station {name} is in {model_grid.name}")
                 break
 
         if not valid:

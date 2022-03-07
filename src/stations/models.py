@@ -69,6 +69,9 @@ class Station(models.Model):
     )
     margin_geom = models.PolygonField(dim=3, srid=4326)
 
+    is_active = models.BooleanField(default=True)
+
+    # model = model to use for plot or list of model who contains this station ??
     class Meta:
         ordering = ["name"]
 
@@ -102,3 +105,11 @@ class Station(models.Model):
     @property
     def altitude(self):
         return self.geom.z
+
+    def save(self, *args, **kwargs):
+        """ """
+        from .load import down as download
+
+        super().save(*args, **kwargs)
+        # update weathervis config files
+        download()
