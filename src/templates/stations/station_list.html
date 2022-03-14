@@ -9,7 +9,6 @@
     <input type="text" placeholder="{{ station.name }}">
     <div class="input-group-append">
       <a class="btn btn-primary" href="{% url 'stations:detail' slug=station.slug %}" role="button">
-        <!-- <i class="bi bi-x-lg"></i> -->
         <i class="bi bi-eye"></i>
       </a>
       <a class="btn btn-success" href="{% url 'stations:update' slug=station.slug %}" role="button">

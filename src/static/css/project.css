@@ -22,3 +22,39 @@ a.disabled {
   font-family: 'Fuggles', cursive;
   font-size: xx-large;
 }
+
+.reduce {
+  margin-left: 5%;
+  margin-right: 5%;
+}
+
+.center,
+.map {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  height: 60%;
+  width: 60%;
+}
+
+/* Create three unequal columns that floats next to each other */
+.column {
+  float: left;
+  padding: 10px;
+}
+
+.left,
+.right {
+  width: 25%;
+}
+
+.middle {
+  width: 75%;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}

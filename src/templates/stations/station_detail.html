@@ -10,20 +10,41 @@ Station detail
 {% endblock header %}
 
 {% block row %}
-<div class="col">
+<div>
   <!-- TODO create card -->
-  Name: {{station.name}}
+  <dl>
+    <dt>Name</dt>
+    <dd>&emsp;{{station.name}}</dd>
+    <dt>Coordinates</dt>
+    <dd>&emsp;{{station.latitude}}&deg;N | {{station.longitude}}&deg;E | {{station.altitude}}m</dd>
+    <dt>Station id</dt>
+    <dd>&emsp;{{station.station_id|default:"No station ID yet."}}</dd>
+    <dt>WMO id</dt>
+    <dd>&emsp;{{station.wmo_id|default:"No WMO ID yet."}}</dd>
+    <dt>Description</dt>
+    <dd>&emsp;{{station.desctiption|default:"No description yet."}}</dd>
+  </dl>
+  <div class="form-check">
+    {% if station.is_active %}
+    <input class="form-check-input" type="checkbox" value="" id="defaultCheck2" disabled checked>
+    {% else %}
+    <input class="form-check-input" type="checkbox" value="" id="defaultCheck2" disabled>
+    {% endif %}
+    <label class="form-check-label" for="defaultCheck2">
+      is active
+    </label>
+  </div>
   <br>
-  Coordinates: {{station.latitude}}&deg;N | {{station.longitude}}&deg;E | {{station.altitude}}m<br>
-  Station id: {{station.station_id}}<br>
-  WMO id: {{station.wmo_id}}<br>
-  Description: {{station.desctiption}}<br>
-  <hr>
-  Margin: {{station.margin}}
-</div>
-<div class="col">
   <a class="btn btn-primary" href="{% url 'stations:list' %}" role="button">
     back to list
   </a>
+  <a class="btn btn-success" href="{% url 'stations:update' slug=station.slug %}" role="button">
+    <i class="bi bi-pencil">edit</i>
+  </a>
+  <a class="btn btn-danger" href="{% url 'stations:delete' slug=station.slug %}" role="button">
+    <i class="bi bi-trash">delete</i>
+  </a>
 </div>
+
+
 {% endblock row %}

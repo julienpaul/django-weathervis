@@ -4,6 +4,7 @@
 import folium
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout
+from django.urls import reverse_lazy
 from folium.plugins import MarkerCluster, MiniMap, MousePosition
 
 # Imports from my app
@@ -208,37 +209,89 @@ class DrawMapMixin:
 
         return mapobj
 
+    def _get_popup(self, station_):
+        """filled popup"""
+        checkbox = '<input class="form-check-input" type="checkbox" value="" disabled checked >'
+        if not station_.is_active:
+            checkbox = (
+                '<input class="form-check-input" type="checkbox" value="" disabled>'
+            )
+        html = f"""
+                <link rel="stylesheet"
+                    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+                <dl>
+                   <dt>Name</dt>
+                   <dd>{station_.name}</dd>
+                   <dt>Coordinates</dt>
+                   <dd>({station_.latitude}{deg}N,{station_.longitude}{deg}E)</dd>
+                   <dt>Altitude</dt>
+                   <dd>{station_.altitude}m</dd>
+                 </dl>
+                 <div class="form-check">
+                    {checkbox}
+                   <label class="form-check-label" for="defaultCheck2">
+                     is active
+                   </label>
+                 </div>
+                <!--
+                <div class="input-group mb-3">
+                    <div class="input-group-append">
+                        <a class="btn btn-primary"
+                           href="{reverse_lazy("stations:detail", kwargs={"slug": station_.slug})}"
+                           role="button">
+                        <i class="bi bi-eye"></i>
+                    </a>
+                    <a class="btn btn-success"
+                       href="{reverse_lazy("stations:update", kwargs={"slug": station_.slug})}"
+                       role="button">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+                   </div>
+                 </div>
+                 -->
+                """
+        return html
+
     def _add_marker(self, mapobj: folium.Map, pnt: Station, color="blue"):
         _zoffset = int(pnt.latitude)
         if color != "blue":
             _zoffset = 100
-
+            if not pnt.is_active:
+                color = "darkred"
+        html = self._get_popup(pnt)
         folium.Marker(
             [pnt.latitude, pnt.longitude],
             z_index_offset=_zoffset,
             tooltip="Click me!",
-            popup=f"{pnt.name} <br><hr> Coordinates:<br>({pnt.latitude}{deg}N,{pnt.longitude}{deg}E)",
-            icon=folium.Icon(color=color),
+            popup=html,
+            icon=folium.Icon(color=color, icon="home", prefix="fa"),
         ).add_to(mapobj)
 
         return mapobj
 
     def _add_points(self, mapobj: folium.Map, local: Station = None):
         # Create empty lists to contain the point coordinates and the point pop-up information
-        coords, popups = [], []
+        coords, popups, icons = [], [], []
         for pnt in Station.objects.all():
             if pnt != local:
+                color = "blue"
+                if not pnt.is_active:
+                    color = "cadetblue"
                 # Append lat and long coordinates to "coords" list
                 coords.append([pnt.latitude, pnt.longitude])
-                html = f"Name:<br>{pnt.name} <br><hr>\
-                         Coordinates:<br>{pnt.latitude}{deg}N&nbsp|&nbsp{pnt.longitude}{deg}E"
+                html = self._get_popup(pnt)
                 popups.append(html)
+
+                icon = folium.Icon(color=color, icon="cloud", prefix="fa")
+                icons.append(icon)
 
         # Create a Folium feature group for this layer, since we will be displaying multiple layers
         pt_lyr = folium.FeatureGroup(name="stations")
         if coords:
             # Add the clustered points of crime locations and popups to this layer
-            pt_lyr.add_child(MarkerCluster(locations=coords, popups=popups))
+            pt_lyr.add_child(
+                MarkerCluster(locations=coords, popups=popups, icons=icons)
+            )
             # Add this point layer to the map object
             mapobj.add_child(pt_lyr)
 
