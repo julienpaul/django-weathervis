@@ -1,0 +1,60 @@
+{% extends 'vmeteograms/base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}
+AROME Arctic vmeteogram forecasts for ISLAS2021
+{% endblock title %}
+
+{% block container %}
+<div class="row">
+  <div class="col">
+    {% if object_list %}
+    {% for vmeteogram in page_obj %}
+    <div class="input-group mb-3">
+      <input type="text" placeholder="{{ vmeteogram }}" size="40">
+      <div class="input-group-append">
+        <a class="btn btn-primary" href="{% url 'vmeteograms:detail' slug=vmeteogram.slug %}" role="button">
+          <i class="bi bi-eye"></i>
+        </a>
+      </div>
+    </div>
+    {% endfor %}
+    <hr>
+
+    {% if is_paginated %}
+    <div class="pagination">
+      <span class="step-links">
+        {% if page_obj.has_previous %}
+        <a href="?page=1">&laquo; first</a>
+        <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+        {% else %}
+        <a href="#" class="disabled">&laquo; first</a>
+        <a href="#" class="disabled">previous</a>
+        {% endif %}
+
+        <span class="current">
+          Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        </span>
+
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">next</a>
+        <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+        {% else %}
+        <a href="#" class="disabled">next</a>
+        <a href="#" class="disabled">last &raquo;</a>
+        {% endif %}
+      </span>
+    </div>
+    {% endif %}
+    {% else %}
+    <h4> No Vertical Meteogram yet.</h4>
+    {% endif %}
+  </div>
+  <div class="col">
+    <a class="btn btn-primary" href="{% url 'vmeteograms:create' %}" role="button">
+      Add Vertical Meteogram
+    </a>
+  </div>
+</div>
+{% endblock container %}

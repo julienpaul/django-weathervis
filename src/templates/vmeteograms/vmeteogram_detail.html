@@ -1,0 +1,51 @@
+{% extends 'vmeteograms/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load i18n %}
+
+{% block content %}
+<div class="row">
+  <nav class="navbar navbar-expand-md navbar-light">
+    <div class="mb-1">
+      {% csrf_token %}
+      {% crispy form %}
+    </div>
+  </nav>
+  <!-- div class="col-sm">
+  </div -->
+</div>
+<div class="row">
+  <table border=0 bgcolor=#ffffff width=1300 align=center>
+    <tr>
+      <td align=center>
+        <div class="card" style="width=40%">
+          <img class="card-img-top" id="panel1" src="{% get_media_prefix %}/pics/default.svg" alt="default">
+          <div class="card-body">
+            <h5 class="card-title" id="title1">{{vmeteogram.location}} {{vmeteogram.date.date|date:'Y-m-d H:i'}}</h5>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
+              content.</p>
+          </div>
+        </div>
+      </td>
+      <td align=center>
+        <div class="card" style="width=40%">
+          <img class="card-img-top" id="panel2" src="{% get_media_prefix %}/pics/default.svg" alt="default">
+          <div class="card-body">
+            <h5 class="card-title" id="title2">{{vmeteogram.location}} {{vmeteogram.date.date|date:'Y-m-d H:i'}}</h5>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
+              content.</p>
+          </div>
+        </div>
+      </td>
+    </tr>
+  </table>
+</div>
+<!--
+<br>
+<div class="row">
+  <a class="btn btn-primary" href="{% url 'vmeteograms:list' %}" role="button">
+    back to list
+  </a>
+</div>
+-->
+{% endblock content %}

@@ -1,0 +1,24 @@
+{% extends 'pages/plots.html' %}
+
+{% load crispy_forms_tags %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}
+AROME Arctic vertical meteogram forecasts for ISLAS2021-2022
+{% endblock title %}
+
+{% block extra_css %}
+<!-- link href="{% static 'css/watersip.css' %}" rel="stylesheet" -->
+{% endblock %}
+{% block extra_javascript %}
+<script defer src="{% static 'js/vmeteograms/navigation.js' %}"></script>
+<!-- script defer src="{% static 'js/meteograms/page_navigation.js' %}"></script -->
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  {% block container %}
+  {% endblock container %}
+</div>
+{% endblock content %}

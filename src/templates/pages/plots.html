@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block navplot %}
+<div class='reduce'>
+  <ul class="nav nav-tabs">
+    <li class="nav-item">
+      <a class="nav-link active" href="{% url 'vmeteograms:list' %}">Vertical Meteograms</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link disabled " href="#">Surface Meteograms</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link disabled" href="#">AROME Maps</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link disabled" href="#">Flexpart AROME</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link disabled" href="#">FLEXPLART IFS</a>
+    </li>
+  </ul>
+</div>
+{% endblock navplot %}

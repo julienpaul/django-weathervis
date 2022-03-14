@@ -33,6 +33,13 @@ urlpatterns = [
         "margins/",
         include("src.margins.urls", namespace="margins"),
     ),
+    path(
+        "plots/", TemplateView.as_view(template_name="pages/plots.html"), name="plots"
+    ),
+    path(
+        "vmeteograms/",
+        include("src.vertical_meteograms.urls", namespace="vmeteograms"),
+    ),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 

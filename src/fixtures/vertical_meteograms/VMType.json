@@ -1,0 +1,16 @@
+[
+    {
+        "model": "vertical_meteograms.vmtype",
+        "pk": 1,
+        "fields": {
+            "name": "op1"
+            }
+    },
+    {
+        "model": "vertical_meteograms.vmtype",
+        "pk": 2,
+        "fields": {
+            "name": "op2"
+            }
+    }
+]
