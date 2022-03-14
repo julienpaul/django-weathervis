@@ -206,7 +206,7 @@ def _check_param(dict_, fparam_):
                     )
 
 
-def up(fparam_=model_grid_path / "data.yaml"):
+def upload(fparam_=model_grid_path / "data.yaml"):
     """upload and save shape file of weather forecast models"""
     try:
         # read parameters configuration file yaml

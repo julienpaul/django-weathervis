@@ -12,7 +12,7 @@ from dateutil.parser import ParserError
 from faker import Faker
 
 # Imports from my apps
-from src.model_grids import load
+from src.model_grids import util
 from src.model_grids.models import ModelGrid
 
 pytestmark = pytest.mark.django_db
@@ -69,7 +69,7 @@ def test__setup_border_variable_not_found(tmp_path):
     ds = nc.Dataset(_tmp, "r")
 
     with pytest.raises(IndexError) as execinfo:
-        load._setup_border(ds, _name, _start, _end)
+        util._setup_border(ds, _name, _start, _end)
     # check error message
     assert str(execinfo.value).startswith("Can not find variable")
 
@@ -91,7 +91,7 @@ def test__setup_border_variable_not_2D(tmp_path):
     ds = nc.Dataset(_tmp, "r")
 
     with pytest.raises(TypeError) as execinfo:
-        load._setup_border(ds, _name, _start, _end)
+        util._setup_border(ds, _name, _start, _end)
     # check error message
     assert str(execinfo.value).startswith("Invalid dimension for variable")
 
@@ -111,9 +111,9 @@ def test__setup_border_raises_no_exception(tmp_path):
 
     try:
         # set up border
-        load._setup_border(ds, _name, _start, _end)
+        util._setup_border(ds, _name, _start, _end)
     except Exception as exc:
-        assert False, f"'load._setup_border()' raised an exception {exc}"
+        assert False, f"'util._setup_border()' raised an exception {exc}"
 
 
 def test__setup_grid_invalid_date():
@@ -125,7 +125,7 @@ def test__setup_grid_invalid_date():
     thredd = "https://thredds.met.no/thredds/dodsC/metpplatest/met_forecast_1_0km_nordic_latest.nc"
     dict = {"url": thredd, "date_valid_start": "2020-13-01"}
     with pytest.raises(ParserError) as execinfo:
-        load._setup_grid("test", dict)
+        util._setup_grid("test", dict)
 
     # check error message
     assert str(execinfo.value).startswith("Invalid dates.")
@@ -146,12 +146,12 @@ def test__setup_grid_invalid_ncfile(modelGrid: ModelGrid):
 
     with pytest.raises(OSError) as execinfo:
         dict = {"url": "", "date_valid_start": "2020-01-01"}
-        load._setup_grid(modelGrid.name, dict)
+        util._setup_grid(modelGrid.name, dict)
         dict = {"url": None, "date_valid_start": "2020-01-01"}
-        load._setup_grid(modelGrid.name, dict)
+        util._setup_grid(modelGrid.name, dict)
         thredd = "https://thredds.met.no/thredds/metpplatest/met_forecast_1_0km_nordic_latestt.nc"
         dict = {"url": thredd, "date_valid_start": "2020-01-01"}
-        load._setup_grid(modelGrid.name, dict)
+        util._setup_grid(modelGrid.name, dict)
     # check error message
     assert str(execinfo.value).startswith("Can not find or open file")
 
@@ -165,9 +165,9 @@ def test__setup_grid_invalid_name():
     thredd = "https://thredds.met.no/thredds/dodsC/metpplatest/met_forecast_1_0km_nordic_latest.nc"
     dict = {"url": thredd, "date_valid_start": "2020-01-01"}
     with pytest.raises(TypeError) as execinfo:
-        load._setup_grid(None, dict)
-        load._setup_grid("", dict)
-        load._setup_grid(" ", dict)
+        util._setup_grid(None, dict)
+        util._setup_grid("", dict)
+        util._setup_grid(" ", dict)
     # check error message
     assert str(execinfo.value).startswith("Invalid type for argument name_")
 
@@ -181,9 +181,9 @@ def test__setup_grid_raises_no_exception():
     thredd = "https://thredds.met.no/thredds/dodsC/metpplatest/met_forecast_1_0km_nordic_latest.nc"
     dict = {"url": thredd, "date_valid_start": "2020-01-01"}
     try:
-        load._setup_grid("test", dict)
+        util._setup_grid("test", dict)
     except Exception as exc:
-        assert False, f"'load._setup_grid()' raised an exception {exc}"
+        assert False, f"'util._setup_grid()' raised an exception {exc}"
 
 
 def test__setup_grid_add_to_db():
@@ -199,7 +199,7 @@ def test__setup_grid_add_to_db():
 
     ds = nc.Dataset(thredd, "r")
 
-    load._setup_border(ds, _name, _start, _end)
+    util._setup_border(ds, _name, _start, _end)
 
     all_entries = ModelGrid.objects.all()
 
@@ -217,7 +217,7 @@ def test__check_param_data_key():
     """
     dict = {"dat": "something"}
     with pytest.raises(KeyError) as execinfo:
-        load._check_param(dict, "whatever")
+        util._check_param(dict, "whatever")
     # check error message
     assert "No key 'data' in" in str(execinfo.value)
     # TODO: find why the line below do not work ?
@@ -234,14 +234,14 @@ def test__check_param_data_value():
     """
     dict = {"data": "something"}
     with pytest.raises(TypeError) as execinfo:
-        load._check_param(dict, "whatever")
+        util._check_param(dict, "whatever")
     # check error message
     assert str(execinfo.value).startswith("Value of key 'data' in")
     assert str(execinfo.value).endswith("must be a dictionnary.")
 
     dict = {"data": ["something", "something else"]}
     with pytest.raises(TypeError) as execinfo:
-        load._check_param(dict, "whatever")
+        util._check_param(dict, "whatever")
     # check error message
     assert str(execinfo.value).startswith("Value of key 'data' in")
     assert str(execinfo.value).endswith("must be a dictionnary.")
@@ -263,21 +263,21 @@ def test__check_param_data_date_valid():
     thredd = "https://thredds.met.no/thredds/dodsC/metpplatest/met_forecast_1_0km_nordic_latest.nc"
     dict = {"data": {"model_name": {"url": thredd, "date_valid_start": "2020-13-01"}}}
     with pytest.raises(ValueError) as execinfo:
-        load._check_param(dict, "whatever")
+        util._check_param(dict, "whatever")
     # check error message
     assert str(execinfo.value).startswith("Invalid datetime format")
     assert str(execinfo.value).endswith("\nCheck whatever")
 
     dict = {"data": {"model_name": {"url": thredd, "date_valid_start": ""}}}
     with pytest.raises(ValueError) as execinfo:
-        load._check_param(dict, "whatever")
+        util._check_param(dict, "whatever")
     # check error message
     assert str(execinfo.value).startswith("Invalid datetime format")
     assert str(execinfo.value).endswith("\nCheck whatever")
 
     dict = {"data": {"model_name": {"url": thredd, "date_valid_start": None}}}
     with pytest.raises(ValueError) as execinfo:
-        load._check_param(dict, "whatever")
+        util._check_param(dict, "whatever")
     # check error message
     assert str(execinfo.value).startswith("Invalid datetime format")
     assert str(execinfo.value).endswith("\nCheck whatever")
@@ -299,7 +299,7 @@ def test__check_param_data_url():
     thredd = "thredds/dodsC/metpplatest/met_forecast_1_0km_nordic_latest.nc"
     dict = {"data": {"model_name": {"url": thredd, "date_valid_start": "2020-01-01"}}}
     with pytest.raises(ValueError) as execinfo:
-        load._check_param(dict, "whatever")
+        util._check_param(dict, "whatever")
     # check error message
     assert str(execinfo.value).startswith("Invalid URL for model grid")
     assert str(execinfo.value).endswith(
@@ -321,9 +321,9 @@ def test__check_param_raises_no_exception():
     thredd = "https://thredds.met.no/thredds/dodsC/metpplatest/met_forecast_1_0km_nordic_latest.nc"
     dict = {"data": {"model_name": {"url": thredd, "date_valid_start": "2020-01-01"}}}
     try:
-        load._check_param(dict, "whatever")
+        util._check_param(dict, "whatever")
     except Exception as exc:
-        assert False, f"'load._check_param()' raised an exception {exc}"
+        assert False, f"'util._check_param()' raised an exception {exc}"
 
 
 def test_upload_yaml(tmp_path):
@@ -335,7 +335,7 @@ def test_upload_yaml(tmp_path):
     """
     _tmp = None
     with pytest.raises(Exception) as execinfo:
-        load.up(_tmp)
+        util.upload(_tmp)
 
     # check error message
     assert str(execinfo.value).startswith(
@@ -348,7 +348,7 @@ def test_upload_yaml(tmp_path):
         yaml.dump(dict, ff, allow_unicode=True, default_flow_style=False)
 
     with pytest.raises(Exception) as execinfo:
-        load.run(_tmp)
+        util.run(_tmp)
 
 
 def test_upload_raises_no_exception():
@@ -361,9 +361,9 @@ def test_upload_raises_no_exception():
     Assert your python code raises no exception.
     """
     try:
-        load.up()
+        util.upload()
     except Exception as exc:
-        assert False, f"'load.run()' raised an exception {exc}"
+        assert False, f"'util.upload()' raised an exception {exc}"
 
 
 @pytest.mark.skip(reason="useless ??")
@@ -374,8 +374,8 @@ def test_upload_yaml_success():
     THEN  'geojosn' file(s) created on load.model_grid_data_path
      and  element(s) added to the database
     """
-    load.up()
-    fparam_ = load.model_grid_path / "data.yaml"
+    util.upload()
+    fparam_ = util.model_grid_path / "data.yaml"
     with open(fparam_, "r") as stream:
         try:
             param = yaml.safe_load(stream)
@@ -384,7 +384,7 @@ def test_upload_yaml_success():
 
     # check geojson exist
     for f in param["data"].keys():
-        output = load.model_grid_data_path / (f + ".geojson")
+        output = util.model_grid_data_path / (f + ".geojson")
         assert output.exists()
         assert output.is_file()
     # check instance on database

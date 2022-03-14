@@ -166,12 +166,25 @@ see [qgis.org download](https://qgis.org/en/site/forusers/download.html)
 
         $ python manage.py migrate
 
-7. Create and Load weather forecast shape files
+7. Load database
+
+    7.1 Create and Load model grid shape files
 
         $ python manage.py shell
-        >>> from src.model_grids import load
-        >>> load.up()
+        >>> from src.model_grids.util import upload
+        >>> upload()
         >>> exit()
+
+    7.2 Create and load station
+
+        $ python manage.py shell
+        >>> from src.stations.util import upload
+        >>> upload()
+        >>> exit()
+
+    7.3 load other fixture
+
+        $ python manage.py loaddata src/fixtures/**/*.json
 
 8. Finally run the Django development server:
 

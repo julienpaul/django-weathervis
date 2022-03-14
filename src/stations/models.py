@@ -108,7 +108,7 @@ class Station(models.Model):
 
     def save(self, *args, **kwargs):
         """ """
-        from .load import down as download
+        from .util import download
 
         super().save(*args, **kwargs)
         # update weathervis config files

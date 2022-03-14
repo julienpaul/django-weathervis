@@ -16,9 +16,9 @@ class TestLoad:
     """
 
     @pytest.mark.skip(reason="test not implemented yet")
-    def test_load_up(self):
+    def test_upload(self):
         """"""
 
     @pytest.mark.skip(reason="test not implemented yet")
-    def test_load_down(self):
+    def test_download(self):
         """"""

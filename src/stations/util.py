@@ -47,7 +47,7 @@ def _check_param(dict_, fparam_):
                     )
 
 
-def up(fparam_=station_data_path / "stations.ini.yaml"):
+def upload(fparam_=station_data_path / "stations.ini.yaml"):
     """upload and save station and margin"""
     try:
         # read parameters configuration file yaml
@@ -98,7 +98,7 @@ def up(fparam_=station_data_path / "stations.ini.yaml"):
         )
 
 
-def down(fparam_=station_data_path / "stations.yaml"):
+def download(fparam_=station_data_path / "stations.yaml"):
     """download station and margin from database and write station.yaml
 
     Note: only active stations are downloaded.
