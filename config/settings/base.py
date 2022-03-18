@@ -14,6 +14,11 @@ READ_DOT_ENV_FILE = env.bool("DJANGO_READ_DOT_ENV_FILE", default=False)
 if READ_DOT_ENV_FILE:
     # OS environment variables take precedence over variables from .env
     env.read_env(str(ROOT_DIR / ".env"))
+else:
+    try:
+        env.read_env(str(ROOT_DIR / ".env"))
+    except FileNotFoundError:
+        pass
 
 # GENERAL
 # ------------------------------------------------------------------------------
@@ -237,9 +242,9 @@ EMAIL_TIMEOUT = 5
 # Django Admin URL.
 ADMIN_URL = "admin/"
 # https://docs.djangoproject.com/en/dev/ref/settings/#admins
-ADMINS = [("""Julien Paul""", "julien.paul@uib.no")]
+ADMINS = env("DJANGO_ADMINS", default=[("""Julien Paul""", "julien.paul@uib.no")])
 # https://docs.djangoproject.com/en/dev/ref/settings/#managers
-MANAGERS = ADMINS
+MANAGERS = env("DJANGO_MANAGERS", default=ADMINS)
 
 # LOGGING
 # ------------------------------------------------------------------------------

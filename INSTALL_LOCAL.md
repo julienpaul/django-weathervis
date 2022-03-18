@@ -100,7 +100,6 @@ see [qgis.org download](https://qgis.org/en/site/forusers/download.html)
         $ mkdir DJANGO_WEATHERVIS
         $ cd DJANGO_WEATHERVIS
 
-
 2. <a name="py39"></a>Create a virtualenv, and activate it:
     Here I use conda, obviously you could use the virtualenv you are familiar with.
 
