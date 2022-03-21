@@ -37,6 +37,6 @@ setup(
     name="django-weathervis",
     maintainer="BCDC",
     url="https://github.com/julienpaul/django-weathervis",
-    version="version=0.1.1",
+    version="version=0.1.2",
     zip_safe=False,
 )
