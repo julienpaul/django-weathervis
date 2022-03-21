@@ -2,7 +2,7 @@
 
 """The setup script."""
 
-from setuptools import setup
+from setuptools import find_packages, setup
 
 with open("README.rst") as readme_file:
     readme = readme_file.read()
@@ -23,7 +23,7 @@ setup(
     classifiers=[
         "Development Status :: 2 - Pre-Alpha",
         "Intended Audience :: Developers",
-        "License :: OSI Approved :: MIT License",
+        "License :: OSI Approved :: GNU GPLv3 License",
         "Natural Language :: English",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.9",
@@ -36,6 +36,7 @@ setup(
     keywords="django-weathervis",
     name="django-weathervis",
     maintainer="BCDC",
+    packages=find_packages(include=["django-weathervis"]),
     url="https://github.com/julienpaul/django-weathervis",
     version="version=0.1.2",
     zip_safe=False,
