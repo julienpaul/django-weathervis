@@ -7,7 +7,7 @@
 # Note: key 'data_valid_end' can be omitted. So assume valid until further notice.
 data:
   AROME_Artic:
-    url: 'https://thredds.met.no/thredds/dodsC/aromearcticlatest/arome_arctic_full_2_5km_latest.nc'
+    url: 'https://thredds.met.no/thredds/dodsC/aromearcticlatest/latest/arome_arctic_lagged_12_h_latest_2_5km_latest.nc'
     date_valid_start: '2021-01-02 00:00:00'
 
   MEPS:
