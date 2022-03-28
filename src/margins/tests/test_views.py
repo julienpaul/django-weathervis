@@ -328,26 +328,26 @@ class TestMarginCreateView:
 
 
 @pytest.mark.django_db
-class TestOrganisationDeleteView:
+class TestMarginDeleteView:
     def dummy_get_response(self, request: HttpRequest):
         return None
 
-    def test_template(self, client, user: User, margin: Margin):
+    def test_template(self, client, staff: User, margin: Margin):
         """
         GIVEN an instance of MarginDeleteView,
-          and a user
+          and a staff member
         WHEN  requesting the deletion of an margin
         THEN  should return the confirm_delete template
         """
         url = reverse("margins:delete", kwargs={"pk": margin.id})
-        client.force_login(user)
+        client.force_login(staff)
         response = client.get(url)
         assertTemplateUsed(response, "margins/margin_confirm_delete.html")
 
-    def test_success_message(self, rf: RequestFactory, user: User, margin: Margin):
+    def test_success_message(self, rf: RequestFactory, staff: User, margin: Margin):
         """
         GIVEN an instance of MarginDeleteView,
-          and a user (with an margin)
+          and a staff member
         WHEN  deleting successfuly the margin
         THEN  should return a success message
         """
@@ -356,36 +356,36 @@ class TestOrganisationDeleteView:
         # Add the session/message middleware to the request
         SessionMiddleware(self.dummy_get_response).process_request(request)
         MessageMiddleware(self.dummy_get_response).process_request(request)
-        request.user = user
+        request.user = staff
 
         MarginDeleteView.as_view()(request, pk=margin.id)
 
         messages_sent = [m.message for m in messages.get_messages(request)]
         assert messages_sent == ["Margin successfully removed"]
 
-    def test_delete_from_db(self, client, user: User, margin: Margin):
+    def test_delete_from_db(self, client, staff: User, margin: Margin):
         """
         GIVEN an instance of _MarginDeleteView,
-          and a user
+          and a staff member
         WHEN  deleting successfuly the margin
         THEN  databse should not contain any margin
         """
         url = reverse("margins:delete", kwargs={"pk": margin.id})
-        client.force_login(user)
+        client.force_login(staff)
         client.delete(url)
 
         assert Margin.objects.count() == 0
 
-    def test_redirect_client(self, client, user: User, margin: Margin):
+    def test_redirect_client(self, client, staff: User, margin: Margin):
         """
         GIVEN an instance of MarginDeleteView,
-          and a user
+          and a staff member
         WHEN  deleting successfuly the margin
         THEN  should be redirect to margins list page,
          with  status code 302
         """
         url = reverse("margins:delete", kwargs={"pk": margin.id})
-        client.force_login(user)
+        client.force_login(staff)
         response = client.delete(url, follow=True)
         success_url = reverse("margins:list")
 
@@ -394,17 +394,17 @@ class TestOrganisationDeleteView:
         assert redirect_url == f"{success_url}"
         assert redirect_status_code == 302
 
-    def test_redirect(self, rf: RequestFactory, user: User, margin: Margin):
+    def test_redirect(self, rf: RequestFactory, staff: User, margin: Margin):
         """
         GIVEN an instance of MarginDeleteView,
-          and a user
+          and a staff member
           and a margin
         WHEN  deleting successfuly the margin
         THEN  should be redirect to margins list page,
          with  status code 302
         """
         request = rf.delete("/fake-url/")
-        request.user = user
+        request.user = staff
         # Add the session/message middleware to the request
         SessionMiddleware(self.dummy_get_response).process_request(request)
         MessageMiddleware(self.dummy_get_response).process_request(request)

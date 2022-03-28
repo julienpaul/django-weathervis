@@ -1,7 +1,7 @@
 # Stdlib imports
 # Core Django imports
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.gis.geos import Point as GeoPoint
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
@@ -20,11 +20,16 @@ from src.utils import util
 # Imports from my apps
 from src.utils.mixins import DrawMapMixin
 
-from .forms import StationForm
+from .forms import StationForm, StationUpdateForm
 from .models import Station
 
 
-class StationListView(LoginRequiredMixin, SuccessMessageMixin, DrawMapMixin, ListView):
+class StationListView(
+    LoginRequiredMixin,
+    SuccessMessageMixin,
+    DrawMapMixin,
+    ListView,
+):
     model = Station
     template_name = "stations/station_list.html"
     context_object_name = "stations"
@@ -42,7 +47,10 @@ station_list_view = StationListView.as_view()
 
 
 class StationDetailView(
-    LoginRequiredMixin, SuccessMessageMixin, DrawMapMixin, DetailView
+    LoginRequiredMixin,
+    SuccessMessageMixin,
+    DrawMapMixin,
+    DetailView,
 ):
     model = Station
     context_object_name = "station"
@@ -61,12 +69,17 @@ station_detail_view = StationDetailView.as_view()
 
 
 class StationUpdateView(
-    LoginRequiredMixin, SuccessMessageMixin, DrawMapMixin, UpdateView
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    SuccessMessageMixin,
+    DrawMapMixin,
+    UpdateView,
 ):
+    permission_required = "stations.change_station"
     model = Station
     context_object_name = "stations"
     slug_field = "slug"
-    form_class = StationForm
+    form_class = StationUpdateForm
     # template_name = "domain/station_detail.html"
     success_message = _("Station '%(name)s' successfully updated")
 
@@ -122,8 +135,13 @@ station_update_view = StationUpdateView.as_view()
 
 
 class StationCreateView(
-    LoginRequiredMixin, SuccessMessageMixin, DrawMapMixin, CreateView
+    PermissionRequiredMixin,
+    LoginRequiredMixin,
+    SuccessMessageMixin,
+    DrawMapMixin,
+    CreateView,
 ):
+    permission_required = "stations.change_station"
     model = Station
     form_class = StationForm
     context_object_name = "stations"
@@ -160,8 +178,13 @@ station_create_view = StationCreateView.as_view()
 
 
 class StationDeleteView(
-    LoginRequiredMixin, SuccessMessageMixin, DrawMapMixin, DeleteView
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    SuccessMessageMixin,
+    DrawMapMixin,
+    DeleteView,
 ):
+    permission_required = "stations.delete_station"
     model = Station
     slug_field = "slug"
 

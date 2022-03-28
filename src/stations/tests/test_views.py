@@ -116,6 +116,30 @@ class TestStationListView:
         assertContains(response, 'href="/stations/~add/"', 0)
         assertContains(response, 'class="btn btn-primary"', 0)
 
+    @pytest.mark.parametrize("user", [{"groups": "Editor"}], indirect=True)
+    def test_editor_station_buttons(self, client, user: User, station: Station):
+        """
+        GIVEN one station,
+          and  a user, from group 'Editor'
+        WHEN  display the list view
+        THEN  three buttons (detail/update/delete) should be displayed
+         and  delete button should be disabled
+        """
+        url = reverse("stations:list")
+        client.force_login(user)
+        response = client.get(url)
+
+        # detail
+        assertContains(response, f'href="/stations/{station.slug}/"', 1)
+        # two primary buttons, detail and create
+        assertContains(response, 'class="btn btn-primary"', 2)
+        # update
+        assertContains(response, f'href="/stations/{station.slug}/~update/"', 1)
+        assertContains(response, 'class="btn btn-success"', 1)
+        # delete
+        assertContains(response, f'href="/stations/~delete/{station.slug}/"', 1)
+        assertContains(response, 'class="btn btn-secondary"', 1)
+
     def test_staff_station_buttons(self, client, staff: User, station: Station):
         """
         GIVEN one station,
@@ -636,15 +660,15 @@ class TestStationDeleteView:
         assert response.status_code == 302
         assert response.url == f"{login_url}?next=/fake-url/"
 
-    def test_get_template(self, client, user: User, station: Station):
+    def test_get_template(self, client, staff: User, station: Station):
         """
         GIVEN an instance of StationDeleteView,
-          and a user
+          and a staff member
         WHEN  requesting the deletion of a station
         THEN  should return the confirm_delete template
         """
         url = reverse("stations:delete", kwargs={"slug": station.slug})
-        client.force_login(user)
+        client.force_login(staff)
         response = client.get(url)
         assertTemplateUsed(response, "stations/station_confirm_delete.html")
 
@@ -656,10 +680,10 @@ class TestStationDeleteView:
 
         assertContains(response, "csrfmiddlewaretoken")
 
-    def test_success_message(self, rf: RequestFactory, user: User, station: Station):
+    def test_success_message(self, rf: RequestFactory, staff: User, station: Station):
         """
         GIVEN an instance of StationDeleteView,
-          and a user
+          and a staff member
         WHEN  deleting successfuly the station
         THEN  should return a success message
         """
@@ -668,37 +692,37 @@ class TestStationDeleteView:
         # Add the session/message middleware to the request
         SessionMiddleware(self.dummy_get_response).process_request(request)
         MessageMiddleware(self.dummy_get_response).process_request(request)
-        request.user = user
+        request.user = staff
 
         StationDeleteView.as_view()(request, slug=station.slug)
 
         messages_sent = [m.message for m in messages.get_messages(request)]
         assert messages_sent == [f"Station '{station.name}' successfully removed"]
 
-    def test_delete_from_db(self, client, user: User, station: Station):
+    def test_delete_from_db(self, client, staff: User, station: Station):
         """
         GIVEN an instance of StationDeleteView,
-          and a user
+          and a staff member
         WHEN  deleting successfuly the station
         THEN  databse should not contain any station
         """
         url = reverse("stations:delete", kwargs={"slug": station.slug})
-        client.force_login(user)
+        client.force_login(staff)
         client.delete(url)
 
         assert Station.objects.count() == 0
 
-    def test_redirect_client(self, client, user: User, station: Station):
+    def test_redirect_client(self, client, staff: User, station: Station):
         """
         GIVEN an instance of StationDeleteView,
-          and a user
+          and a staff member
           and a station
         WHEN  deleting successfuly the station
         THEN  should be redirect to stations list page,
          with  status code 302
         """
         url = reverse("stations:delete", kwargs={"slug": station.slug})
-        client.force_login(user)
+        client.force_login(staff)
         response = client.delete(url, follow=True)
         success_url = reverse("stations:list")
 
@@ -707,17 +731,17 @@ class TestStationDeleteView:
         assert redirect_url == f"{success_url}"
         assert redirect_status_code == 302
 
-    def test_redirect(self, rf: RequestFactory, user: User, station: Station):
+    def test_redirect(self, rf: RequestFactory, staff: User, station: Station):
         """
         GIVEN an instance of OrganisationDeleteView,
-          and a user
+          and a staff member
           and a station
         WHEN  deleting successfuly the station
         THEN  should be redirect to stations list page,
          with  status code 302
         """
         request = rf.delete("/fake-url/")
-        request.user = user
+        request.user = staff
         # Add the session/message middleware to the request
         SessionMiddleware(self.dummy_get_response).process_request(request)
         MessageMiddleware(self.dummy_get_response).process_request(request)

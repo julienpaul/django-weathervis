@@ -1,7 +1,7 @@
 # Stdlib imports
 # Core Django imports
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import resolve_url
 from django.urls import reverse_lazy
@@ -31,7 +31,7 @@ class MarginView(LoginRequiredMixin, View):
 margin_view = MarginView.as_view()
 
 
-class MarginListView(ListView):
+class MarginListView(LoginRequiredMixin, ListView):
     model = Margin
     context_object_name = "margins"
     template_name = "margins/margin_list.html"
@@ -43,7 +43,12 @@ class MarginListView(ListView):
         return context
 
 
-class MarginCreateView(SuccessMessageMixin, SuccessURLAllowedHostsMixin, CreateView):
+class MarginCreateView(
+    LoginRequiredMixin,
+    SuccessMessageMixin,
+    SuccessURLAllowedHostsMixin,
+    CreateView,
+):
     model = Margin
     context_object_name = "margins"
     template_name = "margins/margin_list.html"
@@ -98,7 +103,13 @@ class MarginCreateView(SuccessMessageMixin, SuccessURLAllowedHostsMixin, CreateV
         return next_page
 
 
-class MarginDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
+class MarginDeleteView(
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    SuccessMessageMixin,
+    DeleteView,
+):
+    permission_required = "margins.delete_margin"
     model = Margin
     # context_object_name = "margins"
 

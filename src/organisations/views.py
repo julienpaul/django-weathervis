@@ -1,7 +1,7 @@
 # Stdlib imports
 # Core Django imports
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import resolve_url
 from django.urls import reverse_lazy
@@ -41,7 +41,7 @@ class OrganisationView(LoginRequiredMixin, View):
 organisation_view = OrganisationView.as_view()
 
 
-class OrganisationListView(ListView):
+class OrganisationListView(LoginRequiredMixin, ListView):
     model = Organisation
     context_object_name = "organisations"
     template_name = "organisations/organisation_list.html"
@@ -54,7 +54,10 @@ class OrganisationListView(ListView):
 
 
 class OrganisationCreateView(
-    SuccessMessageMixin, SuccessURLAllowedHostsMixin, CreateView
+    LoginRequiredMixin,
+    SuccessMessageMixin,
+    SuccessURLAllowedHostsMixin,
+    CreateView,
 ):
     model = Organisation
     context_object_name = "organisations"
@@ -110,7 +113,13 @@ class OrganisationCreateView(
         return next_page
 
 
-class OrganisationDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
+class OrganisationDeleteView(
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    SuccessMessageMixin,
+    DeleteView,
+):
+    permission_required = "organisations.delete_organisation"
     model = Organisation
     # context_object_name = "organisations"
 

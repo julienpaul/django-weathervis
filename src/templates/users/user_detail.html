@@ -74,7 +74,7 @@
             <input class="form-check-input" type="checkbox" value="" id="defaultCheck2" disabled>
             {% endif %}
             <label class="form-check-label" for="defaultCheck2">
-              can add weathervis site
+              can add weathervis station
             </label>
           </div>
         </div>
@@ -88,7 +88,11 @@
     <div class="row">
       <div class="col-sm-12">
         <!-- Your Stuff: Custom user template urls -->
-        <a class="btn btn-secondary" href="{% url 'users:upgrade_request' %}" role="button">Upgrade</a>
+        {% if perms.stations.add_station %}
+        <a class="btn btn-secondary" href="#" role="button" aria-disabled="true">Request Upgrade</a>
+        {% else %}
+        <a class="btn btn-primary" href="{% url 'users:upgrade_request' %}" role="button">Request Upgrade</a>
+        {% endif %}
       </div>
     </div>
   </p>

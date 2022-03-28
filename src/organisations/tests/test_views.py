@@ -321,33 +321,33 @@ class TestOrganisationDeleteView:
     def dummy_get_response(self, request: HttpRequest):
         return None
 
-    def test_template(self, client, user: User):
+    def test_template(self, client, staff: User):
         """
         GIVEN an instance of OrganisationDeleteView,
-          and a user (with an organisation)
+          and a staff member (with an organisation)
         WHEN  requesting the deletion of an organisation
         THEN  should return the confirm_delete template
         """
-        organisation = user.organisation
+        organisation = staff.organisation
         url = reverse("organisations:delete", kwargs={"pk": organisation.id})
-        client.force_login(user)
+        client.force_login(staff)
         response = client.get(url)
         assertTemplateUsed(response, "organisations/organisation_confirm_delete.html")
 
-    def test_success_message(self, rf: RequestFactory, user: User):
+    def test_success_message(self, rf: RequestFactory, staff: User):
         """
         GIVEN an instance of OrganisationDeleteView,
-          and a user (with an organisation)
+          and a staff member (with an organisation)
         WHEN  deleting successfuly the organisation
         THEN  should return a success message
         """
-        organisation = user.organisation
+        organisation = staff.organisation
         request = rf.delete("/fake-url/")
 
         # Add the session/message middleware to the request
         SessionMiddleware(self.dummy_get_response).process_request(request)
         MessageMiddleware(self.dummy_get_response).process_request(request)
-        request.user = user
+        request.user = staff
 
         OrganisationDeleteView.as_view()(request, pk=organisation.id)
 
@@ -356,21 +356,21 @@ class TestOrganisationDeleteView:
             f"Organisation '{organisation.name}' successfully removed"
         ]
 
-    def test_delete_from_db(self, client, user: User):
+    def test_delete_from_db(self, client, staff: User):
         """
         GIVEN an instance of OrganisationDeleteView,
           and a user (with an organisation)
         WHEN  deleting successfuly the organisation
         THEN  databse should not contain any organisation
         """
-        organisation = user.organisation
+        organisation = staff.organisation
         url = reverse("organisations:delete", kwargs={"pk": organisation.id})
-        client.force_login(user)
+        client.force_login(staff)
         client.delete(url)
 
         assert Organisation.objects.count() == 0
 
-    def test_redirect_client(self, client, user: User):
+    def test_redirect_client(self, client, staff: User):
         """
         GIVEN an instance of OrganisationDeleteView,
           and a user (with an organisation)
@@ -378,9 +378,9 @@ class TestOrganisationDeleteView:
         THEN  should be redirect to organisations list page,
          with  status code 302
         """
-        organisation = user.organisation
+        organisation = staff.organisation
         url = reverse("organisations:delete", kwargs={"pk": organisation.id})
-        client.force_login(user)
+        client.force_login(staff)
         response = client.delete(url, follow=True)
         success_url = reverse("organisations:list")
 
@@ -389,7 +389,7 @@ class TestOrganisationDeleteView:
         assert redirect_url == f"{success_url}"
         assert redirect_status_code == 302
 
-    def test_redirect(self, rf: RequestFactory, user: User):
+    def test_redirect(self, rf: RequestFactory, staff: User):
         """
         GIVEN an instance of OrganisationDeleteView,
           and a user (with an organisation)
@@ -397,9 +397,9 @@ class TestOrganisationDeleteView:
         THEN  should be redirect to organisations list page,
          with  status code 302
         """
-        organisation = user.organisation
+        organisation = staff.organisation
         request = rf.delete("/fake-url/")
-        request.user = user
+        request.user = staff
         # Add the session/message middleware to the request
         SessionMiddleware(self.dummy_get_response).process_request(request)
         MessageMiddleware(self.dummy_get_response).process_request(request)

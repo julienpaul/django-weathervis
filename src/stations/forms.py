@@ -158,3 +158,10 @@ class StationForm(CrispyMixin, forms.ModelForm):
             raise ValidationError(
                 "Station is not inside any ModelGrid registered.",
             )
+
+
+class StationUpdateForm(StationForm):
+    def _custom_helper(self):
+        """customize crispy form"""
+        # change some field
+        self.fields["name"].disabled = True

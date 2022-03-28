@@ -3,6 +3,7 @@ from typing import Any, Sequence
 
 # Core Django imports
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group, Permission
 
 # Third-party app imports
 from factory import Faker as FactoryFaker
@@ -11,6 +12,26 @@ from factory.django import DjangoModelFactory
 
 # Imports from my apps
 from src.organisations.tests.factories import OrganisationFactory
+
+
+def get_group(name_):
+    """Returns the name_ Group"""
+    try:
+        group_obj = Group.objects.get(name__iexact=name_)
+    except Group.DoesNotExist:
+        raise ValueError(f"No Group {name_}")
+    return group_obj
+
+
+def get_permission(name_):
+    """Returns the name_ Permission"""
+    try:
+        permission = Permission.objects.get(
+            codename=f"change_{name_}",
+        )
+    except Permission.DoesNotExist:
+        raise ValueError(f"No Permission {name_}")
+    return permission
 
 
 class UserFactory(DjangoModelFactory):
