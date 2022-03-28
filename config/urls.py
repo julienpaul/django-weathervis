@@ -10,6 +10,12 @@ from django.views.generic import TemplateView
 # Third-party app imports
 # Imports from my apps
 
+admin.site.site_header = (
+    "Django Weathervis Adminsitration"  # default: "Django Administration"
+)
+admin.site.index_title = "Weathervis Administration"  # default: "Site administration"
+admin.site.site_title = "Django weathervis admin"  # default: "Django site admin"
+
 urlpatterns = [
     path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
     path(
