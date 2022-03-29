@@ -71,22 +71,24 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'about' %}">About</a>
+            <a class="nav-link {% block nav_about%}{% endblock %}" href="{% url 'about' %}">About</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'stations:list' %}">Stations</a>
+            <a class="nav-link {% block nav_stations%}{% endblock %} " href="{% url 'stations:list' %}">Stations</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'vmeteograms:redirect' %}">Plots</a>
+            <a class="nav-link {% block nav_plots%}{% endblock %}" href="{% url 'vmeteograms:redirect' %}">Plots</a>
           </li>
           {% if request.user.is_authenticated %}
           <li class="nav-item">
             {# URL provided by django-allauth/account/urls.py #}
-            <a class="nav-link" href="{% url 'users:detail' request.user.username  %}">{% translate "My Profile" %}</a>
+            <a class="nav-link {% block nav_profile%}{% endblock %}"
+              href="{% url 'users:detail' request.user.username  %}">{% translate "My Profile" %}</a>
           </li>
           <li class="nav-item">
             {# URL provided by django-allauth/account/urls.py #}
-            <a class="nav-link" href="{% url 'account_logout' %}">{% translate "Sign Out" %}</a>
+            <a class="nav-link {% block nav_logout%}{% endblock %}"
+              href="{% url 'account_logout' %}">{% translate "Sign Out" %}</a>
           </li>
           {% else %}
           <li class="nav-item">
