@@ -46,6 +46,10 @@ urlpatterns = [
         "vmeteograms/",
         include("src.vertical_meteograms.urls", namespace="vmeteograms"),
     ),
+    path(
+        "smeteograms/",
+        include("src.surface_meteograms.urls", namespace="smeteograms"),
+    ),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 

@@ -87,6 +87,7 @@ LOCAL_APPS = [
     "src.stations.apps.StationsConfig",
     "src.margins.apps.MarginsConfig",
     "src.vertical_meteograms.apps.VerticalMeteogramsConfig",
+    "src.surface_meteograms.apps.SurfaceMeteogramsConfig",
     # Your stuff: custom apps go here
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps

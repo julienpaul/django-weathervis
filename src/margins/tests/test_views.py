@@ -27,7 +27,7 @@ from src.users.models import User
 
 
 @pytest.mark.django_db
-class TestOrganisationView:
+class TestMarginView:
     def dummy_get_response(self, request: HttpRequest):
         return None
 

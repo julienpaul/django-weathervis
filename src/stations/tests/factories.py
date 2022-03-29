@@ -5,9 +5,8 @@ from factory import Faker as FactoryFaker
 from factory import SubFactory, lazy_attribute
 from factory.django import DjangoModelFactory
 
-from src.margins.tests.factories import MarginFactory
-
 # Imports from my apps
+from src.margins.tests.factories import MarginFactory
 from src.stations.models import Station
 from src.utils import util
 from src.utils.tests.factories import DjangoGeoPointProvider

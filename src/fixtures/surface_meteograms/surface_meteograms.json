@@ -1,0 +1,9 @@
+[
+    {"model": "surface_meteograms.smtype", "pk": 1, "fields": {"name": "op1"}},
+    {"model": "surface_meteograms.smtype", "pk": 2, "fields": {"name": "op2"}},
+    {"model": "surface_meteograms.smpoints", "pk": 1, "fields": {"name": "ALL"}},
+    {"model": "surface_meteograms.smpoints", "pk": 2, "fields": {"name": "LAND"}},
+    {"model": "surface_meteograms.smpoints", "pk": 3, "fields": {"name": "SEA"}},
+    {"model": "surface_meteograms.smpoints", "pk": 4, "fields": {"name": "NEAR"}},
+    {"model": "surface_meteograms.smpoints", "pk": 5, "fields": {"name": "HERE"}}
+]

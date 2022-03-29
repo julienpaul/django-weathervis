@@ -218,6 +218,7 @@ class TestStationDetailView:
         response = client.get(url)
         assertTemplateUsed(response, "stations/station_detail.html")
 
+    @pytest.mark.parametrize("user", [{"groups": "Editor"}], indirect=True)
     def test_context_data(self, rf: RequestFactory, user: User, station: Station):
         """
         GIVEN a POST request of an instance of StationDeatilView,
@@ -243,6 +244,7 @@ class TestStationUpdateView:
     def dummy_get_response(self, request: HttpRequest):
         return None
 
+    @pytest.mark.parametrize("user", [{"groups": "Editor"}], indirect=True)
     def test_get_authenticated(self, rf: RequestFactory, user: User, station: Station):
         request = rf.get("/fake-url/")
         request.user = user
@@ -264,12 +266,14 @@ class TestStationUpdateView:
         assert response.status_code == 302
         assert response.url == f"{login_url}?next=/fake-url/"
 
+    @pytest.mark.parametrize("user", [{"groups": "Editor"}], indirect=True)
     def test_get_template(self, client, user: User, station: Station):
         url = reverse("stations:update", kwargs={"slug": station.slug})
         client.force_login(user)
         response = client.get(url)
         assertTemplateUsed(response, "stations/station_form.html")
 
+    @pytest.mark.parametrize("user", [{"groups": "Editor"}], indirect=True)
     def test_context_data(self, rf: RequestFactory, user: User, station: Station):
         """
         GIVEN a POST request of an instance of StationUpdateView,
@@ -291,6 +295,7 @@ class TestStationUpdateView:
         assert "form" in response.context_data
         assert isinstance(response.context_data["form"], StationForm)
 
+    @pytest.mark.parametrize("user", [{"groups": "Editor"}], indirect=True)
     def test_context_form(self, client, user: User, station: Station):
         url = reverse("stations:update", kwargs={"slug": station.slug})
         client.force_login(user)
@@ -300,6 +305,7 @@ class TestStationUpdateView:
 
         assert isinstance(form, StationForm)
 
+    @pytest.mark.parametrize("user", [{"groups": "Editor"}], indirect=True)
     def test_csrf(self, rf: RequestFactory, user: User, station: Station):
         request = rf.get("/fake-url/")
         request.user = user
@@ -308,6 +314,7 @@ class TestStationUpdateView:
 
         assertContains(response, "csrfmiddlewaretoken")
 
+    @pytest.mark.parametrize("user", [{"groups": "Editor"}], indirect=True)
     def test_form_buttons(self, client, user: User, station: Station):
         """ """
         url = reverse("stations:update", kwargs={"slug": station.slug})
@@ -316,6 +323,7 @@ class TestStationUpdateView:
 
         assertContains(response, 'input type="submit"', 1)
 
+    @pytest.mark.parametrize("user", [{"groups": "Editor"}], indirect=True)
     def test_form_valid(
         self,
         rf: RequestFactory,
@@ -397,6 +405,7 @@ class TestStationCreateView:
     def dummy_get_response(self, request: HttpRequest):
         return None
 
+    @pytest.mark.parametrize("user", [{"groups": "Editor"}], indirect=True)
     def test_get_authenticated(self, rf: RequestFactory, user: User):
         request = rf.get("/fake-url/")
         request.user = user
@@ -418,12 +427,14 @@ class TestStationCreateView:
         assert response.status_code == 302
         assert response.url == f"{login_url}?next=/fake-url/"
 
+    @pytest.mark.parametrize("user", [{"groups": "Editor"}], indirect=True)
     def test_get_template(self, client, user: User):
         url = reverse("stations:create")
         client.force_login(user)
         response = client.get(url)
         assertTemplateUsed(response, "stations/station_create.html")
 
+    @pytest.mark.parametrize("user", [{"groups": "Editor"}], indirect=True)
     def test_context_data(self, rf: RequestFactory, user: User):
         """
         GIVEN a POST request of an instance of StationCreateView,
@@ -445,6 +456,7 @@ class TestStationCreateView:
         assert "form" in response.context_data
         assert isinstance(response.context_data["form"], StationForm)
 
+    @pytest.mark.parametrize("user", [{"groups": "Editor"}], indirect=True)
     def test_context_form(self, client, user: User, station: Station):
         url = reverse("stations:create")
         client.force_login(user)
@@ -454,6 +466,7 @@ class TestStationCreateView:
 
         assert isinstance(form, StationForm)
 
+    @pytest.mark.parametrize("user", [{"groups": "Editor"}], indirect=True)
     def test_csrf(self, rf: RequestFactory, user: User):
         request = rf.get("/fake-url/")
         request.user = user
@@ -462,6 +475,7 @@ class TestStationCreateView:
 
         assertContains(response, "csrfmiddlewaretoken")
 
+    @pytest.mark.parametrize("user", [{"groups": "Editor"}], indirect=True)
     def test_form_buttons(self, client, user: User):
         """ """
         url = reverse("stations:create")
@@ -470,6 +484,7 @@ class TestStationCreateView:
 
         assertContains(response, 'input type="submit"', 1)
 
+    @pytest.mark.parametrize("user", [{"groups": "Editor"}], indirect=True)
     def test_form_valid(
         self,
         rf: RequestFactory,
@@ -526,6 +541,7 @@ class TestStationCreateView:
         messages_sent = [m.message for m in messages.get_messages(request)]
         assert messages_sent == [f"Station '{_name}' successfully added"]
 
+    @pytest.mark.parametrize("user", [{"groups": "Editor"}], indirect=True)
     def test_success_message_client(
         self,
         client,
@@ -639,9 +655,9 @@ class TestStationDeleteView:
     def dummy_get_response(self, request: HttpRequest):
         return None
 
-    def test_get_authenticated(self, rf: RequestFactory, user: User, station: Station):
+    def test_get_authenticated(self, rf: RequestFactory, staff: User, station: Station):
         request = rf.get("/fake-url/")
-        request.user = user
+        request.user = staff
 
         response = station_confirm_delete_view(request, slug=station.slug)
         assert response.status_code == 200
@@ -672,9 +688,9 @@ class TestStationDeleteView:
         response = client.get(url)
         assertTemplateUsed(response, "stations/station_confirm_delete.html")
 
-    def test_csrf(self, rf: RequestFactory, user: User, station: Station):
+    def test_csrf(self, rf: RequestFactory, staff: User, station: Station):
         request = rf.get("/fake-url/")
-        request.user = user
+        request.user = staff
 
         response = station_confirm_delete_view(request, slug=station.slug)
 

@@ -1,0 +1,24 @@
+{% extends 'smeteograms/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}
+Surface Meteogram create
+{% endblock title %}
+
+{% block header %}
+{% translate "Create Surface Meteogram: " %}
+{% endblock header %}
+
+
+{% block container %}
+<!-- div class="col" -->
+<nav class="navbar navbar-expand-md navbar-light">
+  <div class="mb-1">
+    {% csrf_token %}
+    {% crispy form %}
+  </div>
+</nav>
+<!-- /div -->
+{% endblock container %}

@@ -11,34 +11,13 @@ from django_extensions.db.fields import AutoSlugField
 # Imports from my apps
 from src.stations.models import Station
 from src.utils.storage import OverwriteStorage
+from src.vertical_meteograms.models import VMDate
 
 
-class VMDate(models.Model):
-    date = models.DateTimeField()
-    # https://simpleisbetterthancomplex.com/tutorial/2019/01/03/how-to-use-date-picker-with-django.html
-    # https://simpleisbetterthancomplex.com/references/2016/06/21/date-filter.html
-    # https://stackoverflow.com/questions/10345147/django-query-datetime-for-objects-older-than-5-hours
-
-    class Meta:
-        verbose_name = "Vertical Meteogram Date and Time"
-        ordering = ["date"]
-        constraints = [
-            models.UniqueConstraint(
-                fields=[
-                    "date",
-                ],
-                name="unique_vmeteogram_date",
-            ),
-        ]
-
-    def __str__(self):
-        return f"{self.date}"
-
-
-class VMType(models.Model):
+class SMType(models.Model):
     class Options(models.TextChoices):
-        choice1 = "op1", _("Wind")
-        choice2 = "op2", _("Clouds")
+        choice1 = "op1", _("Synoptics")
+        choice2 = "op2", _("Precipitation")
 
     name = models.CharField(
         max_length=3,
@@ -47,14 +26,14 @@ class VMType(models.Model):
     )
 
     class Meta:
-        verbose_name = "Vertical Meteogram Type"
+        verbose_name = "Surface Meteogram Type"
         ordering = ["name"]
         constraints = [
             models.UniqueConstraint(
                 fields=[
                     "name",
                 ],
-                name="unique_vmeteogram_type",
+                name="unique_smeteogram_type",
             ),
         ]
 
@@ -62,18 +41,53 @@ class VMType(models.Model):
         """"""
         # get_FOO_display(),
         # see https://docs.djangoproject.com/en/3.2/ref/models/instances/#django.db.models.Model.get_FOO_display
-        return f"{self.get_name_display():<6}"
+        return f"{self.get_name_display():<13}"
 
 
-class VerticalMeteogram(models.Model):
+class SMPoints(models.Model):
+    class Options(models.TextChoices):
+        choice1 = "HERE", _("Point location")
+        choice2 = "ALL", _("All points")
+        choice3 = "LAND", _("Land points")
+        choice4 = "SEA", _("Sea points")
+        # choice5 = "NEAR", _("Nearest point")
+
+    name = models.CharField(
+        max_length=4,
+        choices=Options.choices,
+        default=Options.choice1,
+    )
+
+    class Meta:
+        verbose_name = "Surface Meteogram Point"
+        ordering = ["name"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=[
+                    "name",
+                ],
+                name="unique_smeteogram_points",
+            ),
+        ]
+
+    def __str__(self):
+        """"""
+        return f"{self.get_name_display():<14}"
+
+
+class SurfaceMeteogram(models.Model):
     slug = AutoSlugField(
-        "Vertical Meteogram Adress",
+        "Surface Meteogram Adress",
         unique=True,
         # always_update=False,
-        populate_from=["location", "type", "date"],
+        populate_from=["location", "type", "points", "date"],
     )
     type = models.ForeignKey(
-        VMType,
+        SMType,
+        on_delete=models.CASCADE,
+    )
+    points = models.ForeignKey(
+        SMPoints,
         on_delete=models.CASCADE,
     )
 
@@ -91,7 +105,7 @@ class VerticalMeteogram(models.Model):
     img_width = models.PositiveIntegerField(default=0)
 
     img = models.ImageField(
-        upload_to="pics/VPMET",
+        upload_to="pics/PMET",
         default="pics/default.svg",
         height_field=None,
         width_field=None,
@@ -99,8 +113,8 @@ class VerticalMeteogram(models.Model):
     )
 
     class Meta:
-        verbose_name = "Vertical Meteogram"
-        ordering = ["date", "location", "type"]
+        verbose_name = "Surface Meteogram"
+        ordering = ["date", "location", "type", "points"]
 
     def __str__(self):
         return f"{self.date.date.strftime('%Y%m%d:%H'):<14} {self.type} {self.location}"
@@ -112,9 +126,10 @@ class VerticalMeteogram(models.Model):
             # date format: YYYYMMDDHH
             _date = self.date.date.strftime("%Y%m%d%H")
 
-            img_path = (
-                f"weathervis/{_date}/VPMET_{self.location}_{_date}_{self.type.name}.png"
-            )
+            if self.points.name == "HERE":
+                img_path = f"weathervis/{_date}/PMET_{self.location}_{_date}_{self.type.name}.png"
+            else:
+                img_path = f"weathervis/{_date}/PMET_{self.location}_{_date}_{self.type.name}_{self.points.name}.png"
             if Path(Path(settings.MEDIA_ROOT) / img_path).exists():
                 # if exist, overwrite path to image
                 self.img = img_path

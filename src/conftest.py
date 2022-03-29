@@ -16,9 +16,13 @@ from src.organisations.models import Organisation
 from src.organisations.tests.factories import OrganisationFactory
 from src.stations.models import Station
 from src.stations.tests.factories import StationFactory
+from src.surface_meteograms.models import SurfaceMeteogram
+from src.surface_meteograms.tests.factories import SurfaceMeteogramFactory
 from src.users.models import User
 from src.users.tests.factories import UserFactory, get_group, get_permission
 from src.utils.tests.factories import DjangoGeoPointProvider
+from src.vertical_meteograms.models import VerticalMeteogram
+from src.vertical_meteograms.tests.factories import VerticalMeteogramFactory
 
 
 @pytest.fixture(scope="session")
@@ -32,39 +36,41 @@ def media_storage(settings, tmpdir):
     settings.MEDIA_ROOT = tmpdir.strpath
 
 
-@pytest.fixture(params={})
+@pytest.fixture()
 def user(request) -> User:
     user = UserFactory()
-    if "groups" in request.param:
-        list_groups = request.param["groups"]
-        if not isinstance(list_groups, list):
-            list_groups = [list_groups]
-        for group in list_groups:
-            user.groups.add(get_group(group))
-    if "permissions" in request.param:
-        list_perms = request.param["permissions"]
-        if not isinstance(list_perms, list):
-            list_perms = [list_perms]
-        for perm in list_perms:
-            user.permissions.add(get_permission(perm))
+    if hasattr(request, "param"):
+        if "groups" in request.param:
+            list_groups = request.param["groups"]
+            if not isinstance(list_groups, list):
+                list_groups = [list_groups]
+            for group in list_groups:
+                user.groups.add(get_group(group))
+        if "permissions" in request.param:
+            list_perms = request.param["permissions"]
+            if not isinstance(list_perms, list):
+                list_perms = [list_perms]
+            for perm in list_perms:
+                user.permissions.add(get_permission(perm))
     return user
 
 
-@pytest.fixture(params={})
+@pytest.fixture()
 def user2(request) -> User:
     user = UserFactory()
-    if "groups" in request.param:
-        list_groups = request.param["groups"]
-        if not isinstance(list_groups, list):
-            list_groups = [list_groups]
-        for group in list_groups:
-            user.groups.add(get_group(group))
-    if "permissions" in request.param:
-        list_perms = request.param["permissions"]
-        if not isinstance(list_perms, list):
-            list_perms = [list_perms]
-        for perm in list_perms:
-            user.permissions.add(get_permission(perm))
+    if hasattr(request, "param"):
+        if "groups" in request.param:
+            list_groups = request.param["groups"]
+            if not isinstance(list_groups, list):
+                list_groups = [list_groups]
+            for group in list_groups:
+                user.groups.add(get_group(group))
+        if "permissions" in request.param:
+            list_perms = request.param["permissions"]
+            if not isinstance(list_perms, list):
+                list_perms = [list_perms]
+            for perm in list_perms:
+                user.permissions.add(get_permission(perm))
     return user
 
 
@@ -101,3 +107,13 @@ def station() -> Station:
 @pytest.fixture
 def margin() -> Margin:
     return MarginFactory()
+
+
+@pytest.fixture
+def smeteogram() -> SurfaceMeteogram:
+    return SurfaceMeteogramFactory()
+
+
+@pytest.fixture
+def vmeteogram() -> VerticalMeteogram:
+    return VerticalMeteogramFactory()

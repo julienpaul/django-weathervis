@@ -16,7 +16,7 @@ from .views import (  # select_location,; select_date,; select_type,
 app_name = "vmeteograms"
 urlpatterns = [
     path("", view=vmeteogram_redirect_view, name="redirect"),
-    path("list", view=vmeteogram_list_view, name="list"),
+    path("list/", view=vmeteogram_list_view, name="list"),
     path("~add/", view=vmeteogram_create_view, name="create"),
     path("<slug>/", view=vmeteogram_update_view, name="detail"),
     path("ajax/change_plot/", change_plot, name="change_plot"),

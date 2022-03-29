@@ -49,6 +49,7 @@ function showPlot(form)
 // change plot
 // $("#change-plot_id").on('change', changePlot());
 $("#change_location_id").change(changePlot);
+$("#change_points_id").change(changePlot);
 $("#change_date_id").change(changePlot);
 // $(".js-change-plot").change(changePlot);
 
