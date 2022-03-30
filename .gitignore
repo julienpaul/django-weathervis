@@ -274,7 +274,7 @@ tags
 
 ### Project template
 
-src/media/
+src/media/weathervis
 
 .pytest_cache/
 
