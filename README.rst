@@ -64,6 +64,17 @@ Running tests with py.test
 
   $ pytest
 
+Bump Version
+^^^^^^^^^^^^
+
+  $ bump2version <part>
+
+<part>: ['major', 'minor', 'patch']
+
+see also `bump2version documentation`_
+
+.. _`bump2version documentation`: https://github.com/c4urself/bump2version
+
 Live reloading and Sass CSS compilation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 

@@ -107,7 +107,12 @@ if USE_ANYMAIL:
         "MAILGUN_SENDER_DOMAIN": env("MAILGUN_DOMAIN"),
         "MAILGUN_API_URL": env("MAILGUN_API_URL", default="https://api.mailgun.net/v3"),
     }
-
+else:
+    EMAIL_HOST = env("DJANGO_EMAIL_HOST", default=None)
+    EMAIL_PORT = env("DJANGO_EMAIL_PORT", default=None)
+    EMAIL_USER = env("DJANGO_EMAIL_USER", default=None)
+    EMAIL_PASSWORD = env("DJANGO_EMAIL_PASSWORD", default=None)
+    EMAIL_USE_TLS = env.bool("DJANGO_EMAIL_USE_TLS", default=False)
 
 # LOGGING
 # ------------------------------------------------------------------------------

@@ -127,9 +127,11 @@ class SurfaceMeteogram(models.Model):
             _date = self.date.date.strftime("%Y%m%d%H")
 
             if self.points.name == "HERE":
-                img_path = f"weathervis/{_date}/PMET_{self.location}_{_date}_{self.type.name}.png"
+                img_path = (
+                    f"gfx/{_date}/PMET_{self.location}_{_date}_{self.type.name}.png"
+                )
             else:
-                img_path = f"weathervis/{_date}/PMET_{self.location}_{_date}_{self.type.name}_{self.points.name}.png"
+                img_path = f"gfx/{_date}/PMET_{self.location}_{_date}_{self.type.name}_{self.points.name}.png"
             if Path(Path(settings.MEDIA_ROOT) / img_path).exists():
                 # if exist, overwrite path to image
                 self.img = img_path

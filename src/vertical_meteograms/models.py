@@ -112,9 +112,7 @@ class VerticalMeteogram(models.Model):
             # date format: YYYYMMDDHH
             _date = self.date.date.strftime("%Y%m%d%H")
 
-            img_path = (
-                f"weathervis/{_date}/VPMET_{self.location}_{_date}_{self.type.name}.png"
-            )
+            img_path = f"gfx/{_date}/VPMET_{self.location}_{_date}_{self.type.name}.png"
             if Path(Path(settings.MEDIA_ROOT) / img_path).exists():
                 # if exist, overwrite path to image
                 self.img = img_path
