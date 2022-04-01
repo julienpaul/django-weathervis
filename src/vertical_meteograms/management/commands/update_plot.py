@@ -27,7 +27,7 @@ class Command(BaseCommand):
 
         # Remove date not listed anymore
         for obj in VMDate.objects.all():
-            _date = obj.date.strftime("%Y%m%d:%H")
+            _date = obj.date.strftime("%Y%m%d%H")
             if _date not in list_date:
                 self.stdout.write(f"Removing date {obj}")
                 obj.delete()
