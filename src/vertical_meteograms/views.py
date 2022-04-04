@@ -44,13 +44,36 @@ class VerticalMeteogramRedirectView(RedirectView):
     """redirect to create either one random object detail page"""
 
     def get_redirect_url(self, *args, **kwargs):
-        objects = VerticalMeteogram.objects.all()
-        if len(objects) == 0:
-            self.pattern_name = "vmeteograms:create"
-        else:
-            obj = random.choice(objects)
-            self.pattern_name = "vmeteograms:detail"
-            kwargs["slug"] = obj.slug
+        obj = None
+        # look for session variable
+        _location_id = self.request.session.get("location_id", None)
+        _date_id = self.request.session.get("date_id", None)
+        if _location_id and _date_id:
+            # if session variable defined
+            _type = VMType.objects.get(Q(name="op1"))
+            _location = Station.objects.get(pk=_location_id)
+            _date = VMDate.objects.get(pk=_date_id)
+            #
+            data = {"type": _type, "location": _location, "date": _date}
+            form = VerticalMeteogramForm(data)
+            if form.is_valid():
+                obj, created = VerticalMeteogram.objects.get_or_create(
+                    type=_type,
+                    location=_location,
+                    date=_date,
+                )
+                self.pattern_name = "vmeteograms:detail"
+                kwargs["slug"] = obj.slug
+
+        if not obj:
+            objects = VerticalMeteogram.objects.all()
+            if len(objects) == 0:
+                self.pattern_name = "vmeteograms:create"
+            else:
+                obj = random.choice(objects)
+                self.pattern_name = "vmeteograms:detail"
+                kwargs["slug"] = obj.slug
+
         return super().get_redirect_url(*args, **kwargs)
 
 
@@ -243,6 +266,10 @@ def show_plot(request):
     form = VerticalMeteogramForm(data)
     if form.is_valid():
         data = {}
+        # save location, and date
+        request.session["location_id"] = _location.pk
+        request.session["date_id"] = _date.pk
+
         vmeteogram, created = VerticalMeteogram.objects.get_or_create(
             type=_type,
             location=_location,

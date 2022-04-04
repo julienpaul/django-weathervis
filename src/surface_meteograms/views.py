@@ -45,13 +45,43 @@ class SurfaceMeteogramRedirectView(RedirectView):
     """redirect to create either one random object detail page"""
 
     def get_redirect_url(self, *args, **kwargs):
-        objects = SurfaceMeteogram.objects.all()
-        if len(objects) == 0:
-            self.pattern_name = "smeteograms:create"
-        else:
-            obj = random.choice(objects)
-            self.pattern_name = "smeteograms:detail"
-            kwargs["slug"] = obj.slug
+        obj = None
+        # look for session variable
+        _location_id = self.request.session.get("location_id", None)
+        _date_id = self.request.session.get("date_id", None)
+        if _location_id and _date_id:
+            # if session variable defined
+            _location = Station.objects.get(pk=_location_id)
+            _date = VMDate.objects.get(pk=_date_id)
+            _type = SMType.objects.get(Q(name="op1"))
+            _points = SMPoints.objects.get(Q(name="ALL"))
+            #
+            data = {
+                "type": _type,
+                "location": _location,
+                "points": _points,
+                "date": _date,
+            }
+            form = SurfaceMeteogramForm(data)
+            if form.is_valid():
+                obj, created = SurfaceMeteogram.objects.get_or_create(
+                    type=_type,
+                    location=_location,
+                    points=_points,
+                    date=_date,
+                )
+                self.pattern_name = "smeteograms:detail"
+                kwargs["slug"] = obj.slug
+
+        if not obj:
+            objects = SurfaceMeteogram.objects.all()
+            if len(objects) == 0:
+                self.pattern_name = "smeteograms:create"
+            else:
+                obj = random.choice(objects)
+                self.pattern_name = "smeteograms:detail"
+                kwargs["slug"] = obj.slug
+
         return super().get_redirect_url(*args, **kwargs)
 
 
@@ -214,6 +244,10 @@ def show_plot(request):
     form = SurfaceMeteogramForm(data)
     if form.is_valid():
         data = {}
+        # save location, and date
+        request.session["location_id"] = _location.pk
+        request.session["date_id"] = _date.pk
+
         smeteogram, created = SurfaceMeteogram.objects.get_or_create(
             type=_type,
             location=_location,
