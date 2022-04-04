@@ -90,3 +90,7 @@ Several packages need to be install before running django-weathervis.
 `Here`_ is how to deploy this application locally.
 
 .. _`Here`: INSTALL_LOCAL.md
+
+`Here`_ is how to deploy this application on server.
+
+.. _`Here`: INSTALL_SERVER.md
