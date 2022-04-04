@@ -79,25 +79,29 @@
           <li class="nav-item">
             <a class="nav-link {% block nav_plots%}{% endblock %}" href="{% url 'vmeteograms:redirect' %}">Plots</a>
           </li>
+        </ul>
+        <ul class="navbar-nav ml-auto">
           {% if request.user.is_authenticated %}
-          <li class="nav-item">
+          <li class="nav-item mr-sm-2">
             {# URL provided by django-allauth/account/urls.py #}
             <a class="nav-link {% block nav_profile%}{% endblock %}"
-              href="{% url 'users:detail' request.user.username  %}">{% translate "My Profile" %}</a>
+              href="{% url 'users:detail' request.user.username  %}">{% firstof request.user.get_full_name request.user.username %}</a>
           </li>
           <li class="nav-item">
             {# URL provided by django-allauth/account/urls.py #}
-            <a class="nav-link {% block nav_logout%}{% endblock %}"
+            <a class="btn btn-outline-success {% block nav_logout%}{% endblock %}"
               href="{% url 'account_logout' %}">{% translate "Sign Out" %}</a>
           </li>
           {% else %}
-          <li class="nav-item">
+          <li class="nav-item mr-sm-2">
             {# URL provided by django-allauth/account/urls.py #}
-            <a id="sign-up-link" class="nav-link" href="{% url 'account_signup' %}">{% translate "Sign Up" %}</a>
+            <a id="sign-up-link" class="btn btn-outline-primary"
+              href="{% url 'account_signup' %}">{% translate "Sign Up" %}</a>
           </li>
-          <li class="nav-item">
+          <li class="nav-item mr-sm-2">
             {# URL provided by django-allauth/account/urls.py #}
-            <a id="log-in-link" class="nav-link" href="{% url 'account_login' %}">{% translate "Sign In" %}</a>
+            <a id="log-in-link" class="btn btn-outline-success"
+              href="{% url 'account_login' %}">{% translate "Sign In" %}</a>
           </li>
           {% endif %}
         </ul>
