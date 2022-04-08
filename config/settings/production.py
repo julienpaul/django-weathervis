@@ -108,10 +108,11 @@ if USE_ANYMAIL:
         "MAILGUN_API_URL": env("MAILGUN_API_URL", default="https://api.mailgun.net/v3"),
     }
 else:
+    # see https://dev.to/abderrahmanemustapha/how-to-send-email-with-django-and-gmail-in-production-the-right-way-24ab
     EMAIL_HOST = env("DJANGO_EMAIL_HOST", default=None)
-    EMAIL_PORT = env("DJANGO_EMAIL_PORT", default=None)
-    EMAIL_USER = env("DJANGO_EMAIL_USER", default=None)
-    EMAIL_PASSWORD = env("DJANGO_EMAIL_PASSWORD", default=None)
+    EMAIL_PORT = env.int("DJANGO_EMAIL_PORT", default=None)
+    EMAIL_HOST_USER = env("DJANGO_EMAIL_HOST_USER", default=None)
+    EMAIL_HOST_PASSWORD = env("DJANGO_EMAIL_HOST_PASSWORD", default=None)
     EMAIL_USE_TLS = env.bool("DJANGO_EMAIL_USE_TLS", default=False)
 
 # LOGGING
@@ -158,6 +159,15 @@ LOGGING = {
         },
     },
 }
+# https://docs.djangoproject.com/en/dev/ref/settings/#debug-propagate-exceptions
+DEBUG_PROPAGATE_EXCEPTIONS = True
+
+# Setup support for proxy headers
+# https://docs.djangoproject.com/en/4.0/ref/settings/#use-x-forwarded-host
+USE_X_FORWARDED_HOST = True
+
+# https://django-allauth.readthedocs.io/en/latest/configuration.html
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
 
 # Your stuff...
 # ------------------------------------------------------------------------------

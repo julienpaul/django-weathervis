@@ -282,6 +282,8 @@ ACCOUNT_ADAPTER = "src.users.adapters.AccountAdapter"
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 SOCIALACCOUNT_ADAPTER = "src.users.adapters.SocialAccountAdapter"
 
+# https://django-allauth.readthedocs.io/en/latest/configuration.html
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = "http"
 
 # Your stuff...
 # ------------------------------------------------------------------------------

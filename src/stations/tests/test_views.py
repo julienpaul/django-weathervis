@@ -138,7 +138,7 @@ class TestStationListView:
         assertContains(response, 'class="btn btn-success"', 1)
         # delete
         assertContains(response, f'href="/stations/~delete/{station.slug}/"', 1)
-        assertContains(response, 'class="btn btn-secondary"', 1)
+        assertContains(response, 'class="btn btn-secondary disabled"', 1)
 
     def test_staff_station_buttons(self, client, staff: User, station: Station):
         """

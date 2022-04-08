@@ -332,6 +332,52 @@ sudo dnf update
 sudo dnf install qgis qgis-grass qgis-python
 ~~~
 
+### install Postfix mail (as root)
+
+Check whether Sendmail is installed on your system.
+If Sendmail is already installed, remove it.
+~~~bash
+rpm -qa | grep sendmail
+
+sudo dnf remove sendmail
+~~~
+
+Update Your System
+~~~bash
+sudo dnf check-update
+sudo dnf -y upgrade
+~~~
+
+Install Postfix
+~~~bash
+sudo dnf install postfix
+~~~
+
+Enable Postfix Services
+~~~bash
+rpm -qa|grep postfix
+
+sudo systemctl enable postfix
+sudo systemctl start postfix
+sudo systemctl status postfix
+~~~
+
+Install mailx Email Client
+~~~bash
+sudo dnf install mailx -y
+~~~
+
+Check mail command version
+~~~bash
+mail -V
+~~~
+
+Send a Test email using mail command in Linux
+~~~bash
+echo "This is test email" | mail -s "Test Email" <your-mail@example.com>
+~~~
+
+
 ## DJANGO_WEATHERVIS
 ### <a name="git_repo"></a>Install django-weathervis (as application user -**centos**-)
 Create repo **<DJANGO_WEATHERVIS>**:
@@ -670,8 +716,8 @@ Create **/etc/httpd/sites-available/weathervis.conf**
     ProxyPass / http://127.0.0.1:8000/
     ProxyPassReverse / http://127.0.0.1:8000/
 
-    Alias /static /home/centos/Code/DJANGO_WEATHERVIS/src/django-weathervis/src/static
-    <Directory /home/centos/Code/DJANGO_WEATHERVIS/src/django-weathervis/src/static>
+    Alias /static /home/centos/DJANGO-WEATHERVIS/src/django-weathervis/staticfiles
+    <Directory /home/centos/DJANGO-WEATHERVIS/src/django-weathervis/staticfiles>
       Require all granted
     </Directory>
 
@@ -791,16 +837,29 @@ Verify Apache is running:
 ~~~bash
 sudo systemctl status httpd
 ~~~
+
+Verify Postfix is running:
+~~~bash
+sudo systemctl status postfix
+~~~
+
 Verify Supervisor is running:
 ~~~bash
 sudo systemctl status supervisord
 ~~~
+
 Verify Gunicorn is running (Superivsor should be running):
 ~~~bash
 sudo supervisorctl status django_weathervis
 ~~~
 
 ## Load database
+~~~bash
+cd <DJANGO_WEATHERVIS>/src/django-weathervis/
+
+export DJANGO_SETTINGS_MODULE=config.settings.production
+~~~
+
 Create user's groups with permission
 ~~~bash
 python manage.py create_groups
