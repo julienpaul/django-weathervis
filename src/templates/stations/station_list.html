@@ -13,18 +13,22 @@
       </a>
       {% if perms.stations.change_station %}
       <a class="btn btn-success" href="{% url 'stations:update' slug=station.slug %}" role="button">
-        {% else %}
-        <a class="btn btn-secondary disabled" href="{% url 'stations:update' slug=station.slug %}" role="button">
-          {% endif %}
-          <i class="bi bi-pencil"></i>
-        </a>
-        {% if perms.stations.delete_station %}
-        <a class="btn btn-danger" href="{% url 'stations:delete' slug=station.slug %}" role="button">
-          {% else %}
-          <a class="btn btn-secondary disabled" href="{% url 'stations:delete' slug=station.slug %}" role="button">
-            {% endif %}
-            <i class="bi bi-trash"></i>
-          </a>
+        <i class="bi bi-pencil"></i>
+      </a>
+      {% else %}
+      <a class="btn btn-secondary disabled" href="{% url 'stations:update' slug=station.slug %}" role="button">
+        <i class="bi bi-pencil"></i>
+      </a>
+      {% endif %}
+      {% if perms.stations.delete_station %}
+      <a class="btn btn-danger" href="{% url 'stations:delete' slug=station.slug %}" role="button">
+        <i class="bi bi-trash"></i>
+      </a>
+      {% else %}
+      <a class="btn btn-secondary disabled" href="{% url 'stations:delete' slug=station.slug %}" role="button">
+        <i class="bi bi-trash"></i>
+      </a>
+      {% endif %}
     </div>
   </div>
   {% endfor %}

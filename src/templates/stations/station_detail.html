@@ -38,12 +38,24 @@ Station detail
   <a class="btn btn-primary" href="{% url 'stations:list' %}" role="button">
     back to list
   </a>
+  {% if perms.stations.delete_station %}
   <a class="btn btn-success" href="{% url 'stations:update' slug=station.slug %}" role="button">
     <i class="bi bi-pencil">edit</i>
   </a>
-  <a class="btn btn-danger" href="{% url 'stations:delete' slug=station.slug %}" role="button">
+  {% else %}
+  <a class="btn btn-secondary disabled" href="{% url 'stations:update' slug=station.slug %}" role="button">
+    <i class="bi bi-pencil">edit</i>
+  </a>
+  {% endif %}
+  {% if perms.stations.delete_station %}
+  <a class="btn btn-danger disabled" href="{% url 'stations:delete' slug=station.slug %}" role="button">
     <i class="bi bi-trash">delete</i>
   </a>
+  {% else %}
+  <a class="btn btn-secondary disabled" href="{% url 'stations:delete' slug=station.slug %}" role="button">
+    <i class="bi bi-trash">delete</i>
+  </a>
+  {% endif %}
 </div>
 
 
