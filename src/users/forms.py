@@ -3,6 +3,7 @@
 from crispy_forms.bootstrap import Field, FieldWithButtons, StrictButton
 from crispy_forms.layout import Button, ButtonHolder, Hidden, Layout, Submit
 from django import forms
+from django.conf import settings
 from django.contrib.auth import forms as admin_forms
 from django.contrib.auth import get_user_model
 from django.contrib.sites.models import Site
@@ -138,6 +139,11 @@ class UserUpgradeForm(UserUpdateForm):
         """
         # send email using the self.cleaned_data dictionary
         subject = "Weahtervis: request to upgrade account"
+        uri = (
+            settings.ACCOUNT_DEFAULT_HTTP_PROTOCOL
+            + ":"
+            + f"{ current_site.domain }/admin/users/user/{user.id}/change/"
+        )
         message = f"""A user request to upgrade his permission.
 
         Name
@@ -149,8 +155,7 @@ class UserUpgradeForm(UserUpdateForm):
         Motivation
             {self.cleaned_data.get('motivation')}
 
-        you could allow it from the weathervis admin page.
-        { current_site.domain }/admin/users/user/{user.id}/change/"""
+        To allow this change got to the weathervis admin page: { uri }"""
         staff = User.objects.filter(is_staff=True)
         recipient_list = [s.email for s in staff]
 
