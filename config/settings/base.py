@@ -74,6 +74,7 @@ DJANGO_APPS = [
     "django.contrib.gis",
 ]
 THIRD_PARTY_APPS = [
+    "leaflet",
     "crispy_forms",
     "allauth",
     "allauth.account",
@@ -287,3 +288,64 @@ ACCOUNT_DEFAULT_HTTP_PROTOCOL = "http"
 
 # Your stuff...
 # ------------------------------------------------------------------------------
+
+
+# leaflet defaults configuration
+LEAFLET_CONFIG = {
+    "TILES": [
+        # more tiles here: https://leaflet-extras.github.io/leaflet-providers/preview/
+        ("Street Map", "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {}),
+        (
+            "Stamen Watercolor",
+            "https://stamen-tiles.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.jpg",
+            {},
+        ),
+        (
+            "Esri_NatGeoWorldMap",
+            "https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}",
+            {},
+        ),
+    ],
+    # "SRID": 2154,  # See http://spatialreference.org
+    # "TILES_EXTENT": [924861, 6375196, 985649, 6448688],
+    # "SPATIAL_EXTENT": ,
+    "DEFAULT_CENTER": (60.3913, 5.3221),
+    "DEFAULT_ZOOM": 1,
+    "MAX_ZOOM": 20,
+    "MIN_ZOOM": 1,
+    "RESET_VIEW": False,
+    # "SCALE": "both",
+    # "MINIMAP": True,
+    # "ATTRIBUTION_PREFIX": "My Custome Leaflet map",
+    "PLUGINS": {
+        "my_leaflet": {
+            "css": "/static/css/myleaflet.css",
+            "js": "/static/js/myleaflet/leaflet.js",
+            "auto-include": True,
+        },
+        "proj4js": {
+            "js": "https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.8.0/proj4.js",
+            "auto-include": True,
+        },
+        "markercluster": {
+            "css": [
+                "https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css",
+                "https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css",
+            ],
+            "js": "https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js",
+            "auto-include": True,
+        },
+        "awesome-marker": {
+            "css": [
+                "http://netdna.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.css",
+                "https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css",
+            ],
+            "js": "https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js",
+            "auto-include": True,
+        },
+        "leaflet-zoom-show-hide": {
+            "js": "/static/js/myleaflet/leaflet-zoom-show-hide.js",
+            "auto-include": True,
+        },
+    },
+}

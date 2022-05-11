@@ -40,6 +40,10 @@ urlpatterns = [
         include("src.margins.urls", namespace="margins"),
     ),
     path(
+        "model_grids/",
+        include("src.model_grids.urls", namespace="model_grids"),
+    ),
+    path(
         "plots/", TemplateView.as_view(template_name="pages/plots.html"), name="plots"
     ),
     path(

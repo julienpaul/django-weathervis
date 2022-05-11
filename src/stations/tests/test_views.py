@@ -75,7 +75,7 @@ class TestStationListView:
         """
         GIVEN a GET request of an instance of StationListView, and a user
         WHEN  displaying the list view
-        THEN  context dictionnary should contain key 'map' and 'form'
+        THEN  context dictionnary should contain key 'station_url', 'station_data', 'grid_data' and 'form'
         """
         request = rf.get("/fake-url/")
         request.user = user
@@ -84,8 +84,9 @@ class TestStationListView:
         assert response.status_code == 200
 
         assert isinstance(response.context_data, dict)
-        assert "map" in response.context_data
-        # assert isinstance(response.context_data["map"], FoliumMap)
+        assert "station_url" in response.context_data
+        assert "station_data" in response.context_data
+        assert "grid_data" in response.context_data
         assert "form" in response.context_data
         assert isinstance(response.context_data["form"], StationForm)
 
@@ -224,7 +225,7 @@ class TestStationDetailView:
         GIVEN a POST request of an instance of StationDeatilView,
           and a user
         WHEN  displaying the create view
-        THEN  context dictionnary should contain key 'map'
+        THEN  context dictionnary should contain key 'station_url', 'station_data', and 'grid_data'
         """
         request = rf.post("/fake-url/")
         # Add the session/message middleware to the request
@@ -236,7 +237,9 @@ class TestStationDetailView:
         assert response.status_code == 200
 
         assert isinstance(response.context_data, dict)
-        assert "map" in response.context_data
+        assert "station_url" in response.context_data
+        assert "station_data" in response.context_data
+        assert "grid_data" in response.context_data
 
 
 @pytest.mark.django_db
@@ -279,7 +282,7 @@ class TestStationUpdateView:
         GIVEN a POST request of an instance of StationUpdateView,
           and a user
         WHEN  displaying the create view
-        THEN  context dictionnary should contain key 'map' and 'form'
+        THEN  context dictionnary should contain key 'station_url', 'station_data', 'grid_data' and 'form'
         """
         request = rf.post("/fake-url/")
         # Add the session/message middleware to the request
@@ -291,7 +294,9 @@ class TestStationUpdateView:
         assert response.status_code == 200
 
         assert isinstance(response.context_data, dict)
-        assert "map" in response.context_data
+        assert "station_url" in response.context_data
+        assert "station_data" in response.context_data
+        assert "grid_data" in response.context_data
         assert "form" in response.context_data
         assert isinstance(response.context_data["form"], StationForm)
 
@@ -440,7 +445,7 @@ class TestStationCreateView:
         GIVEN a POST request of an instance of StationCreateView,
           and a user
         WHEN  displaying the create view
-        THEN  context dictionnary should contain key 'map' and 'form'
+        THEN  context dictionnary should contain key 'station_url', 'station_data', 'grid_data' and 'form'
         """
         request = rf.post("/fake-url/")
         # Add the session/message middleware to the request
@@ -452,7 +457,9 @@ class TestStationCreateView:
         assert response.status_code == 200
 
         assert isinstance(response.context_data, dict)
-        assert "map" in response.context_data
+        assert "station_url" in response.context_data
+        assert "station_data" in response.context_data
+        assert "grid_data" in response.context_data
         assert "form" in response.context_data
         assert isinstance(response.context_data["form"], StationForm)
 
