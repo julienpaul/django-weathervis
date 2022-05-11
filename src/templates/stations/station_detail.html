@@ -1,4 +1,5 @@
 {% extends 'stations/station_base.html' %}
+{% load leaflet_tags %}
 {% load i18n %}
 
 {% block title %}
@@ -8,6 +9,16 @@ Station detail
 {% block header %}
 {% translate "Stations: " %}{{station.name}}
 {% endblock header %}
+
+{% block map_leaflet %}
+{{ station_url|json_script:"station_url" }}
+{{ station_data|json_script:"station_data" }}
+{{ grid_data|json_script:"grid_data" }}
+<div id='station_map_id'>
+  {% leaflet_map "bigmap" callback="local_map_init" %}
+</div>
+{% endblock map_leaflet %}
+
 
 {% block row %}
 <div>
@@ -48,7 +59,7 @@ Station detail
   </a>
   {% endif %}
   {% if perms.stations.delete_station %}
-  <a class="btn btn-danger disabled" href="{% url 'stations:delete' slug=station.slug %}" role="button">
+  <a class="btn btn-danger" href="{% url 'stations:delete' slug=station.slug %}" role="button">
     <i class="bi bi-trash">delete</i>
   </a>
   {% else %}

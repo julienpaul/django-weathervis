@@ -1,7 +1,16 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
+{% load leaflet_tags %}
 {% load static %}
 {% load i18n %}
+
+{% block extra_css %}
+{% leaflet_css%}
+{% endblock %}
+
+{% block extra_javascript %}
+{% leaflet_js%}
+{% endblock %}
 
 {% block nav_stations%}active{% endblock %}
 
@@ -16,9 +25,10 @@ Stations
   {% endblock header %}
 </h1>
 <hr>
-<div class="container">
+<div class="station-container">
   <div class="map">
-    {{ map|safe }}
+    {% block map_leaflet %}
+    {% endblock map_leaflet %}
   </div>
   <hr>
   <div class="row">

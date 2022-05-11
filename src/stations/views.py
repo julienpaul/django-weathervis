@@ -4,6 +4,8 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.gis.geos import Point as GeoPoint
 from django.contrib.messages.views import SuccessMessageMixin
+from django.core.serializers import serialize
+from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import (
@@ -14,20 +16,37 @@ from django.views.generic import (
     UpdateView,
 )
 
-from src.utils import util
-
 # Third-party app imports
 # Imports from my apps
-from src.utils.mixins import DrawMapMixin
+from src.utils import util
 
 from .forms import StationForm, StationUpdateForm
 from .models import Station
 
 
+def this_station_margin(request, slug):
+    """this uses the serializer to convert the data 'Station.objects.all()' to 'geojson' data"""
+    station = serialize(
+        "geojson",
+        Station.objects.filter(slug=slug),
+        geometry_field=("margin_geom"),
+    )
+    return HttpResponse(station, content_type="json")
+
+
+def all_stations(request, slug=None):
+    """this uses the serializer to convert the data 'Station.objects.all()' to 'geojson' data"""
+    station = serialize(
+        "geojson",
+        Station.objects.all(),
+    )
+    # station = serialize("geojson", Station.objects.exclude(slug=slug))
+    return HttpResponse(station, content_type="json")
+
+
 class StationListView(
     LoginRequiredMixin,
     SuccessMessageMixin,
-    DrawMapMixin,
     ListView,
 ):
     model = Station
@@ -37,8 +56,20 @@ class StationListView(
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        m = self.draw_map()
-        context["map"] = m._repr_html_()
+        station_url = {
+            "station-add": reverse_lazy("stations:create"),
+            "station-detail": reverse_lazy("stations:detail", kwargs={"slug": "dummy"}),
+        }
+        station_data = {
+            "station-all": reverse_lazy("stations:all_stations"),
+        }
+        grid_data = {
+            "grid-all": reverse_lazy("model_grids:all_grids"),
+        }
+
+        context["station_url"] = station_url
+        context["station_data"] = station_data
+        context["grid_data"] = grid_data
         context["form"] = StationForm()
         return context
 
@@ -49,7 +80,6 @@ station_list_view = StationListView.as_view()
 class StationDetailView(
     LoginRequiredMixin,
     SuccessMessageMixin,
-    DrawMapMixin,
     DetailView,
 ):
     model = Station
@@ -59,8 +89,24 @@ class StationDetailView(
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        m = self.draw_map(local=self.object)
-        context["map"] = m._repr_html_()
+        station_url = {
+            "station-add": reverse_lazy("stations:create"),
+            "station-detail": reverse_lazy("stations:detail", kwargs={"slug": "dummy"}),
+        }
+        station_data = {
+            "station-local": self.object.slug,
+            "station-all": reverse_lazy("stations:all_stations"),
+            "margin_local": reverse_lazy(
+                "stations:this_margin", kwargs={"slug": self.object.slug}
+            ),
+        }
+        grid_data = {
+            "grid-all": reverse_lazy("model_grids:all_grids"),
+        }
+
+        context["station_url"] = station_url
+        context["station_data"] = station_data
+        context["grid_data"] = grid_data
         context["form"] = StationForm()
         return context
 
@@ -72,15 +118,13 @@ class StationUpdateView(
     LoginRequiredMixin,
     PermissionRequiredMixin,
     SuccessMessageMixin,
-    DrawMapMixin,
     UpdateView,
 ):
     permission_required = "stations.change_station"
     model = Station
-    context_object_name = "stations"
+    context_object_name = "station"
     slug_field = "slug"
     form_class = StationUpdateForm
-    # template_name = "domain/station_detail.html"
     success_message = _("Station '%(name)s' successfully updated")
 
     def get_initial(self):
@@ -103,8 +147,24 @@ class StationUpdateView(
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        m = self.draw_map(local=self.object)
-        context["map"] = m._repr_html_()
+        station_url = {
+            "station-add": reverse_lazy("stations:create"),
+            "station-detail": reverse_lazy("stations:detail", kwargs={"slug": "dummy"}),
+        }
+        station_data = {
+            "station-local": self.object.slug,
+            "station-all": reverse_lazy("stations:all_stations"),
+            "margin_local": reverse_lazy(
+                "stations:this_margin", kwargs={"slug": self.object.slug}
+            ),
+        }
+        grid_data = {
+            "grid-all": reverse_lazy("model_grids:all_grids"),
+        }
+
+        context["station_url"] = station_url
+        context["station_data"] = station_data
+        context["grid_data"] = grid_data
         return context
 
     def form_valid(self, form):
@@ -138,7 +198,6 @@ class StationCreateView(
     PermissionRequiredMixin,
     LoginRequiredMixin,
     SuccessMessageMixin,
-    DrawMapMixin,
     CreateView,
 ):
     permission_required = "stations.change_station"
@@ -150,10 +209,52 @@ class StationCreateView(
     success_message = _("Station '%(name)s' successfully added")
     success_url = reverse_lazy("stations:list")
 
+    def get_initial(self):
+        initial = super().get_initial()
+        # update initial field defaults with custom set default values:
+        _lat = self.request.GET.get("latitude", None)
+        if _lat is not None:
+            try:
+                _lat = float(_lat)
+            except Exception:
+                raise ValueError(f"latitude {_lat} must be a float {type(_lat)}")
+
+        _lon = self.request.GET.get("longitude", None)
+        if _lon is not None:
+            try:
+                _lon = float(_lon)
+            except Exception:
+                raise ValueError(f"longitude {_lon} must be a float {type(_lon)}")
+
+        if None in [_lat, _lon]:
+            _lat, _lon, _alt = None, None, None
+        else:
+            _alt = 0.0
+
+        data = {
+            "latitude": _lat,
+            "longitude": _lon,
+            "altitude": _alt,
+        }
+        initial.update(data)
+        return initial
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        m = self.draw_map(local=self.object)
-        context["map"] = m._repr_html_()
+        station_url = {
+            "station-add": reverse_lazy("stations:create"),
+            "station-detail": reverse_lazy("stations:detail", kwargs={"slug": "dummy"}),
+        }
+        station_data = {
+            "station-all": reverse_lazy("stations:all_stations"),
+        }
+        grid_data = {
+            "grid-all": reverse_lazy("model_grids:all_grids"),
+        }
+
+        context["station_url"] = station_url
+        context["station_data"] = station_data
+        context["grid_data"] = grid_data
         return context
 
     def form_valid(self, form):
@@ -181,11 +282,11 @@ class StationDeleteView(
     LoginRequiredMixin,
     PermissionRequiredMixin,
     SuccessMessageMixin,
-    DrawMapMixin,
     DeleteView,
 ):
     permission_required = "stations.delete_station"
     model = Station
+    context_object_name = "station"
     slug_field = "slug"
 
     success_message = _("Station '%(name)s' successfully removed")
@@ -202,8 +303,24 @@ class StationDeleteView(
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        m = self.draw_map(local=self.object)
-        context["map"] = m._repr_html_()
+        station_url = {
+            "station-add": reverse_lazy("stations:create"),
+            "station-detail": reverse_lazy("stations:detail", kwargs={"slug": "dummy"}),
+        }
+        station_data = {
+            "station-local": self.object.slug,
+            "station-all": reverse_lazy("stations:all_stations"),
+            "margin_local": reverse_lazy(
+                "stations:this_margin", kwargs={"slug": self.object.slug}
+            ),
+        }
+        grid_data = {
+            "grid-all": reverse_lazy("model_grids:all_grids"),
+        }
+
+        context["station_url"] = station_url
+        context["station_data"] = station_data
+        context["grid_data"] = grid_data
         return context
 
 

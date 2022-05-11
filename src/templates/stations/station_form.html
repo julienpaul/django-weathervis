@@ -1,5 +1,6 @@
 {% extends 'stations/station_base.html' %}
 {% load crispy_forms_tags %}
+{% load leaflet_tags %}
 {% load i18n %}
 
 {% block title %}
@@ -9,6 +10,15 @@ Station update
 {% block header %}
 {% translate "Update Station: " %}{{station.name}}
 {% endblock header %}
+
+{% block map_leaflet %}
+{{ station_url|json_script:"station_url" }}
+{{ station_data|json_script:"station_data" }}
+{{ grid_data|json_script:"grid_data" }}
+<div id='station_map_id'>
+  {% leaflet_map "bigmap" callback="local_map_init" %}
+</div>
+{% endblock map_leaflet %}
 
 {% block row %}
 <div class="col">

@@ -1,5 +1,15 @@
 {% extends 'stations/station_base.html' %}
+{% load leaflet_tags %}
 {% load static %}
+
+{% block map_leaflet %}
+{{ station_url|json_script:"station_url" }}
+{{ station_data|json_script:"station_data" }}
+{{ grid_data|json_script:"grid_data" }}
+<div id='station_map_id'>
+  {% leaflet_map "bigmap" callback="main_map_init" %}
+</div>
+{% endblock map_leaflet %}
 
 {% block row %}
 <div class="col">
