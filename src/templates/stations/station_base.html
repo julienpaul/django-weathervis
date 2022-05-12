@@ -26,14 +26,17 @@ Stations
 </h1>
 <hr>
 <div class="station-container">
-  <div class="map">
-    {% block map_leaflet %}
-    {% endblock map_leaflet %}
-  </div>
-  <hr>
   <div class="row">
-    {% block row %}
-    {% endblock row %}
+    <div class="column left">
+      <div class="map">
+        {% block map_leaflet %}
+        {% endblock map_leaflet %}
+      </div>
+    </div>
+    <div class="column right">
+      {% block column %}
+      {% endblock column %}
+    </div>
   </div>
 </div>
 {% endblock content %}

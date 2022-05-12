@@ -20,7 +20,7 @@ Station create
 </div>
 {% endblock map_leaflet %}
 
-{% block row %}
+{% block column %}
 <div class="col">
   {% csrf_token %}
   {% crispy form %}
@@ -32,4 +32,4 @@ Station create
     </a>
 </div>
 -->
-{% endblock row %}
+{% endblock column %}
