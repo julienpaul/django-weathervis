@@ -52,7 +52,7 @@ class StationListView(
     model = Station
     template_name = "stations/station_list.html"
     context_object_name = "stations"
-    paginate_by = 10
+    paginate_by = 14
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

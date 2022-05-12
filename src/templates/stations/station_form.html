@@ -20,16 +20,7 @@ Station update
 </div>
 {% endblock map_leaflet %}
 
-{% block row %}
-<div class="col">
-  {% csrf_token %}
-  {% crispy form %}
-</div>
-<!--
-<div class="col">
-    <a class="btn btn-primary" href="{% url 'stations:list' %}" role="button">
-        back to list
-    </a>
-</div>
--->
-{% endblock row %}
+{% block column %}
+{% csrf_token %}
+{% crispy form %}
+{% endblock column %}

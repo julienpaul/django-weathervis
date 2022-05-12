@@ -20,7 +20,7 @@ Station detail
 {% endblock map_leaflet %}
 
 
-{% block row %}
+{% block column %}
 <div>
   <!-- TODO create card -->
   <dl>
@@ -45,7 +45,7 @@ Station detail
       is active
     </label>
   </div>
-  <br>
+  <hr>
   <a class="btn btn-primary" href="{% url 'stations:list' %}" role="button">
     back to list
   </a>
@@ -70,4 +70,4 @@ Station detail
 </div>
 
 
-{% endblock row %}
+{% endblock column %}
