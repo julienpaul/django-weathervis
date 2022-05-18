@@ -53,6 +53,13 @@ class VerticalMeteogramForm(CrispyMixin, forms.ModelForm):
             ),
         )
 
+    def _custom_helper(self):
+        """customize crispy form
+
+        rename field Date to Base Date
+        """
+        self.fields["date"].label = "Base Date"
+
 
 class VerticalMeteogramCreate(VerticalMeteogramForm):
     class Meta:
