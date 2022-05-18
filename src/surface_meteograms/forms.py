@@ -44,6 +44,13 @@ class SurfaceMeteogramForm(CrispyMixin, forms.ModelForm):
             ),
         )
 
+    def _custom_helper(self):
+        """customize crispy form
+
+        rename field Date to Base Date
+        """
+        self.fields["date"].label = "Base Date"
+
 
 class SurfaceMeteogramCreate(SurfaceMeteogramForm):
     class Meta:
