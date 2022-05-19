@@ -61,20 +61,31 @@ function click_pointer(map) {
 function pointer_popup(feature) {
   // var _url = $("#station_url_id").attr("station-detail");
   var station_url = JSON.parse(document.getElementById('station_url').textContent);
-  var _url = station_url["station-detail"];
+  var _detail_url = station_url["station-detail"];
+  var _redirect_url = station_url["station-redirect"];
   let popup = L.popup().setContent(
     "<link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css'>\
+    <div class='input-group mb-3'>\
     <dl>\
     <dt>Name</dt>\
-    <dd><a class='btn btn-outline-primary btn-sm' href=" + _url.replace('dummy',feature.properties.name) + " role='button'>"+
-    feature.properties.name+"</a></dd>\
+    <dd><a class='btn btn-outline-primary btn-sm'\
+     href=" + _detail_url.replace('dummy',feature.properties.name) + " role='button'>\
+     <i class='bi bi-eye'> "+feature.properties.name+"</i>\
+     </a>\
+    </dd>\
     <dt>Coordinates</dt>\
-    <dd>("+feature.geometry.coordinates[0]+"N,"+feature.geometry.coordinates[1]+"E)</dd>\
+    <dd>("+
+    feature.geometry.coordinates[0]+ String.fromCharCode(176) + "N, " +
+    feature.geometry.coordinates[1] + String.fromCharCode(176) +"E)</dd>\
     <dt>Altitude</dt> <dd>"+feature.geometry.coordinates[2]+"m</dd>\
     <dt>\
     <div class='form-check'>"+checkbox(feature)+"<label class='form-check-label' for='defaultCheck2'>is active</label></div>\
     </dt><dd></dd>\
-    </dl>"
+    </dl>\
+    <a class='btn btn-outline-info btn-sm'\
+     href=" + _redirect_url.replace('dummy',feature.properties.name) + " role='button'>\
+     <i class='bi bi-images'> plots</i>\
+    </a>"
     );
   return popup
 }

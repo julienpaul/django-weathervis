@@ -5,7 +5,6 @@ window.onload=initWebsite;
 function initWebsite()
 {
   var form = $("form");
-  console.log('initWebsite')
   $.ajax({
   // url: '/meteograms/ajax/select_location/',
 	// url: form.attr("data-select-location-url"),
@@ -25,7 +24,6 @@ function initWebsite()
 // show plot
 function showPlot(form)
 {
-  console.log('showPlot')
   $.ajax({
     // url: '/meteograms/ajax/switch_plot/',
     url: form.attr("data-show-plot-url"),
@@ -55,7 +53,6 @@ $("#change_date_id").change(changePlot);
 
 function changePlot() {
 	var form = $(this).closest("form");
-  console.log('changePlot')
   $.ajax({
     // url: '/meteograms/ajax/select_location/',
 	  url: form.attr("data-change-plot-url"),

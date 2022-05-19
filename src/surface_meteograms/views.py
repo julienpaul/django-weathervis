@@ -156,7 +156,7 @@ class SurfaceMeteogramListView(LoginRequiredMixin, SuccessMessageMixin, ListView
 smeteogram_list_view = SurfaceMeteogramListView.as_view()
 
 
-def change_plot(request):
+def data_change_plot(request):
     """ """
     _type = SMType.objects.get(Q(name="op1"))
 
@@ -208,7 +208,7 @@ def change_plot(request):
         return render(request, "smeteograms/smeteogram_detail.html", {"form": form})
 
 
-def show_plot(request):
+def data_show_plot(request):
     """ """
     try:
         _type = SMType.objects.get(Q(name="op1"))

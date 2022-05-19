@@ -35,14 +35,17 @@ class TestSurfaceMeteogramView:
         )
 
     def test_change_plot(self):
-        assert reverse("smeteograms:change_plot") == "/smeteograms/ajax/change_plot/"
         assert (
-            resolve("/smeteograms/ajax/change_plot/").view_name
+            reverse("smeteograms:change_plot") == "/smeteograms/ajax/data_change_plot/"
+        )
+        assert (
+            resolve("/smeteograms/ajax/data_change_plot/").view_name
             == "smeteograms:change_plot"
         )
 
     def test_show_plot(self):
-        assert reverse("smeteograms:show_plot") == "/smeteograms/ajax/show_plot/"
+        assert reverse("smeteograms:show_plot") == "/smeteograms/ajax/data_show_plot/"
         assert (
-            resolve("/smeteograms/ajax/show_plot/").view_name == "smeteograms:show_plot"
+            resolve("/smeteograms/ajax/data_show_plot/").view_name
+            == "smeteograms:show_plot"
         )
