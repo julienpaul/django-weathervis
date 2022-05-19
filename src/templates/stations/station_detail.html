@@ -67,6 +67,10 @@ Station detail
     <i class="bi bi-trash">delete</i>
   </a>
   {% endif %}
+  <hr>
+  <a class="btn btn-outline-info" href="{% url 'stations:redirect' slug=station.slug %}" role="button">
+    <i class="bi bi-images"> plots</i>
+  </a>
 </div>
 
 

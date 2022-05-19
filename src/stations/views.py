@@ -5,7 +5,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMix
 from django.contrib.gis.geos import Point as GeoPoint
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.serializers import serialize
+from django.db.models import Q
 from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import (
@@ -13,18 +15,21 @@ from django.views.generic import (
     DeleteView,
     DetailView,
     ListView,
+    RedirectView,
     UpdateView,
 )
 
 # Third-party app imports
 # Imports from my apps
 from src.utils import util
+from src.vertical_meteograms.forms import VerticalMeteogramForm
+from src.vertical_meteograms.models import VerticalMeteogram, VMDate, VMType
 
 from .forms import StationForm, StationUpdateForm
 from .models import Station
 
 
-def this_station_margin(request, slug):
+def data_this_station_margin(request, slug):
     """this uses the serializer to convert the data 'Station.objects.all()' to 'geojson' data"""
     station = serialize(
         "geojson",
@@ -34,7 +39,7 @@ def this_station_margin(request, slug):
     return HttpResponse(station, content_type="json")
 
 
-def all_stations(request, slug=None):
+def data_all_stations(request, slug=None):
     """this uses the serializer to convert the data 'Station.objects.all()' to 'geojson' data"""
     station = serialize(
         "geojson",
@@ -59,6 +64,9 @@ class StationListView(
         station_url = {
             "station-add": reverse_lazy("stations:create"),
             "station-detail": reverse_lazy("stations:detail", kwargs={"slug": "dummy"}),
+            "station-redirect": reverse_lazy(
+                "stations:redirect", kwargs={"slug": "dummy"}
+            ),
         }
         station_data = {
             "station-all": reverse_lazy("stations:all_stations"),
@@ -92,6 +100,9 @@ class StationDetailView(
         station_url = {
             "station-add": reverse_lazy("stations:create"),
             "station-detail": reverse_lazy("stations:detail", kwargs={"slug": "dummy"}),
+            "station-redirect": reverse_lazy(
+                "stations:redirect", kwargs={"slug": "dummy"}
+            ),
         }
         station_data = {
             "station-local": self.object.slug,
@@ -150,6 +161,9 @@ class StationUpdateView(
         station_url = {
             "station-add": reverse_lazy("stations:create"),
             "station-detail": reverse_lazy("stations:detail", kwargs={"slug": "dummy"}),
+            "station-redirect": reverse_lazy(
+                "stations:redirect", kwargs={"slug": "dummy"}
+            ),
         }
         station_data = {
             "station-local": self.object.slug,
@@ -244,6 +258,9 @@ class StationCreateView(
         station_url = {
             "station-add": reverse_lazy("stations:create"),
             "station-detail": reverse_lazy("stations:detail", kwargs={"slug": "dummy"}),
+            "station-redirect": reverse_lazy(
+                "stations:redirect", kwargs={"slug": "dummy"}
+            ),
         }
         station_data = {
             "station-all": reverse_lazy("stations:all_stations"),
@@ -306,6 +323,9 @@ class StationDeleteView(
         station_url = {
             "station-add": reverse_lazy("stations:create"),
             "station-detail": reverse_lazy("stations:detail", kwargs={"slug": "dummy"}),
+            "station-redirect": reverse_lazy(
+                "stations:redirect", kwargs={"slug": "dummy"}
+            ),
         }
         station_data = {
             "station-local": self.object.slug,
@@ -325,3 +345,38 @@ class StationDeleteView(
 
 
 station_confirm_delete_view = StationDeleteView.as_view()
+
+
+class StationRedirectView(
+    LoginRequiredMixin,
+    RedirectView,
+):
+    """redirect to plot object detail page"""
+
+    def get_redirect_url(self, slug, *args, **kwargs):
+        # _station = self.get_object(slug=slug)
+        _station = get_object_or_404(Station, slug=slug)
+        # look for session variable
+        if _station:
+            # if station object defined
+            _type = VMType.objects.get(Q(name="op1"))
+            _location = _station
+            _date = VMDate.objects.earliest("date")
+            #
+            data = {"type": _type, "location": _location, "date": _date}
+            form = VerticalMeteogramForm(data)
+            if form.is_valid():
+                obj, created = VerticalMeteogram.objects.get_or_create(
+                    type=_type,
+                    location=_location,
+                    date=_date,
+                )
+                self.pattern_name = "vmeteograms:detail"
+                kwargs["slug"] = obj.slug
+
+        # if not obj:
+
+        return super().get_redirect_url(*args, **kwargs)
+
+
+station_redirect_view = StationRedirectView.as_view()
