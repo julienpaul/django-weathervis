@@ -349,3 +349,5 @@ LEAFLET_CONFIG = {
         },
     },
 }
+
+VERSION = "0.2.1"
