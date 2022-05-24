@@ -11,57 +11,145 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('stations', '0003_station_is_active'),
-        ('vertical_meteograms', '0001_initial'),
+        ("stations", "0003_station_is_active"),
+        ("vertical_meteograms", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='SMPoints',
+            name="SMPoints",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(choices=[('', 'Point location'), ('ALL', 'All points'), ('LAND', 'Land points'), ('SEA', 'Sea points'), ('NEAR', 'Nearest point')], default='', max_length=4)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(
+                        choices=[
+                            ("", "Point location"),
+                            ("ALL", "All points"),
+                            ("LAND", "Land points"),
+                            ("SEA", "Sea points"),
+                            ("NEAR", "Nearest point"),
+                        ],
+                        default="",
+                        max_length=4,
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Surface Meteogram Point',
-                'ordering': ['name'],
+                "verbose_name": "Surface Meteogram Point",
+                "ordering": ["name"],
             },
         ),
         migrations.CreateModel(
-            name='SMType',
+            name="SMType",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(choices=[('op1', 'Synoptics'), ('op2', 'Precipitation')], default='op1', max_length=3)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(
+                        choices=[("op1", "Synoptics"), ("op2", "Precipitation")],
+                        default="op1",
+                        max_length=3,
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Surface Meteogram Type',
-                'ordering': ['name'],
+                "verbose_name": "Surface Meteogram Type",
+                "ordering": ["name"],
             },
         ),
         migrations.CreateModel(
-            name='SurfaceMeteogram',
+            name="SurfaceMeteogram",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('slug', django_extensions.db.fields.AutoSlugField(blank=True, editable=False, populate_from=['location', 'type', 'points', 'date'], unique=True, verbose_name='Surface Meteogram Adress')),
-                ('img_height', models.PositiveIntegerField(default=0)),
-                ('img_width', models.PositiveIntegerField(default=0)),
-                ('img', models.ImageField(default='pics/default.svg', storage=src.utils.storage.OverwriteStorage(), upload_to='pics/PMET')),
-                ('date', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='vertical_meteograms.vmdate')),
-                ('location', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='stations.station')),
-                ('points', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='surface_meteograms.smpoints')),
-                ('type', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='surface_meteograms.smtype')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "slug",
+                    django_extensions.db.fields.AutoSlugField(
+                        blank=True,
+                        editable=False,
+                        populate_from=["location", "type", "points", "date"],
+                        unique=True,
+                        verbose_name="Surface Meteogram Adress",
+                    ),
+                ),
+                ("img_height", models.PositiveIntegerField(default=0)),
+                ("img_width", models.PositiveIntegerField(default=0)),
+                (
+                    "img",
+                    models.ImageField(
+                        default="pics/default.svg",
+                        storage=src.utils.storage.OverwriteStorage(),
+                        upload_to="pics/PMET",
+                    ),
+                ),
+                (
+                    "date",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="vertical_meteograms.vmdate",
+                    ),
+                ),
+                (
+                    "location",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="stations.station",
+                    ),
+                ),
+                (
+                    "points",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="surface_meteograms.smpoints",
+                    ),
+                ),
+                (
+                    "type",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="surface_meteograms.smtype",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Surface Meteogram',
-                'ordering': ['date', 'location', 'type', 'points'],
+                "verbose_name": "Surface Meteogram",
+                "ordering": ["date", "location", "type", "points"],
             },
         ),
         migrations.AddConstraint(
-            model_name='smtype',
-            constraint=models.UniqueConstraint(fields=('name',), name='unique_smeteogram_type'),
+            model_name="smtype",
+            constraint=models.UniqueConstraint(
+                fields=("name",), name="unique_smeteogram_type"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='smpoints',
-            constraint=models.UniqueConstraint(fields=('name',), name='unique_smeteogram_points'),
+            model_name="smpoints",
+            constraint=models.UniqueConstraint(
+                fields=("name",), name="unique_smeteogram_points"
+            ),
         ),
     ]

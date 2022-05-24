@@ -10,44 +10,90 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='ModelGrid',
+            name="ModelGrid",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=50)),
-                ('slug', django_extensions.db.fields.AutoSlugField(blank=True, editable=False, populate_from='name', unique=True, verbose_name='ModelGrid name')),
-                ('geom', django.contrib.gis.db.models.fields.PolygonField(dim=3, srid=4326)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('date_valid_start', models.DateTimeField(null=True)),
-                ('date_valid_end', models.DateTimeField(null=True)),
-                ('leadtime', models.DurationField(null=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=50)),
+                (
+                    "slug",
+                    django_extensions.db.fields.AutoSlugField(
+                        blank=True,
+                        editable=False,
+                        populate_from="name",
+                        unique=True,
+                        verbose_name="ModelGrid name",
+                    ),
+                ),
+                (
+                    "geom",
+                    django.contrib.gis.db.models.fields.PolygonField(dim=3, srid=4326),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("date_valid_start", models.DateTimeField(null=True)),
+                ("date_valid_end", models.DateTimeField(null=True)),
+                ("leadtime", models.DurationField(null=True)),
             ],
             options={
-                'ordering': ['name', 'date_valid_start'],
+                "ordering": ["name", "date_valid_start"],
             },
         ),
         migrations.CreateModel(
-            name='ModelVariable',
+            name="ModelVariable",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=150)),
-                ('slug', django_extensions.db.fields.AutoSlugField(blank=True, editable=False, populate_from='name', unique=True, verbose_name='Variable name')),
-                ('model_grid', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='model_grids.modelgrid')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=150)),
+                (
+                    "slug",
+                    django_extensions.db.fields.AutoSlugField(
+                        blank=True,
+                        editable=False,
+                        populate_from="name",
+                        unique=True,
+                        verbose_name="Variable name",
+                    ),
+                ),
+                (
+                    "model_grid",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="model_grids.modelgrid",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['model_grid', 'name'],
+                "ordering": ["model_grid", "name"],
             },
         ),
         migrations.AddConstraint(
-            model_name='modelgrid',
-            constraint=models.UniqueConstraint(fields=('name', 'date_valid_start'), name='unique_model_grid'),
+            model_name="modelgrid",
+            constraint=models.UniqueConstraint(
+                fields=("name", "date_valid_start"), name="unique_model_grid"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='modelvariable',
-            constraint=models.UniqueConstraint(fields=('name', 'model_grid'), name='unique_variable'),
+            model_name="modelvariable",
+            constraint=models.UniqueConstraint(
+                fields=("name", "model_grid"), name="unique_variable"
+            ),
         ),
     ]
