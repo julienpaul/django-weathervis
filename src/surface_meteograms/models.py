@@ -11,6 +11,7 @@ from django_extensions.db.fields import AutoSlugField
 # Imports from my apps
 from src.stations.models import Station
 from src.utils.storage import OverwriteStorage
+from src.utils.util import read_subtext_file
 from src.vertical_meteograms.models import VMDate
 
 
@@ -101,6 +102,11 @@ class SurfaceMeteogram(models.Model):
         on_delete=models.CASCADE,
     )
 
+    subtext = models.TextField(
+        blank=True,
+        null=True,
+    )
+
     img_height = models.PositiveIntegerField(default=0)
     img_width = models.PositiveIntegerField(default=0)
 
@@ -112,12 +118,18 @@ class SurfaceMeteogram(models.Model):
         storage=OverwriteStorage(),
     )
 
+    img_path = models.CharField(
+        max_length=150,
+        blank=True,
+        null=True,
+    )
+
     class Meta:
         verbose_name = "Surface Meteogram"
         ordering = ["date", "location", "type", "points"]
 
     def __str__(self):
-        return f"{self.date.date.strftime('%Y%m%d:%H'):<14} {self.type} {self.location}"
+        return f"{self.date.date.strftime('%Y%m%d:%H'):<14} {self.type} {self.location} {self.points}"
 
     def save(self, *args, **kwargs):
         """overwrite save to load imgage"""
@@ -127,12 +139,34 @@ class SurfaceMeteogram(models.Model):
             _date = self.date.date.strftime("%Y%m%d%H")
 
             if self.points.name == "HERE":
-                img_path = (
+                self.img_path = (
                     f"gfx/{_date}/PMET_{self.location}_{_date}_{self.type.name}.png"
                 )
             else:
-                img_path = f"gfx/{_date}/PMET_{self.location}_{_date}_{self.type.name}_{self.points.name}.png"
-            if Path(Path(settings.MEDIA_ROOT) / img_path).exists():
+                self.img_path = f"gfx/{_date}/PMET_{self.location}_{_date}_{self.type.name}_{self.points.name}.png"
+
+            if Path(Path(settings.MEDIA_ROOT) / self.img_path).exists():
                 # if exist, overwrite path to image
-                self.img = img_path
+                self.img = self.img_path
+
+        if self.subtext is None:
+            self._get_subtext()
+
         super().save(*args, **kwargs)  # Call the "real" save() method.
+
+    def _get_subtext(self):
+        """get subtext from subtext.yaml"""
+        plots = read_subtext_file()
+        if "SurfaceMeteogram" in plots:
+            _ = plots["SurfaceMeteogram"]
+            self.subtext = _.get("subtext", None)
+            if _ is not None and "type" in _:
+                key = str(self.type).strip()
+                _ = _["type"].get(key, None)
+                if _ is not None and "subtext" in _:
+                    self.subtext = _.get("subtext", None)
+                if _ is not None and "points" in _:
+                    key = str(self.points).strip()
+                    _ = _["points"].get(key, None)
+                    if _ is not None and "subtext" in _:
+                        self.subtext = _.get("subtext", None)

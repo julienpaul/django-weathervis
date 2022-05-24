@@ -15,32 +15,38 @@
   </div -->
 </div>
 <div class="row">
-  <table border=0 bgcolor=#ffffff width=1300 align=center>
-    <tr>
-      <td align=center>
-        <div class="card" style="width=40%">
-          <img class="card-img-top" height="600px" id="panel1" src="{% get_media_prefix %}/pics/default.svg"
-            alt="default">
-          <div class="card-body">
-            <h5 class="card-title" id="title1">{{smeteogram.location}} {{smeteogram.date.date|date:'Y-m-d H:i'}}</h5>
-            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
-              content.</p>
-          </div>
-        </div>
-      </td>
-      <td align=center>
-        <div class="card" style="width=40%">
-          <img class="card-img-top" height="600px" id="panel2" src="{% get_media_prefix %}/pics/default.svg"
-            alt="default">
-          <div class="card-body">
-            <h5 class="card-title" id="title2">{{smeteogram.location}} {{smeteogram.date.date|date:'Y-m-d H:i'}}</h5>
-            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
-              content.</p>
-          </div>
-        </div>
-      </td>
-    </tr>
-  </table>
+  <div class="card-group">
+    <div class="card" style="width=40%">
+      <!--div class="card-header">Header</div-->
+      <img class="card-img-top" height="600px" id="panel1" src="{% get_media_prefix %}/pics/default.svg" alt="default">
+      <div class="card-body">
+        <h5 class="card-title" id="title1">{{smeteogram.location}} {{smeteogram.date.date|date:'Y-m-d H:i'}}</h5>
+        <p class="card-text" id="subtext1">{{smeteogram.subtext}}</p>
+        {% if perms.smeteograms.change_smeteogram %}
+        <a class="btn btn-success btn-sm" id="chg_subtext1" href="{% url 'smeteograms:update' slug='dummy' %}"
+          role="button">
+          <i class="bi bi-pencil"></i>
+        </a>
+        {% endif %}
+      </div>
+      <div class="card-footer"><small class="text-muted" id="path1"></small></div>
+    </div>
+    <div class="card" style="width=40%">
+      <!-- div class="card-header">Header</div -->
+      <img class="card-img-top" height="600px" id="panel2" src="{% get_media_prefix %}/pics/default.svg" alt="default">
+      <div class="card-body">
+        <h5 class="card-title" id="title2">{{smeteogram.location}} {{smeteogram.date.date|date:'Y-m-d H:i'}}</h5>
+        <p class="card-text" id="subtext2">{{smeteogram.subtext}}</p>
+        {% if perms.smeteograms.change_smeteogram %}
+        <a class="btn btn-success btn-sm" id="chg_subtext2" href="{% url 'smeteograms:update' slug='dummy' %}"
+          role="button">
+          <i class="bi bi-pencil"></i>
+        </a>
+        {% endif %}
+      </div>
+      <div class="card-footer"><small class="text-muted" id="path2"></small></div>
+    </div>
+  </div>
 </div>
 <!--
 <br>

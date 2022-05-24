@@ -11,6 +11,7 @@ from django_extensions.db.fields import AutoSlugField
 # Imports from my apps
 from src.stations.models import Station
 from src.utils.storage import OverwriteStorage
+from src.utils.util import read_subtext_file
 
 
 class VMDate(models.Model):
@@ -87,6 +88,11 @@ class VerticalMeteogram(models.Model):
         on_delete=models.CASCADE,
     )
 
+    subtext = models.TextField(
+        blank=True,
+        null=True,
+    )
+
     img_height = models.PositiveIntegerField(default=0)
     img_width = models.PositiveIntegerField(default=0)
 
@@ -96,6 +102,12 @@ class VerticalMeteogram(models.Model):
         height_field=None,
         width_field=None,
         storage=OverwriteStorage(),
+    )
+
+    img_path = models.CharField(
+        max_length=150,
+        blank=True,
+        null=True,
     )
 
     class Meta:
@@ -112,8 +124,26 @@ class VerticalMeteogram(models.Model):
             # date format: YYYYMMDDHH
             _date = self.date.date.strftime("%Y%m%d%H")
 
-            img_path = f"gfx/{_date}/VPMET_{self.location}_{_date}_{self.type.name}.png"
-            if Path(Path(settings.MEDIA_ROOT) / img_path).exists():
+            self.img_path = (
+                f"gfx/{_date}/VPMET_{self.location}_{_date}_{self.type.name}.png"
+            )
+            if Path(Path(settings.MEDIA_ROOT) / self.img_path).exists():
                 # if exist, overwrite path to image
-                self.img = img_path
+                self.img = self.img_path
+
+        if self.subtext is None:
+            self._get_subtext()
+
         super().save(*args, **kwargs)  # Call the "real" save() method.
+
+    def _get_subtext(self):
+        """get subtext from subtext.yaml"""
+        plots = read_subtext_file()
+        if "VerticalMeteogram" in plots:
+            _ = plots["VerticalMeteogram"]
+            self.subtext = _.get("subtext", None)
+            if _ is not None and "type" in _:
+                key = str(self.type).strip()
+                _ = _["type"].get(key, None)
+                if _ is not None and "subtext" in _:
+                    self.subtext = _.get("subtext", None)

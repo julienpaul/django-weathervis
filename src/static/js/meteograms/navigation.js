@@ -7,7 +7,6 @@ function initWebsite()
   var form = $("form");
   $.ajax({
   // url: '/meteograms/ajax/select_location/',
-	// url: form.attr("data-select-location-url"),
 	url: form.attr("data-change-plot-url"),
 	data: form.serialize(),
   dataType: 'json',
@@ -35,10 +34,14 @@ function showPlot(form)
       } else {
         document.getElementById("panel1").src=data.img1.url;
         document.getElementById("panel1").alt=data.img1.nam;
-        // document.getElementById("title1").innerHTML=data.img1.ttl;
+        document.getElementById("path1").innerHTML=data.img1.path;
+        document.getElementById("subtext1").innerHTML=data.img1.subtext;
+        document.getElementById("chg_subtext1").href=data.img1.chg_subtext;
         document.getElementById("panel2").src=data.img2.url;
         document.getElementById("panel2").alt=data.img2.nam;
-        // document.getElementById("title2").innerHTML=data.img2.ttl;
+        document.getElementById("path2").innerHTML=data.img2.path;
+        document.getElementById("subtext2").innerHTML=data.img2.subtext;
+        document.getElementById("chg_subtext2").href=data.img2.chg_subtext;
       }
     }
   });

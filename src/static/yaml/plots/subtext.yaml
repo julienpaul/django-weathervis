@@ -1,0 +1,48 @@
+# example:
+# PlotModel:
+#   subtext: <subext use if none below>
+#     type:
+#       <type value>:
+#         subtext: <subtext use if none below>
+#       <type value>:
+#         subtext: <subtext use if none below>
+
+VerticalMeteogram:
+  subtext: vertical meteogram
+
+  type:
+    Wind:
+      subtext: windy vertical meteogram
+    Clouds:
+      subtext: cloudy vertical meteogram
+
+SurfaceMeteogram:
+  subtext: surface meteogram
+
+  type:
+
+    Synoptics:
+      subtext: synoptic surface meteogram
+
+      points:
+        Point location:
+          subtext: "synoptic surface meteogram, on local point"
+        All points:
+          subtext: "synoptic surface meteogram, on all points"
+        Land points:
+          subtext: "synoptic surface meteogram, on land points only"
+        Sea points:
+          subtext: "synoptic surface meteogram, on sea points only"
+
+    Precipitation:
+      subtext: precipitation surface meteogram
+
+      points:
+        Point location:
+          subtext: "precipitation surface meteogram, on local point"
+        All points:
+          subtext: "precipitation surface meteogram, on all points"
+        Land points:
+          subtext: "precipitation surface meteogram, on land points only"
+        Sea points:
+          subtext: "precipitation surface meteogram, on sea points only"

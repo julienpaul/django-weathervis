@@ -2,7 +2,6 @@
 import random
 
 # Core Django imports
-# Third-party app imports
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
@@ -19,11 +18,16 @@ from django.views.generic import (
     UpdateView,
 )
 
+# Third-party app imports
 # Imports from my apps
 from src.stations.models import Station
 from src.vertical_meteograms.models import VMDate
 
-from .forms import SurfaceMeteogramCreate, SurfaceMeteogramForm
+from .forms import (
+    SurfaceMeteogramCreate,
+    SurfaceMeteogramForm,
+    SurfaceMeteogramUpdateSubtextForm,
+)
 from .models import SMPoints, SMType, SurfaceMeteogram
 
 
@@ -42,7 +46,7 @@ smeteogram_detail_view = SurfaceMeteogramDetailView.as_view()
 
 
 class SurfaceMeteogramRedirectView(RedirectView):
-    """redirect to create either one random object detail page"""
+    """redirect to object detail page"""
 
     def get_redirect_url(self, *args, **kwargs):
         obj = None
@@ -116,6 +120,23 @@ class SurfaceMeteogramUpdateView(LoginRequiredMixin, SuccessMessageMixin, Update
 
 
 smeteogram_update_view = SurfaceMeteogramUpdateView.as_view()
+
+
+class SurfaceMeteogramUpdateSubtextView(SurfaceMeteogramUpdateView):
+    model = SurfaceMeteogram
+    context_object_name = "smeteogram"
+    template_name = "smeteograms/smeteogram_update.html"
+    form_class = SurfaceMeteogramUpdateSubtextForm
+    success_message = _("Surface Meteogram successfully updated")
+
+    def get_success_url(self):
+        obj = self.object
+        url = reverse_lazy("smeteograms:detail", kwargs={"slug": obj.slug})
+
+        return url
+
+
+smeteogram_update_subtext_view = SurfaceMeteogramUpdateSubtextView.as_view()
 
 
 class SurfaceMeteogramCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
@@ -194,8 +215,6 @@ def data_change_plot(request):
             points=_points,
             date=_date,
         )
-        # print(f"form valid {form}")
-        print(f"smeteogram {smeteogram.slug}")
         data = {
             "is_valid": True,
         }
@@ -248,7 +267,7 @@ def data_show_plot(request):
         request.session["location_id"] = _location.pk
         request.session["date_id"] = _date.pk
 
-        smeteogram, created = SurfaceMeteogram.objects.get_or_create(
+        smeteogram, created = SurfaceMeteogram.objects.update_or_create(
             type=_type,
             location=_location,
             points=_points,
@@ -257,10 +276,14 @@ def data_show_plot(request):
         data["img1"] = {
             "url": smeteogram.img.url,
             "nam": smeteogram.img.name,
+            "path": smeteogram.img_path,
+            "subtext": smeteogram.subtext,
+            "chg_subtext": reverse_lazy(
+                "smeteograms:update", kwargs={"slug": smeteogram.slug}
+            ),
             # "ttl": f"{smeteogram.location} {smeteogram.date.date.strftime('%Y-%m-%d %H:%M')}",
         }
-        print(f"img {data['img1']}")
-        smeteogram, created = SurfaceMeteogram.objects.get_or_create(
+        smeteogram, created = SurfaceMeteogram.objects.update_or_create(
             type=_type_rev,
             location=_location,
             points=_points,
@@ -269,6 +292,11 @@ def data_show_plot(request):
         data["img2"] = {
             "url": smeteogram.img.url,
             "nam": smeteogram.img.name,
+            "path": smeteogram.img_path,
+            "subtext": smeteogram.subtext,
+            "chg_subtext": reverse_lazy(
+                "smeteograms:update", kwargs={"slug": smeteogram.slug}
+            ),
             # "ttl": f"{smeteogram.location} {smeteogram.date.date.strftime('%Y-%m-%d %H:%M')}",
         }
         return JsonResponse(data)

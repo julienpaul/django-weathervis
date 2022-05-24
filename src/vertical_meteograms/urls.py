@@ -10,6 +10,7 @@ from .views import (  # select_location,; select_date,; select_type,
     vmeteogram_create_view,
     vmeteogram_list_view,
     vmeteogram_redirect_view,
+    vmeteogram_update_subtext_view,
     vmeteogram_update_view,
 )
 
@@ -19,6 +20,7 @@ urlpatterns = [
     path("list/", view=vmeteogram_list_view, name="list"),
     path("~add/", view=vmeteogram_create_view, name="create"),
     path("<slug>/", view=vmeteogram_update_view, name="detail"),
+    path("~update/<slug>/", view=vmeteogram_update_subtext_view, name="update"),
     path("ajax/change_plot/", change_plot, name="change_plot"),
     # path("ajax/select_location/", select_location, name="select_location"),
     # path("ajax/select_date/", select_date, name="select_date"),

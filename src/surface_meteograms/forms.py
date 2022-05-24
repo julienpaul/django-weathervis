@@ -1,7 +1,9 @@
 # Stdlib imports
 # Core Django imports
+from crispy_forms.bootstrap import Field
 from crispy_forms.layout import Button, ButtonHolder, Column, Layout, Row, Submit
 from django import forms
+from django.forms import HiddenInput
 from django.urls import reverse, reverse_lazy
 
 # Third-party app imports
@@ -14,7 +16,7 @@ from .models import SurfaceMeteogram
 class SurfaceMeteogramForm(CrispyMixin, forms.ModelForm):
     class Meta:
         model = SurfaceMeteogram
-        fields = ["location", "points", "date"]
+        fields = ["location", "points", "date", "subtext"]
 
     def _init_helper_layout(self):
         """initialise crispy layout"""
@@ -50,6 +52,30 @@ class SurfaceMeteogramForm(CrispyMixin, forms.ModelForm):
         rename field Date to Base Date
         """
         self.fields["date"].label = "Base Date"
+
+
+class SurfaceMeteogramUpdateSubtextForm(SurfaceMeteogramForm):
+    def _custom_helper(self):
+        """customize crispy form"""
+        super()._custom_helper()
+        # change some field
+        self.fields["location"].widget = HiddenInput()
+        self.fields["points"].widget = HiddenInput()
+        self.fields["date"].widget = HiddenInput()
+        # add some field and buttons
+        _btn = ButtonHolder(
+            Submit("submit", "Submit", css_class="btn-success"),
+            Button(
+                "cancel",
+                "Cancel",
+                css_class="btn-primary",
+                onclick="history.go(-1);",
+            ),
+        )
+        self.helper.layout.insert(1, _btn)
+        _fld = Field("subtext")
+        self.helper.layout.insert(1, _fld)
+        self.fields["subtext"].label = "Change Subtext"
 
 
 class SurfaceMeteogramCreate(SurfaceMeteogramForm):

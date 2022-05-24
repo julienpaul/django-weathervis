@@ -11,67 +11,126 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('stations', '0003_station_is_active'),
+        ("stations", "0003_station_is_active"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='VerticalMeteogram',
+            name="VerticalMeteogram",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('slug', django_extensions.db.fields.AutoSlugField(blank=True, editable=False, populate_from=['location', 'type', 'date'], unique=True, verbose_name='Vertical Meteogram Adress')),
-                ('img_height', models.PositiveIntegerField(default=0)),
-                ('img_width', models.PositiveIntegerField(default=0)),
-                ('img', models.ImageField(default='pics/default.svg', storage=src.utils.storage.OverwriteStorage(), upload_to='pics/VPMET')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "slug",
+                    django_extensions.db.fields.AutoSlugField(
+                        blank=True,
+                        editable=False,
+                        populate_from=["location", "type", "date"],
+                        unique=True,
+                        verbose_name="Vertical Meteogram Adress",
+                    ),
+                ),
+                ("img_height", models.PositiveIntegerField(default=0)),
+                ("img_width", models.PositiveIntegerField(default=0)),
+                (
+                    "img",
+                    models.ImageField(
+                        default="pics/default.svg",
+                        storage=src.utils.storage.OverwriteStorage(),
+                        upload_to="pics/VPMET",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Vertical Meteogram',
-                'ordering': ['date', 'location', 'type'],
+                "verbose_name": "Vertical Meteogram",
+                "ordering": ["date", "location", "type"],
             },
         ),
         migrations.CreateModel(
-            name='VMDate',
+            name="VMDate",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('date', models.DateTimeField()),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("date", models.DateTimeField()),
             ],
             options={
-                'verbose_name': 'Vertical Meteogram Date and Time',
-                'ordering': ['date'],
+                "verbose_name": "Vertical Meteogram Date and Time",
+                "ordering": ["date"],
             },
         ),
         migrations.CreateModel(
-            name='VMType',
+            name="VMType",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(choices=[('op1', 'Wind'), ('op2', 'Clouds')], default='op1', max_length=3)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(
+                        choices=[("op1", "Wind"), ("op2", "Clouds")],
+                        default="op1",
+                        max_length=3,
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Vertical Meteogram Type',
-                'ordering': ['name'],
+                "verbose_name": "Vertical Meteogram Type",
+                "ordering": ["name"],
             },
         ),
         migrations.AddConstraint(
-            model_name='vmtype',
-            constraint=models.UniqueConstraint(fields=('name',), name='unique_vmeteogram_type'),
+            model_name="vmtype",
+            constraint=models.UniqueConstraint(
+                fields=("name",), name="unique_vmeteogram_type"
+            ),
         ),
         migrations.AddConstraint(
-            model_name='vmdate',
-            constraint=models.UniqueConstraint(fields=('date',), name='unique_vmeteogram_date'),
+            model_name="vmdate",
+            constraint=models.UniqueConstraint(
+                fields=("date",), name="unique_vmeteogram_date"
+            ),
         ),
         migrations.AddField(
-            model_name='verticalmeteogram',
-            name='date',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='vertical_meteograms.vmdate'),
+            model_name="verticalmeteogram",
+            name="date",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to="vertical_meteograms.vmdate",
+            ),
         ),
         migrations.AddField(
-            model_name='verticalmeteogram',
-            name='location',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='stations.station'),
+            model_name="verticalmeteogram",
+            name="location",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="stations.station"
+            ),
         ),
         migrations.AddField(
-            model_name='verticalmeteogram',
-            name='type',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='vertical_meteograms.vmtype'),
+            model_name="verticalmeteogram",
+            name="type",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to="vertical_meteograms.vmtype",
+            ),
         ),
     ]

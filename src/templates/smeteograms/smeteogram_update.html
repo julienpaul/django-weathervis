@@ -1,0 +1,28 @@
+{% extends 'smeteograms/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load i18n %}
+
+{% block container %}
+<div class="row">
+  <div class="column left">
+    <div class="card">
+      <!--div class="card-header">Header</div-->
+      <img class="card-img-top" height="600px" src="{{ smeteogram.img.url }}" alt="default">
+      <div class="card-body">
+        <h5 class="card-title">{{smeteogram.location}} {{smeteogram.date.date|date:'Y-m-d H:i'}}</h5>
+        <p class="card-text">{{smeteogram.subtext}}</p>
+      </div>
+      <div class="card-footer"><small class="text-muted" id="path1">{{ smeteogram.img_path }}</small></div>
+    </div>
+  </div>
+  <div class="column right">
+    <nav class="navbar navbar-expand-md navbar-light">
+      <div class="mb-1">
+        {% csrf_token %}
+        {% crispy form %}
+      </div>
+    </nav>
+  </div>
+</div>
+{% endblock container %}

@@ -6,16 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('margins', '0001_initial'),
+        ("margins", "0001_initial"),
     ]
 
     operations = [
         migrations.RemoveConstraint(
-            model_name='margin',
-            name='unique',
+            model_name="margin",
+            name="unique",
         ),
         migrations.AddConstraint(
-            model_name='margin',
-            constraint=models.UniqueConstraint(fields=('west', 'east', 'north', 'south'), name='unique_margin'),
+            model_name="margin",
+            constraint=models.UniqueConstraint(
+                fields=("west", "east", "north", "south"), name="unique_margin"
+            ),
         ),
     ]

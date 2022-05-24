@@ -3,6 +3,7 @@
 from crispy_forms.bootstrap import Field
 from crispy_forms.layout import Button, ButtonHolder, Column, Layout, Row, Submit
 from django import forms
+from django.forms import HiddenInput
 from django.urls import reverse, reverse_lazy
 
 # Third-party app imports
@@ -21,7 +22,7 @@ class CustomFieldCarousel(Field):
 class VerticalMeteogramForm(CrispyMixin, forms.ModelForm):
     class Meta:
         model = VerticalMeteogram
-        fields = ["location", "date"]
+        fields = ["location", "date", "subtext"]
 
     def _init_helper_layout(self):
         """initialise crispy layout"""
@@ -36,16 +37,11 @@ class VerticalMeteogramForm(CrispyMixin, forms.ModelForm):
             Row(
                 Column(
                     "location",
-                    # css_class="form-group col-md-6 mb-0 js-change-plot",
-                    # css_class="form-group col-md-6 mb-0 js-select-location",
                     css_class="form-group col-md-6 mb-0",
                     css_id="change_location_id",
                 ),
-                # Column("type", css_class="form-group col-md-4 mb-0 js-select-type"),
-                # Column("date", css_class="form-group col-md-6 mb-0 js-select-date"),
                 Column(
                     "date",
-                    # css_class="form-group col-md-6 mb-0 js-change-plot",
                     css_class="form-group col-md-6 mb-0",
                     css_id="change_date_id",
                 ),
@@ -61,10 +57,35 @@ class VerticalMeteogramForm(CrispyMixin, forms.ModelForm):
         self.fields["date"].label = "Base Date"
 
 
+class VerticalMeteogramUpdateSubtextForm(VerticalMeteogramForm):
+    def _custom_helper(self):
+        """customize crispy form"""
+        super()._custom_helper()
+        # change some field
+        self.fields["location"].widget = HiddenInput()
+        self.fields["date"].widget = HiddenInput()
+        # self.fields["location"].disabled = True
+        # self.fields["date"].disabled = True
+        # add some field and buttons
+        _btn = ButtonHolder(
+            Submit("submit", "Submit", css_class="btn-success"),
+            Button(
+                "cancel",
+                "Cancel",
+                css_class="btn-primary",
+                onclick="history.go(-1);",
+            ),
+        )
+        self.helper.layout.insert(1, _btn)
+        _fld = Field("subtext")
+        self.helper.layout.insert(1, _fld)
+        self.fields["subtext"].label = "Change Subtext"
+
+
 class VerticalMeteogramCreate(VerticalMeteogramForm):
     class Meta:
         model = VerticalMeteogram
-        fields = ["location", "type", "date"]
+        fields = ["location", "type", "date", "subtext"]
 
     def _init_helper_layout(self):
         """initialise crispy layout"""

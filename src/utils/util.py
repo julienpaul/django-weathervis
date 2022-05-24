@@ -1,11 +1,14 @@
 # Stdlib imports
 from urllib.parse import urlparse
 
+# Third-party app imports
+import yaml
+
 # Core Django imports
+from django.conf import settings
 from django.contrib.gis.geos import Point as GeoPoint
 from django.contrib.gis.geos import Polygon as GeoPolygon
 
-# Third-party app imports
 # Imports from my apps
 
 degree_sign = "\N{DEGREE SIGN}"
@@ -66,3 +69,22 @@ def antipode(pnt_: GeoPoint):
     lon = (lon % 360 + 540) % 360 - 180
 
     return GeoPoint(lon, lat, pnt_.z)
+
+
+def read_subtext_file(fparam_=None):
+    """read subtext file"""
+    try:
+        if fparam_ is None:
+            fparam_ = "/".join([settings.STATIC_ROOT, "yaml", "plots", "subtext.yaml"])
+        # read parameters configuration file yaml
+        with open(fparam_, "r") as stream:
+            try:
+                param = yaml.safe_load(stream)
+            except yaml.YAMLError as exc:
+                raise yaml.YAMLError(exc)
+        # check parameters file
+        return param
+    except Exception as exc:
+        raise Exception(
+            f"Something goes wrong when getting subtext of VerticalMeteogram. See parameters file -{fparam_}-. {exc}"
+        )

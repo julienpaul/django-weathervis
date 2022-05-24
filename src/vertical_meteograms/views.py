@@ -2,7 +2,6 @@
 import random
 
 # Core Django imports
-# Third-party app imports
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
@@ -19,10 +18,15 @@ from django.views.generic import (
     UpdateView,
 )
 
+# Third-party app imports
 # Imports from my apps
 from src.stations.models import Station
 
-from .forms import VerticalMeteogramCreate, VerticalMeteogramForm
+from .forms import (
+    VerticalMeteogramCreate,
+    VerticalMeteogramForm,
+    VerticalMeteogramUpdateSubtextForm,
+)
 from .models import VerticalMeteogram, VMDate, VMType
 
 
@@ -41,7 +45,7 @@ vmeteogram_detail_view = VerticalMeteogramDetailView.as_view()
 
 
 class VerticalMeteogramRedirectView(RedirectView):
-    """redirect to create either one random object detail page"""
+    """redirect to object detail page"""
 
     def get_redirect_url(self, *args, **kwargs):
         obj = None
@@ -107,6 +111,23 @@ class VerticalMeteogramUpdateView(LoginRequiredMixin, SuccessMessageMixin, Updat
 
 
 vmeteogram_update_view = VerticalMeteogramUpdateView.as_view()
+
+
+class VerticalMeteogramUpdateSubtextView(VerticalMeteogramUpdateView):
+    model = VerticalMeteogram
+    context_object_name = "vmeteogram"
+    template_name = "vmeteograms/vmeteogram_update.html"
+    form_class = VerticalMeteogramUpdateSubtextForm
+    success_message = _("Vertical Meteogram successfully updated")
+
+    def get_success_url(self):
+        obj = self.object
+        url = reverse_lazy("vmeteograms:detail", kwargs={"slug": obj.slug})
+
+        return url
+
+
+vmeteogram_update_subtext_view = VerticalMeteogramUpdateSubtextView.as_view()
 
 
 class VerticalMeteogramCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
@@ -177,7 +198,6 @@ def change_plot(request):
             date=_date,
         )
         # print(f"form valid {form}")
-        print(f"vmeteogram {vmeteogram.slug}")
         data = {
             "is_valid": True,
         }
@@ -188,54 +208,6 @@ def change_plot(request):
     else:
         data = {"is_valid": False, "error_message": "this form is invalid."}
         return render(request, "vmeteograms/vmeteogram_detail.html", {"form": form})
-
-
-# def select_location(request):
-#     _id = request.GET.get("location", None)
-#     print(f"location {_id}")
-#     try:
-#         inst = Station.objects.get(pk=_id)
-#         exist = True
-#     except Station.DoesNotExist:
-#         exist = False
-#     data = {
-#         "is_taken": not exist,
-#     }
-#     if data["is_taken"]:
-#         data["error_message"] = f"this location ({inst}) already exists."
-#     return JsonResponse(data)
-#
-#
-# def select_date(request):
-#     _id = request.GET.get("date", None)
-#     print(f"date_id {_id}")
-#     try:
-#         inst = VMDate.objects.get(pk=_id)
-#         exist = True
-#     except VMDate.DoesNotExist:
-#         exist = False
-#     data = {
-#         "is_taken": not exist,
-#     }
-#     if data["is_taken"]:
-#         data["error_message"] = f"this date ({inst}) already exists."
-#     return JsonResponse(data)
-#
-#
-# def select_type(request):
-#     _id = request.GET.get("type", None)
-#     print(f"type_id {_id}")
-#     try:
-#         inst = VMType.objects.get(pk=_id)
-#         exist = True
-#     except VMType.DoesNotExist:
-#         exist = False
-#     data = {
-#         "is_taken": not exist,
-#     }
-#     if data["is_taken"]:
-#         data["error_message"] = f"this type ({inst}) already exists."
-#     return JsonResponse(data)
 
 
 def show_plot(request):
@@ -270,7 +242,7 @@ def show_plot(request):
         request.session["location_id"] = _location.pk
         request.session["date_id"] = _date.pk
 
-        vmeteogram, created = VerticalMeteogram.objects.get_or_create(
+        vmeteogram, created = VerticalMeteogram.objects.update_or_create(
             type=_type,
             location=_location,
             date=_date,
@@ -278,9 +250,14 @@ def show_plot(request):
         data["img1"] = {
             "url": vmeteogram.img.url,
             "nam": vmeteogram.img.name,
+            "path": vmeteogram.img_path,
+            "subtext": vmeteogram.subtext,
+            "chg_subtext": reverse_lazy(
+                "vmeteograms:update", kwargs={"slug": vmeteogram.slug}
+            ),
             # "ttl": f"{vmeteogram.location} {vmeteogram.date.date.strftime('%Y-%m-%d %H:%M')}",
         }
-        vmeteogram, created = VerticalMeteogram.objects.get_or_create(
+        vmeteogram, created = VerticalMeteogram.objects.update_or_create(
             type=_type_rev,
             location=_location,
             date=_date,
@@ -288,6 +265,11 @@ def show_plot(request):
         data["img2"] = {
             "url": vmeteogram.img.url,
             "nam": vmeteogram.img.name,
+            "path": vmeteogram.img_path,
+            "subtext": vmeteogram.subtext,
+            "chg_subtext": reverse_lazy(
+                "vmeteograms:update", kwargs={"slug": vmeteogram.slug}
+            ),
             # "ttl": f"{vmeteogram.location} {vmeteogram.date.date.strftime('%Y-%m-%d %H:%M')}",
         }
         return JsonResponse(data)
