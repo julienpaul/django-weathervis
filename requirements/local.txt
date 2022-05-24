@@ -3,7 +3,7 @@
 Werkzeug==1.0.1 # https://github.com/pallets/werkzeug
 ipdb==0.13.9  # https://github.com/gotcha/ipdb
 psycopg2-binary==2.9.1  # https://github.com/psycopg/psycopg2
-bump2version==0.5.11  # https://github.com/c4urself/bump2version
+bump2version==1.0.1  # https://github.com/c4urself/bump2version
 
 # Testing
 # ------------------------------------------------------------------------------

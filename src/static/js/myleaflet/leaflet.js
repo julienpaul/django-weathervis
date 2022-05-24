@@ -69,7 +69,7 @@ function pointer_popup(feature) {
     <dl>\
     <dt>Name</dt>\
     <dd><a class='btn btn-outline-primary btn-sm'\
-     href=" + _detail_url.replace('dummy',feature.properties.name) + " role='button'>\
+     href=" + _detail_url.replace('dummy',feature.properties.slug) + " role='button'>\
      <i class='bi bi-eye'> "+feature.properties.name+"</i>\
      </a>\
     </dd>\
@@ -83,7 +83,7 @@ function pointer_popup(feature) {
     </dt><dd></dd>\
     </dl>\
     <a class='btn btn-outline-info btn-sm'\
-     href=" + _redirect_url.replace('dummy',feature.properties.name) + " role='button'>\
+     href=" + _redirect_url.replace('dummy',feature.properties.slug) + " role='button'>\
      <i class='bi bi-images'> plots</i>\
     </a>"
     );
