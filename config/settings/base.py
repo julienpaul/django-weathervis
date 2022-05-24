@@ -337,7 +337,7 @@ LEAFLET_CONFIG = {
         },
         "awesome-marker": {
             "css": [
-                "http://netdna.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.css",
+                "https://netdna.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.css",
                 "https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css",
             ],
             "js": "https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js",
