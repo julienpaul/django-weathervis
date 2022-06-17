@@ -227,7 +227,7 @@ function add_layers(map, controlLayers) {
           this.setStyle(style_layer());
           // this.closePopup();
         });
-        layer.bindPopup(feature.properties.name);
+        // layer.bindPopup(feature.properties.name); // show popup with grid name
         // Add 'layer' to Layer Control
         controlLayers.addOverlay(layer, feature.properties.name);
         layer.max_zoom = 9.5;

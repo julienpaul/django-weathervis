@@ -84,13 +84,10 @@ Moved to `Live reloading and SASS compilation`_.
 
 Deployment
 ----------
+.. _locally: INSTALL_LOCAL.md
+.. _on server: INSTALL_SERVER.md
 
 Several packages need to be install before running django-weathervis.
 
-`Here`_ is how to deploy this application locally.
-
-.. _`Here`: INSTALL_LOCAL.md
-
-`Here`_ is how to deploy this application on server.
-
-.. _`Here`: INSTALL_SERVER.md
+How to deploy this application :ref:`locally`.
+How to deploy this application :ref:`on server`.
