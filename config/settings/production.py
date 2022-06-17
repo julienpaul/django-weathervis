@@ -126,7 +126,14 @@ else:
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
-    "filters": {"require_debug_false": {"()": "django.utils.log.RequireDebugFalse"}},
+    "filters": {
+        "require_debug_false": {
+            "()": "django.utils.log.RequireDebugFalse",
+        },
+        "require_debug_true": {
+            "()": "django.utils.log.RequireDebugTrue",
+        },
+    },
     "formatters": {
         "verbose": {
             "format": "%(levelname)s %(asctime)s %(module)s "
@@ -144,6 +151,10 @@ LOGGING = {
             "class": "logging.StreamHandler",
             "formatter": "verbose",
         },
+        "null": {
+            "class": "logging.NullHandler",
+            "filters": ["require_debug_false"],
+        },
     },
     "root": {"level": "INFO", "handlers": ["console"]},
     "loggers": {
@@ -153,9 +164,11 @@ LOGGING = {
             "propagate": True,
         },
         "django.security.DisallowedHost": {
-            "level": "ERROR",
-            "handlers": ["console", "mail_admins"],
-            "propagate": True,
+            # "level": "ERROR",
+            # "handlers": ["console", "mail_admins"],
+            # "propagate": True,
+            "handlers": ["null"],
+            "propagate": False,
         },
     },
 }
