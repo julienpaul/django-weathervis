@@ -881,6 +881,14 @@ python manage.py shell
 >>> exit()
 ~~~
 
+Create and load domains
+~~~bash
+python manage.py shell
+>>> from src.domains.util import upload
+>>> upload()
+>>> exit()
+~~~
+
 Load other fixtures
 ~~~bash
 python manage.py loaddata src/fixtures/**/*.json

@@ -1,0 +1,113 @@
+# example:
+# <domain name>:
+#   left: <domain longitude (degree_east)>
+#   right: <domain longitude (degree_east)>
+#   top: <domain latitude (degree_north)>
+#   bottom: <domain latitude (degree_north)>
+#   height: <domain height ()>
+#   description: >
+#     <description could be write on multilines>
+
+default: # set of default values applied if attribute is missing
+  # left:
+  # right:
+  # top:
+  # bottom:
+  # height:
+  height: 0.
+
+MEPS:
+  left: -1
+  right: 60.0
+  bottom: 49.0
+  top: 72
+
+Finse:
+  left: 7.524026
+  right: 8.524026
+  top: 60
+  bottom: 61.5
+
+South_Norway:
+  left: 4.0
+  right: 9.18
+  bottom: 58.01
+  top: 62.2
+
+West_Norway:
+  left: 1.0
+  right: 12.0
+  bottom: 54.5
+  top: 64.0
+
+AromeArctic:
+  left: -18.0
+  right: 80.0
+  bottom: 62.0
+  top: 88.0
+
+Svalbard_z2:
+  left: 15
+  right: 23
+  bottom: 77
+  top: 82
+
+Svalbard_z1:
+  left: 4
+  right: 23
+  bottom: 76.3
+  top: 82
+
+Svalbard:
+  left: -8
+  right: 30
+  bottom: 73
+  top: 82
+
+North_Norway:
+  left: 5
+  right: 25
+  bottom: 66.5
+  top: 77.2
+
+KingsBay:
+  left: 10
+  right: 13.3
+  bottom: 78.6
+  top: 79.3
+
+KingsBay_Z0:
+  left: 11
+  right: 13.0
+  bottom: 78.73
+  top: 79.16
+
+Andenes:
+  left: 15.8
+  right: 16.4
+  bottom: 69.2
+  top: 69.4
+
+ALOMAR:
+  left: 15.8
+  right: 16.4
+  bottom: 69.2
+  top: 69.4
+
+NorwegianSea_area:
+  left: -7
+  right: 16
+  bottom: 69.0
+  top: 77.2
+
+Andenes_area:
+  left: 6.0
+  right: 20.5
+  bottom: 67.5
+  top: 71.6
+
+Iceland:
+  left: -26.0
+  right: -8
+  bottom: 63.0
+  top: 67

@@ -181,6 +181,14 @@ see [qgis.org download](https://qgis.org/en/site/forusers/download.html)
         >>> upload()
         >>> exit()
 
+
+    7.2.bis Create and load domain
+
+        $ python manage.py shell
+        >>> from src.domains.util import upload
+        >>> upload()
+        >>> exit()
+
     7.3 load other fixture
 
         $ python manage.py loaddata src/fixtures/**/*.json
