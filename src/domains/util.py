@@ -94,12 +94,12 @@ def download(fparam_=domain_data_path / "domains.yaml"):
             }
 
     header = """
-# <location name>:
-#   north: <location latitude north (degree_north)>
-#   south: <location latitude south (degree_north)>
-#   west: <location longitude west (degree_east)>
-#   east: <location longitude east (degree_east)>
-#   height: <location height (m)>
+# <domain name>:
+#   north: <domain latitude north (degree_north)>
+#   south: <domain latitude south (degree_north)>
+#   west: <domain longitude west (degree_east)>
+#   east: <domain longitude east (degree_east)>
+#   height: <domain height (m)>
 #   description: >
 #     <description could be write on multilines>
 """
