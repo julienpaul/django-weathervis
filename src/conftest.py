@@ -8,6 +8,8 @@ from django.core.management import call_command
 from faker import Faker
 
 # Imports from my app
+from src.domains.models import Domain
+from src.domains.tests.factories import DomainFactory
 from src.margins.models import Margin
 from src.margins.tests.factories import MarginFactory
 from src.model_grids.models import ModelGrid
@@ -102,6 +104,11 @@ def geopoint():
 @pytest.fixture
 def station() -> Station:
     return StationFactory()
+
+
+@pytest.fixture
+def domain() -> Domain:
+    return DomainFactory()
 
 
 @pytest.fixture

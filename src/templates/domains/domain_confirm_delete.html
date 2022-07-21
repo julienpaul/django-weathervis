@@ -1,0 +1,28 @@
+{% extends "domains/domain_base.html" %}
+{% load leaflet_tags %}
+{% load i18n %}
+
+{% block title %}
+domain
+{% endblock title %}
+
+{% block header %}
+{% translate "Delete domain:" %} {{ object }}
+{% endblock header %}
+
+{% block map_leaflet %}
+{{ domain_url|json_script:"domain_url" }}
+{{ domain_data|json_script:"domain_data" }}
+{{ grid_data|json_script:"grid_data" }}
+<div id='domain_map_id'>
+  {% leaflet_map "bigmap" callback="map_domain_local" %}
+</div>
+{% endblock map_leaflet %}
+
+{% block column %}
+<form method="post">{% csrf_token %}
+  <h3>Are you sure you want to delete domain "{{ object }}"?</h3>
+  <input type="submit" class="btn btn-danger" value="Confirm">
+  <a class="btn btn-primary" href="{% url 'domains:list' %}" role="button">Cancel</a>
+</form>
+{% endblock column %}

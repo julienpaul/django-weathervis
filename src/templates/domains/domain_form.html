@@ -1,22 +1,22 @@
-{% extends 'stations/station_base.html' %}
+{% extends 'domains/domain_base.html' %}
 {% load crispy_forms_tags %}
 {% load leaflet_tags %}
 {% load i18n %}
 
 {% block title %}
-Station update
+domain update
 {% endblock title %}
 
 {% block header %}
-{% translate "Update Station: " %}{{station.name}}
+{% translate "Update domain: " %}{{domain.name}}
 {% endblock header %}
 
 {% block map_leaflet %}
-{{ station_url|json_script:"station_url" }}
-{{ station_data|json_script:"station_data" }}
+{{ domain_url|json_script:"domain_url" }}
+{{ domain_data|json_script:"domain_data" }}
 {{ grid_data|json_script:"grid_data" }}
-<div id='station_map_id'>
-  {% leaflet_map "bigmap" callback="map_station_local" %}
+<div id='domain_map_id'>
+  {% leaflet_map "bigmap" callback="map_domain_local" %}
 </div>
 {% endblock map_leaflet %}
 

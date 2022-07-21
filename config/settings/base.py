@@ -86,6 +86,7 @@ LOCAL_APPS = [
     "src.organisations.apps.OrganisationsConfig",
     "src.model_grids.apps.ModelGridsConfig",
     "src.stations.apps.StationsConfig",
+    "src.domains.apps.DomainsConfig",
     "src.margins.apps.MarginsConfig",
     "src.vertical_meteograms.apps.VerticalMeteogramsConfig",
     "src.surface_meteograms.apps.SurfaceMeteogramsConfig",
@@ -319,8 +320,12 @@ LEAFLET_CONFIG = {
     # "ATTRIBUTION_PREFIX": "My Custome Leaflet map",
     "PLUGINS": {
         "my_leaflet": {
-            "css": "/static/css/myleaflet.css",
-            "js": "/static/js/myleaflet/leaflet.js",
+            "css": "/static/css/myleaflet/myleaflet.css",
+            "js": [
+                "/static/js/myleaflet/leaflet.js",
+                "/static/js/myleaflet/leaflet_station.js",
+                "/static/js/myleaflet/leaflet_domain.js",
+            ],
             "auto-include": True,
         },
         "proj4js": {
@@ -344,7 +349,19 @@ LEAFLET_CONFIG = {
             "auto-include": True,
         },
         "leaflet-zoom-show-hide": {
-            "js": "/static/js/myleaflet/leaflet-zoom-show-hide.js",
+            "js": "/static/js/leaflet-zoom-show-hide/leaflet-zoom-show-hide.js",
+            "auto-include": True,
+        },
+        "leaflet-mouse-position": {
+            "js": "/static/js/leaflet-mouse-position/L.Control.MousePosition.js",
+            "css": "/static/css/leaflet-mouse-position/L.Control.MousePosition.css",
+            "auto-include": True,
+        },
+        "leaflet-geoman": {
+            "css": [
+                "https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.css",
+            ],
+            "js": "https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.min.js",
             "auto-include": True,
         },
     },

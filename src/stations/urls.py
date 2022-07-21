@@ -18,11 +18,12 @@ from .views import (
 app_name = "stations"
 urlpatterns = [
     path("", view=station_list_view, name="list"),
-    path("ajax/data_this_margin/<slug>/", data_this_station_margin, name="this_margin"),
-    path("ajax/data_all_stations/", data_all_stations, name="all_stations"),
     path("~redirect/<slug>/", view=station_redirect_view, name="redirect"),
     path("~add/", view=station_create_view, name="create"),
     path("<slug>/", view=station_detail_view, name="detail"),
     path("<slug>/~update/", view=station_update_view, name="update"),
     path("~delete/<slug>/", view=station_confirm_delete_view, name="delete"),
+    #
+    path("ajax/data_this_margin/<slug>/", data_this_station_margin, name="this_margin"),
+    path("ajax/data_all_stations/", data_all_stations, name="all_stations"),
 ]

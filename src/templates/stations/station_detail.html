@@ -15,7 +15,7 @@ Station detail
 {{ station_data|json_script:"station_data" }}
 {{ grid_data|json_script:"grid_data" }}
 <div id='station_map_id'>
-  {% leaflet_map "bigmap" callback="local_map_init" %}
+  {% leaflet_map "bigmap" callback="map_station_local" %}
 </div>
 {% endblock map_leaflet %}
 
@@ -33,7 +33,7 @@ Station detail
     <dt>WMO id</dt>
     <dd>&emsp;{{station.wmo_id|default:"No WMO ID yet."}}</dd>
     <dt>Description</dt>
-    <dd>&emsp;{{station.desctiption|default:"No description yet."}}</dd>
+    <dd>&emsp;{{station.description|default:"No description yet."}}</dd>
   </dl>
   <div class="form-check">
     {% if station.is_active %}
