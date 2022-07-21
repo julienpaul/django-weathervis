@@ -1,41 +1,40 @@
-{% extends 'stations/station_base.html' %}
+{% extends 'domains/domain_base.html' %}
 {% load leaflet_tags %}
 {% load static %}
 
 {% block map_leaflet %}
-{{ station_url|json_script:"station_url" }}
-{{ station_data|json_script:"station_data" }}
-{{ grid_data|json_script:"grid_data" }}
-<div id='station_map_id'>
-  {% leaflet_map "bigmap" callback="map_station_list" %}
+{{ domain_url|json_script:"domain_url" }}
+{{ domain_data|json_script:"domain_data" }}
+<div id='domain_map_id'>
+  {% leaflet_map "bigmap" callback="map_domain_list" %}
 </div>
 {% endblock map_leaflet %}
 
 {% block column %}
 <div class="row">
   {% if object_list %}
-  {% for station in page_obj %}
+  {% for domain in page_obj %}
   <div class="input-group mb-3">
-    <input type="text" placeholder="{{ station.name }}">
+    <input type="text" placeholder="{{ domain.name }}">
     <div class="input-group-append">
-      <a class="btn btn-primary" href="{% url 'stations:detail' slug=station.slug %}" role="button">
+      <a class="btn btn-primary" href="{% url 'domains:detail' slug=domain.slug %}" role="button">
         <i class="bi bi-eye"></i>
       </a>
-      {% if perms.stations.change_station %}
-      <a class="btn btn-success" href="{% url 'stations:update' slug=station.slug %}" role="button">
+      {% if perms.domains.change_domain %}
+      <a class="btn btn-success" href="{% url 'domains:update' slug=domain.slug %}" role="button">
         <i class="bi bi-pencil"></i>
       </a>
       {% else %}
-      <a class="btn btn-secondary disabled" href="{% url 'stations:update' slug=station.slug %}" role="button">
+      <a class="btn btn-secondary disabled" href="{% url 'domains:update' slug=domain.slug %}" role="button">
         <i class="bi bi-pencil"></i>
       </a>
       {% endif %}
-      {% if perms.stations.delete_station %}
-      <a class="btn btn-danger" href="{% url 'stations:delete' slug=station.slug %}" role="button">
+      {% if perms.domains.delete_domain %}
+      <a class="btn btn-danger" href="{% url 'domains:delete' slug=domain.slug %}" role="button">
         <i class="bi bi-trash"></i>
       </a>
       {% else %}
-      <a class="btn btn-secondary disabled" href="{% url 'stations:delete' slug=station.slug %}" role="button">
+      <a class="btn btn-secondary disabled" href="{% url 'domains:delete' slug=domain.slug %}" role="button">
         <i class="bi bi-trash"></i>
       </a>
       {% endif %}
@@ -69,17 +68,17 @@
   </div>
   {% endif %}
   {% else %}
-  <h4> No Station yet.</h4>
+  <h4> No domain yet.</h4>
   {% endif %}
 </div>
 <hr>
 <div class="row">
-  {% if perms.stations.change_station %}
-  <a class="btn btn-primary" href="{% url 'stations:create' %}" role="button">
+  {% if perms.domains.change_domain %}
+  <a class="btn btn-primary" href="{% url 'domains:create' %}" role="button">
     {% else %}
-    <a class="btn btn-secondary disabled" href="{% url 'stations:create' %}" role="button">
+    <a class="btn btn-secondary disabled" href="{% url 'domains:create' %}" role="button">
       {% endif %}
-      Add Station
+      Add Domain
     </a>
 </div>
 {% endblock column %}

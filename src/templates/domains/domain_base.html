@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load leaflet_tags %}
+{% load static %}
+{% load i18n %}
+
+{% block extra_css %}
+{% leaflet_css%}
+{% endblock %}
+
+{% block extra_javascript %}
+{% leaflet_js%}
+{% endblock %}
+
+{% block nav_domains%}active{% endblock %}
+
+{% block title %}
+Domains
+{% endblock title %}
+
+{% block content %}
+<h1>
+  {% block header %}
+  {% translate "Domains:" %}
+  {% endblock header %}
+</h1>
+<hr>
+<div class="domain-container">
+  <div class="row">
+    <div class="column left">
+      <div class="map">
+        {% block map_leaflet %}
+        {% endblock map_leaflet %}
+      </div>
+    </div>
+    <div class="column right">
+      {% block column %}
+      {% endblock column %}
+    </div>
+  </div>
+</div>
+{% endblock content %}

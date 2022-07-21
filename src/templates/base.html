@@ -79,6 +79,9 @@
             <a class="nav-link {% block nav_stations%}{% endblock %} " href="{% url 'stations:list' %}">Stations</a>
           </li>
           <li class="nav-item">
+            <a class="nav-link {% block nav_domains%}{% endblock %} " href="{% url 'domains:list' %}">Domains</a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link {% block nav_plots%}{% endblock %}" href="{% url 'vmeteograms:redirect' %}">Plots</a>
           </li>
         </ul>

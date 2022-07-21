@@ -36,6 +36,10 @@ urlpatterns = [
         include("src.stations.urls", namespace="stations"),
     ),
     path(
+        "domains/",
+        include("src.domains.urls", namespace="domains"),
+    ),
+    path(
         "margins/",
         include("src.margins.urls", namespace="margins"),
     ),

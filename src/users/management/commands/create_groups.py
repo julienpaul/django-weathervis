@@ -7,6 +7,7 @@ based on https://stackoverflow.com/a/58231725
 from django.contrib.auth.models import Group, Permission
 from django.core.management import BaseCommand
 
+from src.domains.models import Domain
 from src.margins.models import Margin
 from src.organisations.models import Organisation
 from src.stations.models import Station
@@ -15,11 +16,13 @@ from src.users.models import User
 GROUPS_PERMISSIONS = {
     "Editor": {
         Station: ["add", "change", "view"],
+        Domain: ["add", "change", "view"],
     },
     "Staff": {
         Margin: ["add", "change", "delete", "view"],
         Organisation: ["add", "change", "delete", "view"],
         Station: ["add", "change", "delete", "view"],
+        Domain: ["add", "change", "delete", "view"],
         User: ["change", "view"],
     },
 }

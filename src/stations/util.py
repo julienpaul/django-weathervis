@@ -99,7 +99,7 @@ def upload(fparam_=station_data_path / "stations.ini.yaml"):
 
 
 def download(fparam_=station_data_path / "stations.yaml"):
-    """download station and margin from database and write station.yaml
+    """download station and margin from database and write stations.yaml
 
     Note: only active stations are downloaded.
     """

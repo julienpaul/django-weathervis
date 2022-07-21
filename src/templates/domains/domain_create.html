@@ -1,22 +1,22 @@
-{% extends 'stations/station_base.html' %}
+{% extends 'domains/domain_base.html' %}
 {% load crispy_forms_tags %}
 {% load leaflet_tags %}
 {% load i18n %}
 
 {% block title %}
-Station create
+domain create
 {% endblock title %}
 
 {% block header %}
-{% translate "Create Station: " %}
+{% translate "Create domain: " %}
 {% endblock header %}
 
 {% block map_leaflet %}
-{{ station_url|json_script:"station_url" }}
-{{ station_data|json_script:"station_data" }}
+{{ domain_url|json_script:"domain_url" }}
+{{ domain_data|json_script:"domain_data" }}
 {{ grid_data|json_script:"grid_data" }}
-<div id='station_map_id'>
-  {% leaflet_map "bigmap" callback="map_station_edit" %}
+<div id='domain_map_id'>
+  {% leaflet_map "bigmap" callback="map_domain_edit" %}
 </div>
 {% endblock map_leaflet %}
 
@@ -27,7 +27,7 @@ Station create
 </div>
 <!--
 <div class="col">
-    <a class="btn btn-primary" href="{% url 'stations:list' %}" role="button">
+    <a class="btn btn-primary" href="{% url 'domains:list' %}" role="button">
         back to list
     </a>
 </div>

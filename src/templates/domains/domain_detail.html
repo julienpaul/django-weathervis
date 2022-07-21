@@ -1,0 +1,115 @@
+{% extends 'domains/domain_base.html' %}
+{% load leaflet_tags %}
+{% load i18n %}
+
+{% block title %}
+domain detail
+{% endblock title %}
+
+{% block header %}
+{% translate "domains: " %}{{domain.name}}
+{% endblock header %}
+
+{% block map_leaflet %}
+{{ domain_url|json_script:"domain_url" }}
+{{ domain_data|json_script:"domain_data" }}
+{{ grid_data|json_script:"grid_data" }}
+<div id='domain_map_id'>
+  {% leaflet_map "bigmap" callback="map_domain_local" %}
+</div>
+{% endblock map_leaflet %}
+
+
+{% block column %}
+<div>
+  <!-- TODO create card -->
+  <dl>
+    <dt>Name</dt>
+    <dd>&emsp;{{domain.name}}</dd>
+    <dt>Boundary Box Coordinates</dt>
+    <dd>
+      <table style="width:100%">
+        <tr>
+          <td></td>
+          <td>
+            <dl>
+              <dt>North</dt>
+              <dd>&emsp;{{domain.north}}&deg;N</dd>
+            </dl>
+          </td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>
+            <dl>
+              <dt>West</dt>
+              <dd>&emsp;{{domain.west}}&deg;E</dd>
+            </dl>
+          </td>
+          <td></td>
+          <td>
+            <dl>
+              <dt>East</dt>
+              <dd>&emsp;{{domain.east}}&deg;E</dd>
+            </dl>
+          </td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <dl>
+              <dt>North</dt>
+              <dd>&emsp;{{domain.south}}&deg;N</dd>
+            </dl>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+      <dl>
+        <dt>Altitude</dt>
+        <dd>{{domain.altitude}}m</dd>
+      </dl>
+    </dd>
+    <dt>Description</dt>
+    <dd>&emsp;{{domain.description|default:"No description yet."}}</dd>
+  </dl>
+  <div class="form-check">
+    {% if domain.is_active %}
+    <input class="form-check-input" type="checkbox" value="" id="defaultCheck2" disabled checked>
+    {% else %}
+    <input class="form-check-input" type="checkbox" value="" id="defaultCheck2" disabled>
+    {% endif %}
+    <label class="form-check-label" for="defaultCheck2">
+      is active
+    </label>
+  </div>
+  <hr>
+  <a class="btn btn-primary" href="{% url 'domains:list' %}" role="button">
+    back to list
+  </a>
+  {% if perms.domains.delete_domain %}
+  <a class="btn btn-success" href="{% url 'domains:update' slug=domain.slug %}" role="button">
+    <i class="bi bi-pencil">edit</i>
+  </a>
+  {% else %}
+  <a class="btn btn-secondary disabled" href="{% url 'domains:update' slug=domain.slug %}" role="button">
+    <i class="bi bi-pencil">edit</i>
+  </a>
+  {% endif %}
+  {% if perms.domains.delete_domain %}
+  <a class="btn btn-danger" href="{% url 'domains:delete' slug=domain.slug %}" role="button">
+    <i class="bi bi-trash">delete</i>
+  </a>
+  {% else %}
+  <a class="btn btn-secondary disabled" href="{% url 'domains:delete' slug=domain.slug %}" role="button">
+    <i class="bi bi-trash">delete</i>
+  </a>
+  {% endif %}
+  <hr>
+  <a class="btn btn-outline-info" href="{% url 'domains:redirect' slug=domain.slug %}" role="button">
+    <i class="bi bi-images"> plots</i>
+  </a>
+</div>
+
+
+{% endblock column %}
