@@ -65,3 +65,11 @@ class Domain(models.Model):
     @property
     def altitude(self):
         return self.geom.coords[0][0][2]
+
+    def save(self, *args, **kwargs):
+        """ """
+        from .util import download
+
+        super().save(*args, **kwargs)
+        # update weathervis config files
+        download()
