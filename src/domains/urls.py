@@ -20,7 +20,7 @@ urlpatterns = [
     path("", view=domain_list_view, name="list"),
     path("~add/", view=domain_create_view, name="create"),
     path("<slug>/", view=domain_detail_view, name="detail"),
-    path("<slug>/~update/", view=domain_update_view, name="update"),
+    path("~update/<slug>/", view=domain_update_view, name="update"),
     path("~delete/<slug>/", view=domain_confirm_delete_view, name="delete"),
     path("~redirect/<slug>/", view=domain_redirect_view, name="redirect"),
     #

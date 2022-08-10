@@ -14,6 +14,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+        ("stations", "0001_postgres_extensions"),
     ]
 
     operations = [

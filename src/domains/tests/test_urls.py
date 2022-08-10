@@ -30,9 +30,9 @@ class TestDomainView:
     def test_update(self, domain: Domain):
         assert (
             reverse("domains:update", kwargs={"slug": domain.slug})
-            == f"/domains/{domain.slug}/~update/"
+            == f"/domains/~update/{domain.slug}/"
         )
-        assert resolve(f"/domains/{domain.slug}/~update/").view_name == "domains:update"
+        assert resolve(f"/domains/~update/{domain.slug}/").view_name == "domains:update"
 
     def test_delete(self, domain: Domain):
         assert (

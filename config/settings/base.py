@@ -86,6 +86,7 @@ LOCAL_APPS = [
     "src.organisations.apps.OrganisationsConfig",
     "src.model_grids.apps.ModelGridsConfig",
     "src.stations.apps.StationsConfig",
+    "src.plots.apps.StationsPlotsConfig",
     "src.domains.apps.DomainsConfig",
     "src.margins.apps.MarginsConfig",
     "src.vertical_meteograms.apps.VerticalMeteogramsConfig",
@@ -163,6 +164,11 @@ STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 ]
+
+# https://docs.djangoproject.com/en/dev/ref/settings/#file-upload-directory-permissions
+FILE_UPLOAD_DIRECTORY_PERMISSIONS = 0o755
+# https://docs.djangoproject.com/en/dev/ref/settings/#file-upload-permissions
+FILE_UPLOAD_PERMISSIONS = 0o644
 
 # MEDIA
 # ------------------------------------------------------------------------------
@@ -362,6 +368,10 @@ LEAFLET_CONFIG = {
                 "https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.css",
             ],
             "js": "https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.min.js",
+            "auto-include": True,
+        },
+        "leaflet-smooth-marker-bouncing": {
+            "js": "https://cdn.jsdelivr.net/gh/hosuaby/Leaflet.SmoothMarkerBouncing@v3.0.2/dist/bundle.js",
             "auto-include": True,
         },
     },

@@ -7,7 +7,7 @@ Station detail
 {% endblock title %}
 
 {% block header %}
-{% translate "Stations: " %}{{station.name}}
+{% translate "Station: " %}{{station.name}}
 {% endblock header %}
 
 {% block map_leaflet %}
@@ -22,56 +22,6 @@ Station detail
 
 {% block column %}
 <div>
-  <!-- TODO create card -->
-  <dl>
-    <dt>Name</dt>
-    <dd>&emsp;{{station.name}}</dd>
-    <dt>Coordinates</dt>
-    <dd>&emsp;{{station.latitude}}&deg;N | {{station.longitude}}&deg;E | {{station.altitude}}m</dd>
-    <dt>Station id</dt>
-    <dd>&emsp;{{station.station_id|default:"No station ID yet."}}</dd>
-    <dt>WMO id</dt>
-    <dd>&emsp;{{station.wmo_id|default:"No WMO ID yet."}}</dd>
-    <dt>Description</dt>
-    <dd>&emsp;{{station.description|default:"No description yet."}}</dd>
-  </dl>
-  <div class="form-check">
-    {% if station.is_active %}
-    <input class="form-check-input" type="checkbox" value="" id="defaultCheck2" disabled checked>
-    {% else %}
-    <input class="form-check-input" type="checkbox" value="" id="defaultCheck2" disabled>
-    {% endif %}
-    <label class="form-check-label" for="defaultCheck2">
-      is active
-    </label>
-  </div>
-  <hr>
-  <a class="btn btn-primary" href="{% url 'stations:list' %}" role="button">
-    back to list
-  </a>
-  {% if perms.stations.delete_station %}
-  <a class="btn btn-success" href="{% url 'stations:update' slug=station.slug %}" role="button">
-    <i class="bi bi-pencil">edit</i>
-  </a>
-  {% else %}
-  <a class="btn btn-secondary disabled" href="{% url 'stations:update' slug=station.slug %}" role="button">
-    <i class="bi bi-pencil">edit</i>
-  </a>
-  {% endif %}
-  {% if perms.stations.delete_station %}
-  <a class="btn btn-danger" href="{% url 'stations:delete' slug=station.slug %}" role="button">
-    <i class="bi bi-trash">delete</i>
-  </a>
-  {% else %}
-  <a class="btn btn-secondary disabled" href="{% url 'stations:delete' slug=station.slug %}" role="button">
-    <i class="bi bi-trash">delete</i>
-  </a>
-  {% endif %}
-  <hr>
-  <a class="btn btn-outline-info" href="{% url 'stations:redirect' slug=station.slug %}" role="button">
-    <i class="bi bi-images"> plots</i>
-  </a>
+  {% include "stations/detail.html" %}
 </div>
-
-
 {% endblock column %}

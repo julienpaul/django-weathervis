@@ -9,6 +9,7 @@ from .views import (
     data_this_station_margin,
     station_confirm_delete_view,
     station_create_view,
+    station_detail_list_view,
     station_detail_view,
     station_list_view,
     station_redirect_view,
@@ -17,11 +18,13 @@ from .views import (
 
 app_name = "stations"
 urlpatterns = [
-    path("", view=station_list_view, name="list"),
-    path("~redirect/<slug>/", view=station_redirect_view, name="redirect"),
+    path("~redirect/", view=station_redirect_view, name="redirect"),
+    path("~list", view=station_list_view, name="list"),
     path("~add/", view=station_create_view, name="create"),
-    path("<slug>/", view=station_detail_view, name="detail"),
-    path("<slug>/~update/", view=station_update_view, name="update"),
+    path("<slug>/", view=station_detail_list_view, name="detail_list"),
+    # path("#<slug>/", view=station_list2_view, name="detail"),
+    path("~detail/<slug>/", view=station_detail_view, name="detail"),
+    path("~update/<slug>/", view=station_update_view, name="update"),
     path("~delete/<slug>/", view=station_confirm_delete_view, name="delete"),
     #
     path("ajax/data_this_margin/<slug>/", data_this_station_margin, name="this_margin"),

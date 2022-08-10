@@ -13,8 +13,8 @@ pytestmark = pytest.mark.django_db
 
 class TestStationView:
     def test_list(self):
-        assert reverse("stations:list") == "/stations/"
-        assert resolve("/stations/").view_name == "stations:list"
+        assert reverse("stations:list") == "/stations/~list/"
+        assert resolve("/stations/~list/").view_name == "stations:list"
 
     def test_add(self):
         assert reverse("stations:create") == "/stations/~add/"
@@ -23,17 +23,19 @@ class TestStationView:
     def test_detail(self, station: Station):
         assert (
             reverse("stations:detail", kwargs={"slug": station.slug})
-            == f"/stations/{station.slug}/"
+            == f"/stations/~detail/{station.slug}/"
         )
-        assert resolve(f"/stations/{station.slug}/").view_name == "stations:detail"
+        assert (
+            resolve(f"/~detail/stations/{station.slug}/").view_name == "stations:detail"
+        )
 
     def test_update(self, station: Station):
         assert (
             reverse("stations:update", kwargs={"slug": station.slug})
-            == f"/stations/{station.slug}/~update/"
+            == f"/stations/~update/{station.slug}/"
         )
         assert (
-            resolve(f"/stations/{station.slug}/~update/").view_name == "stations:update"
+            resolve(f"/stations/~update/{station.slug}/").view_name == "stations:update"
         )
 
     def test_delete(self, station: Station):
