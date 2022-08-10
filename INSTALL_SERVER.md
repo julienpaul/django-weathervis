@@ -6,7 +6,7 @@ The **web server** will also be configured with **HTTPS certificates**. Meaning 
 
 **The Web Server Gateway Interface (WSGI)** is an application server. Depending on the number of processors the server has, it can spawn multiple workers to process multiple requests in parallel. It manages the workload and executes the Python and Django code.
 
-**Django** is the one doing the hard work. It may access the database (PostgreSQL) or the file system. But for the most part, the work is done inside the views, rendering templates, all those things that we’ve been coding for the past weeks. After Django process the request, it returns a response to Gunicorn, who returns the result to NGINX that will finally deliver the response to the client.
+**Django** is the one doing the hard work. It may access the database (PostgreSQL) or the file system. But for the most part, the work is done inside the views, rendering templates. After Django process the request, it returns a response to Gunicorn, who returns the result to the Web Server that will finally deliver the response to the client.
 
 We are also going to install **PostgreSQL**, a production quality database system. Because of Django’s ORM system, it’s easy to switch databases.
 

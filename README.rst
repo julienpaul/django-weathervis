@@ -3,20 +3,21 @@ weathervis
 
 django weathervis website
 
-.. image:: https://img.shields.io/badge/built%20with-Cookiecutter%20Django-ff69b4.svg?logo=cookiecutter
+|cookiecutter| |codestyle| |license| |release|
+
+.. |cookiecutter| image:: https://img.shields.io/badge/built%20with-Cookiecutter%20Django-ff69b4.svg?logo=cookiecutter
      :target: https://github.com/pydanny/cookiecutter-django/
      :alt: Built with Cookiecutter Django
 
-.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
+.. |codestyle| image:: https://img.shields.io/badge/code%20style-black-000000.svg
      :target: https://github.com/ambv/black
      :alt: Black code style
 
-
-.. image:: https://img.shields.io/badge/License-GPLv3-blue.svg
+.. |license| image:: https://img.shields.io/badge/License-GPLv3-blue.svg
    :target: http://perso.crans.org/besson/LICENSE.html
 
-.. image:: https://img.shields.io/github/release/julienpaul/django-weathervis.svg
-   :target: https://github.com/julienpaul/django-weathervis/releases/
+.. |release| image:: https://img.shields.io/github/release/julienpaul/django-weathervis.svg
+   :target: https://github.com/julienpaul/django-weathervis/tags/
 
 Settings
 --------
@@ -84,10 +85,9 @@ Moved to `Live reloading and SASS compilation`_.
 
 Deployment
 ----------
-.. _locally: INSTALL_LOCAL.md
-.. _on server: INSTALL_SERVER.md
 
 Several packages need to be install before running django-weathervis.
 
-How to deploy this application :ref:`locally`.
-How to deploy this application :ref:`on server`.
+How to deploy this application `locally <INSTALL_LOCAL.md>`_.
+
+How to deploy this application `on server <INSTALL_SERVER.md>`_.
