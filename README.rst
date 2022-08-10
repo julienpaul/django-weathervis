@@ -16,8 +16,8 @@ django weathervis website
 .. |license| image:: https://img.shields.io/badge/License-GPLv3-blue.svg
    :target: http://perso.crans.org/besson/LICENSE.html
 
-.. |release| image:: https://img.shields.io/github/release/julienpaul/django-weathervis.svg
-   :target: https://github.com/julienpaul/django-weathervis/tags/
+.. |release| image:: https://img.shields.io/github/v/tag/julienpaul/django-weathervis?style=plastic
+  :alt: GitHub tag (latest SemVer)
 
 Settings
 --------
