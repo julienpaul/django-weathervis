@@ -165,16 +165,20 @@ see [qgis.org download](https://qgis.org/en/site/forusers/download.html)
 
         $ python manage.py migrate
 
-7. Load database
+7. Create a super user for the application:
 
-    7.1 Create and Load model grid shape files
+        $ python manage.py createsuperuser
+
+8. Load database
+
+    8.1 Create and Load model grid shape files
 
         $ python manage.py shell
         >>> from src.model_grids.util import upload
         >>> upload()
         >>> exit()
 
-    7.2 Create and load station
+    8.2 Create and load station
 
         $ python manage.py shell
         >>> from src.stations.util import upload
@@ -182,18 +186,18 @@ see [qgis.org download](https://qgis.org/en/site/forusers/download.html)
         >>> exit()
 
 
-    7.2.bis Create and load domain
+    8.2.bis Create and load domain
 
         $ python manage.py shell
         >>> from src.domains.util import upload
         >>> upload()
         >>> exit()
 
-    7.3 load other fixture
+    8.3 load other fixture
 
         $ python manage.py loaddata src/fixtures/**/*.json
 
-8. Finally run the Django development server:
+9. Finally run the Django development server:
 
         $ python manage.py runserver
 
