@@ -76,13 +76,19 @@
             <a class="nav-link {% block nav_about%}{% endblock %}" href="{% url 'about' %}">About</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link {% block nav_stations%}{% endblock %} " href="{% url 'stations:list' %}">Stations</a>
+            <a class="nav-link {% block nav_stations%}{% endblock %} " href="{% url 'stations:redirect' %}">Stations</a>
           </li>
           <li class="nav-item">
             <a class="nav-link {% block nav_domains%}{% endblock %} " href="{% url 'domains:list' %}">Domains</a>
           </li>
+          <!-- li class="nav-item">
+            <a class="nav-link {% block nav_charts%}{% endblock %}" href="{% url 'vmeteograms:redirect' %}">Charts</a>
+          </li -->
+          <!-- li class="nav-item">
+            <a class="nav-link {% block nav_stations_paginate%}{% endblock %} " href="{% url 'stations:list' %}">Stations paginate</a>
+          </li -->
           <li class="nav-item">
-            <a class="nav-link {% block nav_plots%}{% endblock %}" href="{% url 'vmeteograms:redirect' %}">Plots</a>
+            <a class="nav-link {% block nav_plots%}{% endblock %} " href="{% url 'plots:stations_list' %}">Plots</a>
           </li>
         </ul>
         <ul class="navbar-nav ml-auto">
@@ -115,7 +121,7 @@
 
   </div>
 
-  {% block navplot %}{% endblock navplot %}
+  {% block navtab %}{% endblock navtab %}
   <br>
   <div class="container">
 

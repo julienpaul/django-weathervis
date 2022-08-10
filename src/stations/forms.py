@@ -20,6 +20,7 @@ from django.utils.http import urlencode
 # Third-party app imports
 # Imports from my apps
 from src.model_grids.models import ModelGrid
+from src.plots.models import StationsPlot
 from src.utils.mixins import CrispyMixin
 from src.utils.util import degree_sign as deg
 
@@ -51,6 +52,21 @@ class StationForm(CrispyMixin, forms.ModelForm):
         decimal_places=6,
     )
 
+    plots = forms.ModelMultipleChoiceField(
+        required=False,
+        queryset=StationsPlot.objects.all(),
+        widget=forms.CheckboxSelectMultiple(
+            attrs={"class": "form-check", "style": "list-style:none;"}
+        ),
+    )
+
+    start_datetime = forms.DateTimeField(
+        widget=forms.widgets.DateTimeInput(attrs={"placeholder": "YYYY-MM-DD HH:MM"})
+    )
+    end_datetime = forms.DateTimeField(
+        widget=forms.widgets.DateTimeInput(attrs={"placeholder": "YYYY-MM-DD HH:MM"})
+    )
+
     class Meta:
         model = Station
         fields = [
@@ -63,6 +79,16 @@ class StationForm(CrispyMixin, forms.ModelForm):
             "wmo_id",
             "description",
             "margin",
+            "plots",
+            "uses_flexpart",
+            "start_datetime",
+            "end_datetime",
+            "alt_lower",
+            "alt_upper",
+            "alt_unit",
+            "numb_part",
+            "xmass",
+            "number_grid",
         ]
 
     def _init_helper_layout(self):
@@ -115,8 +141,58 @@ class StationForm(CrispyMixin, forms.ModelForm):
                 ),
             ),
             Field("is_active"),
-            Field("description"),
-            HTML("&zwnj;"),
+            Field("uses_flexpart"),
+            Field("description", rows="4"),
+            HTML("<div id=plots>"),
+            HTML("<hr>"),
+            Field("plots"),
+            HTML("</div>"),
+            HTML("<div id=flexpart>"),
+            HTML("<hr>"),
+            Row(
+                Column(
+                    Field("start_datetime"),
+                    css_class="form-group col-md-6 mb-0",
+                ),
+                Column(
+                    Field("end_datetime"),
+                    css_class="form-group col-md-6 mb-0",
+                ),
+                css_class="form-row",
+            ),
+            Row(
+                Column(
+                    Field("alt_lower"),
+                    css_class="form-group col-md-4 mb-0",
+                ),
+                Column(
+                    Field("alt_upper"),
+                    css_class="form-group col-md-4 mb-0",
+                ),
+                Column(
+                    Field("alt_unit"),
+                    css_class="form-group col-md-4 mb-0",
+                ),
+                css_class="form-row",
+            ),
+            Row(
+                Column(
+                    Field("numb_part"),
+                    css_class="form-group col-md-4 mb-0",
+                ),
+                Column(
+                    Field("xmass"),
+                    css_class="form-group col-md-4 mb-0",
+                ),
+                Column(
+                    Field("number_grid"),
+                    css_class="form-group col-md-4 mb-0",
+                ),
+                css_class="form-row",
+            ),
+            HTML("</div>"),
+            # HTML("&zwnj;"),
+            HTML("<hr>"),
             ButtonHolder(
                 Submit("submit", "Submit", css_class="btn-success"),
                 Button(
@@ -127,6 +203,29 @@ class StationForm(CrispyMixin, forms.ModelForm):
                 ),
             ),
         )
+
+    def _custom_helper(self):
+        """customize crispy form"""
+        # Sort plots alphabetically
+        self.fields["plots"].label = "Available plots"
+        self.fields["plots"].queryset = StationsPlot.objects.order_by("name")
+        # rename label
+        self.fields["start_datetime"].label = "Starting date"
+        self.fields["end_datetime"].label = "Ending date"
+        self.fields["alt_lower"].label = "Lower altitude"
+        self.fields["alt_upper"].label = "Upper altitude"
+        self.fields["alt_unit"].label = "Unit"
+        self.fields["numb_part"].label = "Nb particles"
+        self.fields["xmass"].label = "Total mass"
+        # fields not required
+        self.fields["start_datetime"].required = False
+        self.fields["end_datetime"].required = False
+        self.fields["alt_lower"].required = False
+        self.fields["alt_upper"].required = False
+        self.fields["alt_unit"].required = False
+        self.fields["numb_part"].required = False
+        self.fields["xmass"].required = False
+        self.fields["number_grid"].required = False
 
     def clean(self):
         """check station is located inside one the registered forecast"""
@@ -159,9 +258,56 @@ class StationForm(CrispyMixin, forms.ModelForm):
                 "Station is not inside any ModelGrid registered.",
             )
 
+        uses_flexpart = cleaned_data.get("uses_flexpart")
+
+        alt_lower = cleaned_data.get("alt_lower")
+        alt_upper = cleaned_data.get("alt_upper")
+
+        if uses_flexpart:
+            if not alt_lower and alt_lower != 0:
+                raise ValidationError("Lower altitude is a required field.")
+            if not alt_upper and alt_upper != 0:
+                raise ValidationError("Upper altitude is a required field.")
+            if alt_upper < alt_lower:
+                raise ValidationError(
+                    "Flexpart release altitudes aren't sorted in ascending order.",
+                )
+
+        start_datetime = cleaned_data.get("start_datetime")
+        end_datetime = cleaned_data.get("end_datetime")
+
+        if uses_flexpart:
+            if not start_datetime:
+                raise ValidationError("Starting date is a required field.")
+            if not end_datetime:
+                raise ValidationError("Ending date is a required field.")
+            if end_datetime < start_datetime:
+                raise ValidationError(
+                    "Flexpart release dates aren't sorted in ascending order.",
+                )
+
+        numb_part = cleaned_data.get("numb_part")
+        if not isinstance(numb_part, int):
+            raise ValidationError(
+                "Flexpart number of particles must be an integer.",
+            )
+
+        xmass = cleaned_data.get("xmass")
+        if not isinstance(xmass, int):
+            raise ValidationError(
+                "Flexpart xmass must be an integer.",
+            )
+
+        number_grid = cleaned_data.get("number_grid")
+        if not isinstance(number_grid, int):
+            raise ValidationError(
+                "Flexpart number_grid must be an integer.",
+            )
+
 
 class StationUpdateForm(StationForm):
     def _custom_helper(self):
         """customize crispy form"""
+        super()._custom_helper()
         # change some field
         self.fields["name"].disabled = True

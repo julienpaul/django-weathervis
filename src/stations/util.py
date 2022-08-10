@@ -98,10 +98,16 @@ def upload(fparam_=station_data_path / "stations.ini.yaml"):
         )
 
 
-def download(fparam_=station_data_path / "stations.yaml"):
+def download():
+    download_stations()
+    download_releases()
+
+
+def download_stations(fparam_=station_data_path / "stations.yaml"):
     """download station and margin from database and write stations.yaml
 
-    Note: only active stations are downloaded.
+    Note:
+        - only active stations are downloaded to 'stations.yaml'.
     """
     dic = {}
     for station in Station.objects.all():
@@ -119,6 +125,7 @@ def download(fparam_=station_data_path / "stations.yaml"):
                     "north": float(station.margin.north),
                     "south": float(station.margin.south),
                 },
+                "plots": [p.name for p in station.plots.all()],
             }
 
     header = """
@@ -135,6 +142,7 @@ def download(fparam_=station_data_path / "stations.yaml"):
 #     east:   <adds X degree(s) east of location (degree)>
 #     south:  <substracts X degree(s) south of location (degree)>
 #     west:   <substracts X degree(s) west of location (degree)>
+#   plots: list of plots selected fot this station
 """
 
     with open(fparam_, "w") as stream:
@@ -148,13 +156,58 @@ def download(fparam_=station_data_path / "stations.yaml"):
             indent=4,
         )
 
-    header = """rel_begin_YYYYMMDD;rel_begin_HHMMSS;rel_end_YYYYMMDD;rel_end_HHMMSS;\
-        rel_min_1;rel_min_2;rel_max_1;rel_max_2;rel_ZTYPE;rel_ZPOINT_1;rel_ZP OINT_2;\
-        rel_NUMB_PART;rel_XMASS;rel_domain_name;rel_lon;rel_lat;number_grid"""
-    with open(station_data_path / "releases.csv", "w") as stream:
+
+def download_releases(fparam_=station_data_path / "releases.yaml"):
+    """download station flexpart parameters from database and write releases.csv
+
+    Note:
+        - only stations using flexpart are downloaded to 'releases.csv'.
+    """
+    dic = {}
+    for station in Station.objects.all():
+
+        if station.uses_flexpart:
+            dic[station.name] = {
+                "lat": station.latitude,
+                "lon": station.longitude,
+                "start": station.start_datetime,
+                "end": station.end_datetime,
+                "lower": station.alt_lower,
+                "upper": station.alt_upper,
+                "unit": station.alt_unit,
+                "npart": station.numb_part,
+                "xmass": station.xmass,
+                "ngrid": station.number_grid,
+            }
+
+    header = (
+        "rel_begin_YYYYMMDD; rel_begin_HHMMSS; rel_end_YYYYMMDD; rel_end_HHMMSS; "
+        "rel_min_1; rel_min_2; rel_max_1; rel_max_2; rel_ZTYPE; rel_ZPOINT_1; rel_ZPOINT_2; "
+        "rel_NUMB_PART; rel_XMASS; rel_domain_name; rel_lon; rel_lat; number_grid"
+    )
+    with open(fparam_, "w") as stream:
         stream.write(header + "\n")
         for _name, _dic in dic.items():
+
+            _lat, _lon = _dic["lat"], _dic["lon"]
+
+            _d1, _d2 = _dic["start"], _dic["end"]
+            _ymd1, _hms1 = "NaN", "NaN"
+            if _d1:
+                _ymd1, _hms1 = _d1.strftime("%Y%m%d"), _d1.strftime("%H%M%S")
+            _ymd2, _hms2 = "NaN", "NaN"
+            if _d2:
+                _ymd2, _hms2 = _d2.strftime("%Y%m%d"), _d2.strftime("%H%M%S")
+
+            _z1, _z2 = _dic["lower"], _dic["upper"]
+            _unit = _dic["unit"]
+
+            _npart = _dic["npart"]
+            _xmass = _dic["xmass"]
+            _ngrid = _dic["ngrid"]
             stream.write(
-                f"NaN;NaN;NaN;NaN;NaN;NaN;NaN;NaN;1;0;2000;100000;100;{_name};NaN;NaN;200"
+                f"{_ymd1}; {_hms1}; {_ymd2}; {_hms2}; "
+                + f"NaN; NaN; NaN; NaN; {_unit}; {_z1}; {_z2}; "
+                + f"{_npart}; {_xmass}; {_name}; {_lon}; {_lat}; {_ngrid}"
                 + "\n"
             )

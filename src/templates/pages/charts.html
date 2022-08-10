@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block nav_charts%}active{% endblock %}
+{% block navtab %}
+<div class='reduce'>
+  {% with url_name=request.resolver_match.url_name %}
+  <ul class="nav nav-tabs">
+    <li class="nav-item">
+      <a class="nav-link {% block nav_vmeteograms%}{% endblock %}" href="{% url 'vmeteograms:redirect' %}">Vertical
+        Meteograms</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {% block nav_smeteograms%}{% endblock %}" href="{% url 'smeteograms:redirect' %}">Surface
+        Meteograms</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {% block nav_aamaps%}{% endblock %} disabled" href="#"><s>AROME Maps</s></a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {% block nav_flexaa%}{% endblock %} disabled" href="#"><s>Flexpart AROME</s></a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {% block nav_flexifs%}{% endblock %} disabled" href="#"><s>FLEXPLART IFS</s></a>
+    </li>
+  </ul>
+  {% endwith %}
+</div>
+{% endblock navtab %}

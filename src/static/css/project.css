@@ -70,3 +70,14 @@ sub {
   vertical-align: sub;
   font-size: x-small;
 }
+
+/* Bootstrap is applying display: block to the list items, which kills the numbering
+   https://stackoverflow.com/a/34145218
+*/
+.list-group {
+  list-style: decimal inside;
+}
+
+.list-group-item {
+  display: list-item;
+}

@@ -1,0 +1,21 @@
+{% extends 'plots/stations/base.html' %}
+{% load crispy_forms_tags %}
+{% load i18n %}
+
+{% block title %}
+Add Stations Plot
+{% endblock title %}
+
+{% block header %}
+{% translate "Create Stations Plot: " %}
+{% endblock header %}
+
+{% block container %}
+<h1>{% translate "Create Plot and settings for Stations:" %}</h1>
+<div class="row">
+  <div class="col-sm">
+    {% csrf_token %}
+    {% crispy form %}
+  </div>
+</div>
+{% endblock container %}

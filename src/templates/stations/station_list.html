@@ -2,6 +2,9 @@
 {% load leaflet_tags %}
 {% load static %}
 
+{% block nav_stations%}{% endblock %}
+{% block nav_stations_paginate%}active{% endblock %}
+
 {% block map_leaflet %}
 {{ station_url|json_script:"station_url" }}
 {{ station_data|json_script:"station_data" }}

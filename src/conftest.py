@@ -16,6 +16,8 @@ from src.model_grids.models import ModelGrid
 from src.model_grids.tests.factories import ModelGridFactory
 from src.organisations.models import Organisation
 from src.organisations.tests.factories import OrganisationFactory
+from src.plots.models import StationsPlot
+from src.plots.tests.factories import StationsPlotFactory
 from src.stations.models import Station
 from src.stations.tests.factories import StationFactory
 from src.surface_meteograms.models import SurfaceMeteogram
@@ -99,6 +101,11 @@ def geopoint():
     fake.add_provider(DjangoGeoPointProvider)
     point = fake.geo_point()
     return point
+
+
+@pytest.fixture
+def stationsplot() -> StationsPlot:
+    return StationsPlotFactory()
 
 
 @pytest.fixture

@@ -36,6 +36,10 @@ urlpatterns = [
         include("src.stations.urls", namespace="stations"),
     ),
     path(
+        "plots/",
+        include("src.plots.urls", namespace="plots"),
+    ),
+    path(
         "domains/",
         include("src.domains.urls", namespace="domains"),
     ),
@@ -48,7 +52,9 @@ urlpatterns = [
         include("src.model_grids.urls", namespace="model_grids"),
     ),
     path(
-        "plots/", TemplateView.as_view(template_name="pages/plots.html"), name="plots"
+        "charts/",
+        TemplateView.as_view(template_name="pages/charts.html"),
+        name="charts",
     ),
     path(
         "vmeteograms/",

@@ -1,0 +1,46 @@
+{% extends 'plots/stations/base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block container %}
+<h1>{% translate "Available Plots and settings for Stations:" %}</h1>
+<div class="row">
+  <div class="col-sm">
+    {% for plot in stations_plots %}
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">{{ plot.name }}</h5>
+        <h6 class="card-subtitle mb-2 text-muted">{{ plot.description }}</h6>
+        <dl>
+          <dt>Command</dt>
+          <dd>&emsp;{{ plot.command }}</dd>
+          <dt>Options</dt>
+          <dd>&emsp;{{ plot.options }}</dd>
+        </dl>
+        <!-- p class="card-text">{{ plot.description }}</p-->
+        <a class="btn btn-success" href="{% url 'plots:stations_update' pk=plot.id %}" role="button">
+          <i class="bi bi-pencil"></i>
+        </a>
+        <a class="btn btn-danger" href="{% url 'plots:stations_delete' pk=plot.id %}" role="button">
+          <i class="bi bi-trash"></i>
+        </a>
+      </div>
+    </div>
+    <br>
+    {% empty %}
+    No plot yet.
+    {% endfor %}
+  </div>
+</div>
+
+<hr>
+<div class="row">
+  {% if perms.stations_plots.change_station %}
+  <a class="btn btn-primary" href="{% url 'plots:stations_create' %}" role="button">
+    {% else %}
+    <a class="btn btn-secondary disabled" href="{% url 'plots:stations_create' %}" role="button">
+      {% endif %}
+      Add Plot
+    </a>
+</div>
+{% endblock container %}
