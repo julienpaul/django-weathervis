@@ -110,7 +110,7 @@
     <i class='bi bi-eye'>zoom</i>
   </a>
   {% endif %}
-  {% if perms.stations.delete_station %}
+  {% if perms.stations.change_station %}
   <a class="btn btn-success" href="{% url 'stations:update' slug=station.slug %}" role="button">
     <i class="bi bi-pencil">edit</i>
   </a>

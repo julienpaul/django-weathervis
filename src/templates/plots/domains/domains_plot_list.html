@@ -1,12 +1,12 @@
-{% extends 'plots/stations/base.html' %}
+{% extends 'plots/domains/base.html' %}
 {% load static %}
 {% load i18n %}
 
 {% block container %}
-<h1>{% translate "Available Plots and settings for Stations:" %}</h1>
+<h1>{% translate "Available Plots and settings for Domains:" %}</h1>
 <div class="row">
   <div class="col-sm">
-    {% for plot in stations_plots %}
+    {% for plot in domains_plots %}
     <div class="card">
       <div class="card-body">
         <h5 class="card-title">{{ plot.name }}</h5>
@@ -18,21 +18,21 @@
           <dd>&emsp;{{ plot.options }}</dd>
         </dl>
         <!-- p class="card-text">{{ plot.description }}</p-->
-        {% if perms.plots.change_stationsplot %}
-        <a class="btn btn-success" href="{% url 'plots:stations_update' pk=plot.id %}" role="button">
+        {% if perms.plots.change_domainsplot %}
+        <a class="btn btn-success" href="{% url 'plots:domains_update' pk=plot.id %}" role="button">
           <i class="bi bi-pencil"></i>
         </a>
         {% else %}
-        <a class="btn btn-secondary disabled" href="{% url 'plots:stations_update' pk=plot.id %}" role="button">
+        <a class="btn btn-secondary disabled" href="{% url 'plots:domains_delete' pk=plot.id %}" role="button">
           <i class="bi bi-pencil"></i>
         </a>
         {% endif %}
-        {% if perms.plots.delete_stationsplot %}
-        <a class="btn btn-danger" href="{% url 'plots:stations_delete' pk=plot.id %}" role="button">
+        {% if perms.plots.delete_domainsplot %}
+        <a class="btn btn-danger" href="{% url 'plots:domains_delete' pk=plot.id %}" role="button">
           <i class="bi bi-trash"></i>
         </a>
         {% else %}
-        <a class="btn btn-secondary disabled" href="{% url 'plots:stations_delete' pk=plot.id %}" role="button">
+        <a class="btn btn-secondary disabled" href="{% url 'plots:domains_delete' pk=plot.id %}" role="button">
           <i class="bi bi-trash"></i>
         </a>
         {% endif %}
@@ -47,10 +47,10 @@
 
 <hr>
 <div class="row">
-  {% if perms.plots.change_stationsplot %}
-  <a class="btn btn-primary" href="{% url 'plots:stations_create' %}" role="button">
+  {% if perms.plots.change_domainsplot %}
+  <a class="btn btn-primary" href="{% url 'plots:domains_create' %}" role="button">
     {% else %}
-    <a class="btn btn-secondary disabled" href="{% url 'plots:stations_create' %}" role="button">
+    <a class="btn btn-secondary disabled" href="{% url 'plots:domains_create' %}" role="button">
       {% endif %}
       Add Plot
     </a>

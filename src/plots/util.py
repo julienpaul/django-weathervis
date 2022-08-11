@@ -8,20 +8,28 @@ import yaml
 # Imports from my apps
 from src.stations.util import MyDumper
 
-from .models import StationsPlot
+from .models import DomainsPlot, StationsPlot
 
-station_plot_path = Path(__file__).resolve().parent
-station_plot_data_path = station_plot_path / "data"
+plot_path = Path(__file__).resolve().parent
+plot_data_path = plot_path / "data"
 
 
-def download(fparam_=station_plot_data_path / "plots.yaml"):
-    """download plot from database and write plots.yaml
+def download(fparam_=plot_data_path / "plots.yaml"):
+    """download plots from database and write plots.yaml
 
     Note:
         - plot from stations and dommains are downloaded to 'plots.yaml'.
     """
     dic = {}
+    # get station plot from database
     for plot in StationsPlot.objects.all():
+        dic[plot.name] = {
+            "command": plot.command,
+            "options": plot.options,
+            "description": plot.description,
+        }
+    # get domain plot from database
+    for plot in DomainsPlot.objects.all():
         dic[plot.name] = {
             "command": plot.command,
             "options": plot.options,
@@ -37,7 +45,7 @@ def download(fparam_=station_plot_data_path / "plots.yaml"):
 """
 
     # create parent directory if need be
-    fparam_.mkdir(parents=True, exist_ok=True)
+    fparam_.parents[0].mkdir(parents=True, exist_ok=True)
     with open(fparam_, "w") as stream:
         stream.write(header + "\n")
         yaml.dump(

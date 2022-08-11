@@ -10,3 +10,8 @@ from django.utils.translation import gettext_lazy as _
 class StationsPlotsConfig(AppConfig):
     name = "src.plots"
     verbose_name = _("StationsPlots")
+
+
+class DomainsPlotsConfig(AppConfig):
+    name = "src.plots"
+    verbose_name = _("DomainsPlots")
