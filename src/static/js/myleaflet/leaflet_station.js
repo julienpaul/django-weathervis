@@ -207,16 +207,18 @@ $(document).ready(function () {
 })
 
 function bounce_marker(slug) {
-  m = markers[slug]
-  // remove marker from markerClusterGroup
-  clusters.removeLayer(m);
-  // add marker to map
-  map_leaflet.addLayer(m);
-  // bounce three times
-  m.bounce(3).on('bounceend',function() {
-    // remove marker from map
-    map_leaflet.removeLayer(m);
-    // add marker to markerClusterGroup
-    clusters.addLayer(m);
-  });
+  if (document.getElementById('station_data') !== null) {
+    m = markers[slug]
+    // remove marker from markerClusterGroup
+    clusters.removeLayer(m);
+    // add marker to map
+    map_leaflet.addLayer(m);
+    // bounce three times
+    m.bounce(3).on('bounceend',function() {
+      // remove marker from map
+      map_leaflet.removeLayer(m);
+      // add marker to markerClusterGroup
+      clusters.addLayer(m);
+    });
+  }
 }

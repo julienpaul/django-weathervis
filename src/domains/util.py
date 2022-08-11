@@ -91,6 +91,7 @@ def download(fparam_=domain_data_path / "domains.yaml"):
                 "south": domain.south,
                 "height": domain.altitude,
                 "description": domain.description,
+                "plots": [p.name for p in domain.plots.all()],
             }
 
     header = """
@@ -102,6 +103,7 @@ def download(fparam_=domain_data_path / "domains.yaml"):
 #   height: <domain height (m)>
 #   description: >
 #     <description could be write on multilines>
+#   plots: list of plots selected fot this domain
 """
 
     with open(fparam_, "w") as stream:

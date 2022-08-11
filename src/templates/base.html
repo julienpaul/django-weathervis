@@ -79,13 +79,16 @@
             <a class="nav-link {% block nav_stations%}{% endblock %} " href="{% url 'stations:redirect' %}">Stations</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link {% block nav_domains%}{% endblock %} " href="{% url 'domains:list' %}">Domains</a>
+            <a class="nav-link {% block nav_domains%}{% endblock %} " href="{% url 'domains:redirect' %}">Domains</a>
           </li>
           <!-- li class="nav-item">
             <a class="nav-link {% block nav_charts%}{% endblock %}" href="{% url 'vmeteograms:redirect' %}">Charts</a>
           </li -->
           <!-- li class="nav-item">
             <a class="nav-link {% block nav_stations_paginate%}{% endblock %} " href="{% url 'stations:list' %}">Stations paginate</a>
+          </li -->
+          <!-- li class="nav-item">
+            <a class="nav-link {% block nav_domains_paginate%}{% endblock %} " href="{% url 'domains:list' %}">Domains</a>
           </li -->
           <li class="nav-item">
             <a class="nav-link {% block nav_plots%}{% endblock %} " href="{% url 'plots:stations_list' %}">Plots</a>

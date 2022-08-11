@@ -1,4 +1,7 @@
+/* variable specific. */
+var layers = {};
 
+/* methods */
 function set_domain_popup(feature, map) {
 
   var southWest = feature._bounds._southWest;
@@ -43,11 +46,13 @@ function info_domain_popup(feature) {
       <dt>\
       <div class='form-check'>"+checkbox(feature)+"<label class='form-check-label' for='defaultCheck2'>is active</label></div>\
       </dt><dd></dd>\
-      </dl>\
+      </dl>"
+      /*
       <a class='btn btn-outline-info btn-sm'\
        href=" + _redirect_url.replace('dummy',feature.properties.slug) + " role='button'>\
        <i class='bi bi-images'> plots</i>\
       </a>"
+      */
     );
 
   } else {
@@ -129,7 +134,7 @@ function add_layer(map, controlLayers, tag) {
         style: style_layer,
         onEachFeature: function(feature, layer) {
           // layer.on('mouseover', function () {
-          layer.setStyle(style_layer(feature, 'local'));
+          layer.setStyle(style_layer('local'));
           //   this.openPopup();
           // });
           // layer.on('mouseout', function () {
@@ -180,14 +185,17 @@ function add_layers(map, controlLayers, tag) {
       var datalayers = L.geoJson(data ,{
         style: style_layer(),
         onEachFeature: function(feature, layer) {
+          const _id = feature.properties.slug
+          /*
           layer.on('mouseover', function () {
-            this.setStyle(style_layer(feature, 'highlight'));
+            this.setStyle(style_layer('highlight'));
             // this.openPopup();
           });
           layer.on('mouseout', function () {
             this.setStyle(style_layer());
             // this.closePopup();
           });
+          */
           if (tag == 'domain') {
             if (document.getElementById(_url) !== null) {
               let popup = info_domain_popup(feature);
@@ -197,6 +205,7 @@ function add_layers(map, controlLayers, tag) {
               layer.bindPopup(feature.properties.name); // show popup with grid name
             }
           }
+          layers[_id] = layer
           // Add 'layer' to Layer Control
           controlLayers.addOverlay(layer, feature.properties.name);
           // layer ignored by Leaflet-Geoman
@@ -211,7 +220,7 @@ function add_layers(map, controlLayers, tag) {
   }
 }
 
-function style_layer(feature, tag) {
+function style_layer(tag) {
     var _fillColor = "#fff700";
     var _color = "white";
     var _weight = 1.5;
@@ -231,3 +240,19 @@ function style_layer(feature, tag) {
         "dashArray": _dashArray,
     };
   }
+
+function highlight_domain(slug) {
+  if (document.getElementById('domain_data') !== null) {
+    for (key in layers) {
+      l = layers[key]
+      if (key == slug) {
+        l.setStyle(style_layer('highlight'));
+        l.bringToFront();
+      } else {
+        l.setStyle(style_layer());
+        l.bringToBack();
+      }
+
+    }
+  }
+}
