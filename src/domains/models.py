@@ -3,11 +3,14 @@
 from django.contrib.auth import get_user_model
 from django.contrib.gis.db import models
 from django.contrib.postgres.fields import CICharField
+from django.db.models.signals import m2m_changed
+from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
 from django_extensions.db.fields import AutoSlugField
 
 # Third-party app imports
 # Imports from my apps
+from src.plots.models import DomainsPlot
 
 User = get_user_model()
 
@@ -37,6 +40,13 @@ class Domain(models.Model):
         help_text="Add information about the domain",
     )
     is_active = models.BooleanField(default=True)
+
+    # list of plots available for the station
+    plots = models.ManyToManyField(
+        DomainsPlot,
+        blank=True,
+        related_name="domains",
+    )
 
     # model = model to use for plot or list of model who contains this station ??
     class Meta:
@@ -68,8 +78,14 @@ class Domain(models.Model):
 
     def save(self, *args, **kwargs):
         """ """
+        super().save(*args, **kwargs)
+
+
+@receiver(m2m_changed, sender=Domain.plots.through)
+def wait_m2m_changed(sender, instance, action, *args, **kwargs):
+    """wait unitl change in Many2Many field get saved"""
+    # https://stackoverflow.com/a/57308547
+    if "post" in action:
         from .util import download
 
-        super().save(*args, **kwargs)
-        # update weathervis config files
         download()
