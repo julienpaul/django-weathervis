@@ -1,0 +1,18 @@
+{% extends 'pages/plots.html' %}
+
+{% load crispy_forms_tags %}
+{% load static %}
+{% load i18n %}
+
+{% block nav_domains_plots%}active{% endblock %}
+
+{% block title %}
+domains Plots
+{% endblock title %}
+
+{% block content %}
+<div class="container">
+  {% block container %}
+  {% endblock container %}
+</div>
+{% endblock content %}

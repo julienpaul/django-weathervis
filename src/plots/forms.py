@@ -8,7 +8,7 @@ from django import forms
 # Imports from my apps
 from src.utils.mixins import CrispyMixin
 
-from .models import StationsPlot
+from .models import DomainsPlot, StationsPlot
 
 
 class CustomMMCF(forms.ModelMultipleChoiceField):
@@ -19,6 +19,32 @@ class CustomMMCF(forms.ModelMultipleChoiceField):
 class StationsPlotForm(CrispyMixin, forms.ModelForm):
     class Meta:
         model = StationsPlot
+        fields = ["name", "command", "options", "description"]
+
+    def _init_helper_layout(self):
+        """initialise crispy layout"""
+        self.helper.error_text_inline = False
+        self.helper.layout = Layout(
+            Field("name"),
+            Field("command"),
+            Field("options"),
+            Field("description"),
+            HTML("&zwnj;"),
+            ButtonHolder(
+                Submit("submit", "Submit", css_class="btn-success"),
+                Button(
+                    "cancel",
+                    "Cancel",
+                    css_class="btn-primary",
+                    onclick="history.go(-1);",
+                ),
+            ),
+        )
+
+
+class DomainsPlotForm(CrispyMixin, forms.ModelForm):
+    class Meta:
+        model = DomainsPlot
         fields = ["name", "command", "options", "description"]
 
     def _init_helper_layout(self):

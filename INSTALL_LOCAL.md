@@ -95,112 +95,116 @@ see [qgis.org download](https://qgis.org/en/site/forusers/download.html)
 
 # Install and run django-weathervis
 
-1. Create repo 'DJANGO_WEATHERVIS', and go in it:
+## Create repo 'DJANGO_WEATHERVIS', and go in it:
 
-        $ mkdir DJANGO_WEATHERVIS
-        $ cd DJANGO_WEATHERVIS
+    $ mkdir DJANGO_WEATHERVIS
+    $ cd DJANGO_WEATHERVIS
 
-2. <a name="py39"></a>Create a virtualenv, and activate it:
-    Here I use conda, obviously you could use the virtualenv you are familiar with.
+## <a name="py39"></a>Create a virtualenv, and activate it:
+Here I use conda, obviously you could use the virtualenv you are familiar with.
 
-    I run on python 3.9, so to avoid issue when running it, you should do the same.
-    First select python version you want to use
+I run on python 3.9, so to avoid issue when running it, you should do the same.
+First select python version you want to use
 
-        $ conda create --name dj-weathervis python=3.9
+    $ conda create --name dj-weathervis python=3.9
 
-    Activate the virtualenv
+Activate the virtualenv
 
-        $ conda activate dj-weathervis
+    $ conda activate dj-weathervis
 
-3. <a name="git_dir"></a>Clone the github repo
+## <a name="git_dir"></a>Clone the github repo
 
-        $ git clone https://github.com/julienpaul/django-weathervis.git <weathervis>
+    $ git clone https://github.com/julienpaul/django-weathervis.git <weathervis>
 
-4. Install the required environment:
+## Install the required environment:
 
-        $ cd <weathervis>
-        $ pip install -r requirements/local.txt
-        $ pre-commit install
+    $ cd <weathervis>
+    $ pip install -r requirements/local.txt
+    $ pre-commit install
 
-5. Create a new PostgreSQL database using createdb:
-    First check if PostgreSQL is running
+## Create a new PostgreSQL database using createdb:
+First check if PostgreSQL is running
 
-        $ createdb
-    > If PostgreSQL isn’t running, we’ll see an error message
+    $ createdb
+> If PostgreSQL isn’t running, we’ll see an error message
 
-    Create the 'weathervis' database
+Create the 'weathervis' database
 
-    5.1. Create a PostGIS database template
+### Create a PostGIS database template
 
-    > Note: you may need to run those command as superuser `sudo -u postgres`
+> Note: you may need to run those command as superuser `sudo -u postgres`
 
-        $ (sudo -u postgres) createdb template_postgis
+    $ (sudo -u postgres) createdb template_postgis
 
-        # Allows non-superusers the ability to create from this template
-        $ (sudo -u postgres) psql -d postgres -c "UPDATE pg_database SET datistemplate='true' WHERE datname='template_postgis';"
-        $ (sudo -u postgres) psql template_postgis -c "create extension postgis"
-        $ (sudo -u postgres) psql template_postgis -c "create extension postgis_topology"
+    # Allows non-superusers the ability to create from this template
+    $ (sudo -u postgres) psql -d postgres -c "UPDATE pg_database SET datistemplate='true' WHERE datname='template_postgis';"
+    $ (sudo -u postgres) psql template_postgis -c "create extension postgis"
+    $ (sudo -u postgres) psql template_postgis -c "create extension postgis_topology"
 
-    > Warning: check <installdir> path before running:
+> Warning: check <installdir> path before running:
 
-        $ (sudo -u postgres) psql template_postgis -f <installdir>/postgresql/share/contrib/postgis-2.0/legacy.sql
-    > for me it was here:
-    >
-        /usr/share/postgresql/13/contrib/postgis-3.1/legacy.sql
+    $ (sudo -u postgres) psql template_postgis -f <installdir>/postgresql/share/contrib/postgis-2.0/legacy.sql
+> for me it was here:
+>
+    /usr/share/postgresql/13/contrib/postgis-3.1/legacy.sql
 
-        # Enable users to alter spatial tables.
-        $ (sudo -u postgres) psql -d template_postgis -c "GRANT ALL ON geometry_columns TO PUBLIC;"
-        $ (sudo -u postgres) psql -d template_postgis -c "GRANT ALL ON geography_columns TO PUBLIC;"
-        $ (sudo -u postgres) psql -d template_postgis -c "GRANT ALL ON spatial_ref_sys TO PUBLIC;"
-
-
-    5.2. Finally create the 'weathervis' database with PostGIS support:
-
-        $ createdb -T template_postgis weathervis
-
-    > Warning: the database must be named `weathervis`
-
-6. Update the database with the django models.
-    in your <weathervis\> repository (created [above](#git_dir)):
-
-        $ python manage.py migrate
-
-7. Create a super user for the application:
-
-        $ python manage.py createsuperuser
-
-8. Load database
-
-    8.1 Create and Load model grid shape files
-
-        $ python manage.py shell
-        >>> from src.model_grids.util import upload
-        >>> upload()
-        >>> exit()
-
-    8.2 Create and load station
-
-        $ python manage.py shell
-        >>> from src.stations.util import upload
-        >>> upload()
-        >>> exit()
+    # Enable users to alter spatial tables.
+    $ (sudo -u postgres) psql -d template_postgis -c "GRANT ALL ON geometry_columns TO PUBLIC;"
+    $ (sudo -u postgres) psql -d template_postgis -c "GRANT ALL ON geography_columns TO PUBLIC;"
+    $ (sudo -u postgres) psql -d template_postgis -c "GRANT ALL ON spatial_ref_sys TO PUBLIC;"
 
 
-    8.2.bis Create and load domain
+### Finally create the 'weathervis' database with PostGIS support:
 
-        $ python manage.py shell
-        >>> from src.domains.util import upload
-        >>> upload()
-        >>> exit()
+    $ createdb -T template_postgis weathervis
 
-    8.3 load other fixture
+> Warning: the database must be named `weathervis`
 
-        $ python manage.py loaddata src/fixtures/**/*.json
+## Update the database with the django models.
+in your <weathervis\> repository (created [above](#git_dir)):
 
-9. Finally run the Django development server:
+    $ python manage.py migrate
 
-        $ python manage.py runserver
+## Create a super user for the application:
 
-    Open in your browser http://127.0.0.1:8000
+    $ python manage.py createsuperuser
+
+## Load database
+
+### Create user's groups with permission
+
+    $ python manage.py create_groups
+
+### Create and Load model grid shape files
+
+    $ python manage.py shell
+    >>> from src.model_grids.util import upload
+    >>> upload()
+    >>> exit()
+
+### Create and load station
+
+    $ python manage.py shell
+    >>> from src.stations.util import upload
+    >>> upload()
+    >>> exit()
+
+
+### Create and load domain
+
+    $ python manage.py shell
+    >>> from src.domains.util import upload
+    >>> upload()
+    >>> exit()
+
+### load other fixture
+
+    $ python manage.py loaddata src/fixtures/**/*.json
+
+## Finally run the Django development server:
+
+    $ python manage.py runserver
+
+Open in your browser http://127.0.0.1:8000
 
 > Note: when creating a user, you will have to copy/paste the url from the email print on your terminal to "confirm" the user's email address.
