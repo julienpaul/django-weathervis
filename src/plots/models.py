@@ -38,10 +38,10 @@ class StationsPlot(models.Model):
 
     def save(self, *args, **kwargs):
         """ """
-        from .util import download
-
         super().save(*args, **kwargs)
         # update weathervis config files
+        from .util import download
+
         download()
 
 
@@ -71,8 +71,8 @@ class DomainsPlot(models.Model):
 
     def save(self, *args, **kwargs):
         """ """
-        from .util import download
-
         super().save(*args, **kwargs)
         # update weathervis config files
+        from .util import download
+
         download()
