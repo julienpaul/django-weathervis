@@ -157,7 +157,7 @@ def download_stations(fparam_=station_data_path / "stations.yaml"):
         )
 
 
-def download_releases(fparam_=station_data_path / "releases.yaml"):
+def download_releases(fparam_=station_data_path / "releases.csv"):
     """download station flexpart parameters from database and write releases.csv
 
     Note:

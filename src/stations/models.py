@@ -151,6 +151,9 @@ class Station(models.Model):
     def save(self, *args, **kwargs):
         """ """
         super().save(*args, **kwargs)
+        from .util import download
+
+        download()
 
 
 @receiver(m2m_changed, sender=Station.plots.through)

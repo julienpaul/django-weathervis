@@ -79,6 +79,9 @@ class Domain(models.Model):
     def save(self, *args, **kwargs):
         """ """
         super().save(*args, **kwargs)
+        from .util import download
+
+        download()
 
 
 @receiver(m2m_changed, sender=Domain.plots.through)
