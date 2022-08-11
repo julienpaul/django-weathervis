@@ -15,6 +15,7 @@ from django import forms
 
 # Third-party app imports
 # Imports from my apps
+from src.plots.models import DomainsPlot
 from src.utils.mixins import CrispyMixin
 from src.utils.util import degree_sign as deg
 
@@ -63,12 +64,21 @@ class DomainForm(CrispyMixin, forms.ModelForm):
         decimal_places=6,
     )
 
+    plots = forms.ModelMultipleChoiceField(
+        required=False,
+        queryset=DomainsPlot.objects.all(),
+        widget=forms.CheckboxSelectMultiple(
+            attrs={"class": "form-check", "style": "list-style:none;"}
+        ),
+    )
+
     class Meta:
         model = Domain
         fields = [
             "name",
             "is_active",
             "description",
+            "plots",
         ]
 
     def _init_helper_layout(self):
@@ -134,8 +144,12 @@ class DomainForm(CrispyMixin, forms.ModelForm):
             # Field("name"),
             # Fieldset("Coordinates", "latitude", "longitude", "altitude"),
             Field("is_active"),
-            Field("description"),
-            HTML("&zwnj;"),
+            Field("description", rows="4"),
+            HTML("<div id=plots>"),
+            HTML("<hr>"),
+            Field("plots"),
+            HTML("</div>"),
+            HTML("<hr>"),
             ButtonHolder(
                 Submit("submit", "Submit", css_class="btn-success"),
                 Button(
@@ -147,9 +161,16 @@ class DomainForm(CrispyMixin, forms.ModelForm):
             ),
         )
 
+    def _custom_helper(self):
+        """customize crispy form"""
+        # Sort plots alphabetically
+        self.fields["plots"].label = "Available plots"
+        self.fields["plots"].queryset = DomainsPlot.objects.order_by("name")
+
 
 class DomainUpdateForm(DomainForm):
     def _custom_helper(self):
         """customize crispy form"""
+        super()._custom_helper()
         # change some field
         self.fields["name"].disabled = True
