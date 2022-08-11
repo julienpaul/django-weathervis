@@ -2,6 +2,9 @@
 {% load leaflet_tags %}
 {% load static %}
 
+{% block nav_domains%}{% endblock %}
+{% block nav_domains_paginate%}active{% endblock %}
+
 {% block map_leaflet %}
 {{ domain_url|json_script:"domain_url" }}
 {{ domain_data|json_script:"domain_data" }}

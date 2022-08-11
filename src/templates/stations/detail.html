@@ -1,134 +1,134 @@
-  <div class="accordion" id="accordionExample">
-    <div class=" card">
-      <div class="card-body">
-        <dl>
-          <!-- dt>Name</dt>
-          <dd>&emsp;{{station.slug}}</dd -->
-          <dt>Coordinates</dt>
-          <dd>&emsp;{{station.latitude}}&deg;N | {{station.longitude}}&deg;E | {{station.altitude}}m</dd>
-          <dt>Station id</dt>
-          <dd>&emsp;{{station.station_id|default:"No station ID yet."}}</dd>
-          <dt>WMO id</dt>
-          <dd>&emsp;{{station.wmo_id|default:"No WMO ID yet."}}</dd>
-          <dt>Description</dt>
-          <dd>&emsp;{{station.description|default:"No description yet."}}</dd>
-        </dl>
-        <div class="form-check">
-          {% if station.is_active %}
-          <input class="form-check-input" type="checkbox" value="" id="defaultCheck2" disabled checked>
-          {% else %}
-          <input class="form-check-input" type="checkbox" value="" id="defaultCheck2" disabled>
-          {% endif %}
-          <label class="form-check-label" for="defaultCheck2">
-            is active
-          </label>
-        </div>
-        <div class="form-check">
-          {% if station.uses_flexpart %}
-          <input class="form-check-input" type="checkbox" value="" id="defaultCheck2" disabled checked>
-          {% else %}
-          <input class="form-check-input" type="checkbox" value="" id="defaultCheck2" disabled>
-          {% endif %}
-          <label class="form-check-label" for="defaultCheck2">
-            uses flexpart
-          </label>
-        </div>
+<div class="accordion" id="accordionExample">
+  <div class=" card">
+    <div class="card-body">
+      <dl>
+        <!-- dt>Name</dt>
+        <dd>&emsp;{{station.slug}}</dd -->
+        <dt>Coordinates</dt>
+        <dd>&emsp;{{station.latitude}}&deg;N | {{station.longitude}}&deg;E | {{station.altitude}}m</dd>
+        <dt>Station id</dt>
+        <dd>&emsp;{{station.station_id|default:"No station ID yet."}}</dd>
+        <dt>WMO id</dt>
+        <dd>&emsp;{{station.wmo_id|default:"No WMO ID yet."}}</dd>
+        <dt>Description</dt>
+        <dd>&emsp;{{station.description|default:"No description yet."}}</dd>
+      </dl>
+      <div class="form-check">
+        {% if station.is_active %}
+        <input class="form-check-input" type="checkbox" value="" id="defaultCheck2" disabled checked>
+        {% else %}
+        <input class="form-check-input" type="checkbox" value="" id="defaultCheck2" disabled>
+        {% endif %}
+        <label class="form-check-label" for="defaultCheck2">
+          is active
+        </label>
       </div>
-    </div>
-    <div class="card">
-      <div class="card-header" id="headingOne" style="background-color: white;">
-        <h2 class="mb-0">
-          {% if station.plots.all %}
-          <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseOne"
-            aria-expanded="true" aria-controls="collapseOne">
-            Plots
-          </button>
-          {% else %}
-          <button class="btn collapsed">
-            No plot associated yet
-          </button>
-          {% endif %}
-        </h2>
-      </div>
-      <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
-        <div class="card-body">
-          {% if station.plots.all %}
-          {% for plot in station.plots.all|dictsort:"name" %}
-          &emsp;<input class="form-check-input" type="checkbox" value="" id="defaultCheck2" disabled checked>
-          <label class="form-check-label" for="defaultCheck2">
-            {{plot.name}}
-          </label></br>
-          {% endfor %}
-          {% endif %}
-        </div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-header" id="headingTwo" style="background-color: white;">
-        <h2 class="mb-0">
-          {% if station.uses_flexpart %}
-          <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo"
-            aria-expanded="false" aria-controls="collapseTwo">
-            Flexpart release parameters
-          </button>
-          {% else %}
-          <button class="btn collapsed">
-            No flexpart parameters yet
-          </button>
-          {% endif %}
-        </h2>
-      </div>
-      <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
-        <div class="card-body">
-          {% if station.uses_flexpart %}
-          <div>
-            <dl>
-              <dt>Dates</dt>
-              <dd>{{ station.start_datetime|date:'Y-m-d H:i'}} to {{ station.end_datetime|date:'Y-m-d H:i'}}
-              </dd>
-              <dt>Altitudes ({{station.get_alt_unit_display}})</dt>
-              <dd>{{station.alt_lower}} to
-                {{station.alt_upper}} </dd>
-              <dt>Particles</dt>
-              <dd>
-                (nb: {{station.numb_part}}, mass: {{station.xmass}}, grid: {{station.number_grid}})
-              </dd>
-            </dl>
-          </div>
-          {% endif %}
-        </div>
+      <div class="form-check">
+        {% if station.uses_flexpart %}
+        <input class="form-check-input" type="checkbox" value="" id="defaultCheck2" disabled checked>
+        {% else %}
+        <input class="form-check-input" type="checkbox" value="" id="defaultCheck2" disabled>
+        {% endif %}
+        <label class="form-check-label" for="defaultCheck2">
+          uses flexpart
+        </label>
       </div>
     </div>
   </div>
-  </br>
-  {% if request.path == "/stations/~detail/"|add:station.slug|add:"/" %}
-  <a class="btn btn-primary" href="{% url 'stations:detail_list' slug=station.slug %}" role="button">
-    back to list
-  </a>
-  {% else %}
-  <a class="btn btn-primary" href="{% url 'stations:detail' slug=station.slug %}" role="button">
-    <i class='bi bi-eye'>zoom</i>
-  </a>
-  {% endif %}
-  {% if perms.stations.change_station %}
-  <a class="btn btn-success" href="{% url 'stations:update' slug=station.slug %}" role="button">
-    <i class="bi bi-pencil">edit</i>
-  </a>
-  {% else %}
-  <a class="btn btn-secondary disabled" href="{% url 'stations:update' slug=station.slug %}" role="button">
-    <i class="bi bi-pencil">edit</i>
-  </a>
-  {% endif %}
-  {% if perms.stations.delete_station %}
-  <a class="btn btn-danger" href="{% url 'stations:delete' slug=station.slug %}" role="button">
-    <i class="bi bi-trash">delete</i>
-  </a>
-  {% else %}
-  <a class="btn btn-secondary disabled" href="{% url 'stations:delete' slug=station.slug %}" role="button">
-    <i class="bi bi-trash">delete</i>
-  </a>
-  {% endif %}
-  <!-- hr>
-  <a class="btn btn-outline-info" href="{% url 'stations:redirect' %}" role="button">
-    <i class="bi bi-images"> plots</i>
-  </a-->
+  <div class="card">
+    <div class="card-header" id="headingOne" style="background-color: white;">
+      <h2 class="mb-0">
+        {% if station.plots.all %}
+        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseOne"
+          aria-expanded="true" aria-controls="collapseOne">
+          Plots
+        </button>
+        {% else %}
+        <button class="btn collapsed">
+          No plot associated yet
+        </button>
+        {% endif %}
+      </h2>
+    </div>
+    <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+      <div class="card-body">
+        {% if station.plots.all %}
+        {% for plot in station.plots.all|dictsort:"name" %}
+        &emsp;<input class="form-check-input" type="checkbox" value="" id="defaultCheck2" disabled checked>
+        <label class="form-check-label" for="defaultCheck2">
+          {{plot.name}}
+        </label></br>
+        {% endfor %}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header" id="headingTwo" style="background-color: white;">
+      <h2 class="mb-0">
+        {% if station.uses_flexpart %}
+        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo"
+          aria-expanded="false" aria-controls="collapseTwo">
+          Flexpart release parameters
+        </button>
+        {% else %}
+        <button class="btn collapsed">
+          No flexpart parameters yet
+        </button>
+        {% endif %}
+      </h2>
+    </div>
+    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+      <div class="card-body">
+        {% if station.uses_flexpart %}
+        <div>
+          <dl>
+            <dt>Dates</dt>
+            <dd>{{ station.start_datetime|date:'Y-m-d H:i'}} to {{ station.end_datetime|date:'Y-m-d H:i'}}
+            </dd>
+            <dt>Altitudes ({{station.get_alt_unit_display}})</dt>
+            <dd>{{station.alt_lower}} to
+              {{station.alt_upper}} </dd>
+            <dt>Particles</dt>
+            <dd>
+              (nb: {{station.numb_part}}, mass: {{station.xmass}}, grid: {{station.number_grid}})
+            </dd>
+          </dl>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+</br>
+{% if request.path == "/stations/~detail/"|add:station.slug|add:"/" %}
+<a class="btn btn-primary" href="{% url 'stations:detail_list' slug=station.slug %}" role="button">
+  back to list
+</a>
+{% else %}
+<a class="btn btn-primary" href="{% url 'stations:detail' slug=station.slug %}" role="button">
+  <i class='bi bi-eye'>zoom</i>
+</a>
+{% endif %}
+{% if perms.stations.change_station %}
+<a class="btn btn-success" href="{% url 'stations:update' slug=station.slug %}" role="button">
+  <i class="bi bi-pencil">edit</i>
+</a>
+{% else %}
+<a class="btn btn-secondary disabled" href="{% url 'stations:update' slug=station.slug %}" role="button">
+  <i class="bi bi-pencil">edit</i>
+</a>
+{% endif %}
+{% if perms.stations.delete_station %}
+<a class="btn btn-danger" href="{% url 'stations:delete' slug=station.slug %}" role="button">
+  <i class="bi bi-trash">delete</i>
+</a>
+{% else %}
+<a class="btn btn-secondary disabled" href="{% url 'stations:delete' slug=station.slug %}" role="button">
+  <i class="bi bi-trash">delete</i>
+</a>
+{% endif %}
+<!-- hr>
+<a class="btn btn-outline-info" href="{% url 'stations:redirect' %}" role="button">
+  <i class="bi bi-images"> plots</i>
+</a-->

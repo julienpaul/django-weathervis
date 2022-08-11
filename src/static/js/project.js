@@ -13,7 +13,7 @@ $(document).ready(function (e) {
   // show active anchor card, on click
   $(".list-group a").click(function (event) {
     const aslug = $(this).attr('id').split("-")[1];
-    bounce_marker(aslug);
+    highlight(aslug);
     $(this).tab('show');
   });
 });
@@ -22,4 +22,12 @@ function scroll_to_anchor(aid){
   // scroll down to active anchor
   var aTag = $("a[id='"+ aid +"']");
   $('.list-group').animate({scrollTop: aTag.offset().top - 200},'slow');
+}
+
+function highlight(aslug) {
+  console.log('highligh '+aslug)
+  // animate marker
+  bounce_marker(aslug);
+  // animate domain
+  highlight_domain(aslug);
 }

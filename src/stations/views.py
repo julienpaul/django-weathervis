@@ -355,7 +355,7 @@ class StationDeleteView(
     slug_field = "slug"
 
     success_message = _("Station '%(name)s' successfully removed")
-    success_url = reverse_lazy("stations:list")
+    success_url = reverse_lazy("stations:redirect")
 
     def delete(self, request, *args, **kwargs):
         """ """

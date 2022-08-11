@@ -1,0 +1,45 @@
+{% extends 'domains/domain_base.html' %}
+{% load leaflet_tags %}
+{% load static %}
+
+{% block map_leaflet %}
+{{ domain_url|json_script:"domain_url" }}
+{{ domain_data|json_script:"domain_data" }}
+<div id='domain_map_id'>
+  {% leaflet_map "bigmap" callback="map_domain_edit" %}
+</div>
+{% endblock map_leaflet %}
+
+{% block column %}
+<input type="hidden" id='id_slug' name="domain_slug" value={{ object.slug }}>
+<!-- input type="hidden" id='id_domain_local' name="domain_name" value={{ object.name }} -->
+<div class="row">
+  {% if domains %}
+  <div class="list-group list-group-flush overflow-auto" style="max-height: 400px; width: 95%" id="list-tab"
+    role="tablist">
+    {% for domain in domains %}
+    <a class="list-group-item list-group-item-action" data-bs-toggle="list" id="list-{{ domain.slug }}-list"
+      data-bs-toggle="list" href="#list-{{ domain.slug }}" role="tab"
+      aria-controls="list-{{ domain.slug }}">{{ domain.name }}</a>
+    {% endfor %}
+  </div>
+  <hr>
+  {% else %}
+  <h4> No domain yet.</h4>
+  {% endif %}
+</div>
+<br>
+<div class="row">
+  {% if object_list %}
+  <div class="tab-content" id="nav-tabContent" style="width: 95%">
+    {% for domain in object_list %}
+    <div class="tab-pane fade" id="list-{{ domain.slug }}" role="tabpanel"
+      aria-labelledby="list-{{ domain.slug }}-list">
+      {% include "domains/detail.html" %}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+</div>
+{% endblock column %}
