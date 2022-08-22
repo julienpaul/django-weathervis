@@ -155,7 +155,12 @@ class UserUpgradeForm(UserUpdateForm):
         Motivation
             {self.cleaned_data.get('motivation')}
 
-        To allow this change got to the weathervis admin page: { uri }"""
+        To allow this change got to the weathervis admin page: { uri }
+
+        Note:
+            Remember to send a message back to the user and other staff members (see list of receivers)
+            when you have made the change.
+        """
         staff = User.objects.filter(is_staff=True)
         recipient_list = [s.email for s in staff]
 
