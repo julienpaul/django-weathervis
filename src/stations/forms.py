@@ -48,8 +48,8 @@ class StationForm(CrispyMixin, forms.ModelForm):
     altitude = forms.DecimalField(
         min_value=0,
         help_text="m",
-        max_digits=11,
-        decimal_places=6,
+        max_digits=6,
+        decimal_places=1,
     )
 
     plots = forms.ModelMultipleChoiceField(
