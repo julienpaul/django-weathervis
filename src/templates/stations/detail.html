@@ -84,7 +84,8 @@
         <div>
           <dl>
             <dt>Dates</dt>
-            <dd>{{ station.start_datetime|date:'Y-m-d H:i'}} to {{ station.end_datetime|date:'Y-m-d H:i'}}
+            <dd>{{ station.start_datetime|date:'Y-m-d H:i'|default:"from last update"}} to
+              {{ station.end_datetime|date:'Y-m-d H:i'}}
             </dd>
             <dt>Altitudes ({{station.get_alt_unit_display}})</dt>
             <dd>{{station.alt_lower}} to

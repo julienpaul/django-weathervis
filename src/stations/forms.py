@@ -277,11 +277,9 @@ class StationForm(CrispyMixin, forms.ModelForm):
         end_datetime = cleaned_data.get("end_datetime")
 
         if uses_flexpart:
-            if not start_datetime:
-                raise ValidationError("Starting date is a required field.")
             if not end_datetime:
                 raise ValidationError("Ending date is a required field.")
-            if end_datetime < start_datetime:
+            if start_datetime and end_datetime < start_datetime:
                 raise ValidationError(
                     "Flexpart release dates aren't sorted in ascending order.",
                 )
