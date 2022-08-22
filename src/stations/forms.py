@@ -215,7 +215,7 @@ class StationForm(CrispyMixin, forms.ModelForm):
         self.fields["alt_lower"].label = "Lower altitude"
         self.fields["alt_upper"].label = "Upper altitude"
         self.fields["alt_unit"].label = "Unit"
-        self.fields["numb_part"].label = "Nb particles"
+        self.fields["numb_part"].label = "Particles"
         self.fields["xmass"].label = "Total mass"
         # fields not required
         self.fields["start_datetime"].required = False
@@ -277,11 +277,9 @@ class StationForm(CrispyMixin, forms.ModelForm):
         end_datetime = cleaned_data.get("end_datetime")
 
         if uses_flexpart:
-            if not start_datetime:
-                raise ValidationError("Starting date is a required field.")
             if not end_datetime:
                 raise ValidationError("Ending date is a required field.")
-            if end_datetime < start_datetime:
+            if start_datetime and end_datetime < start_datetime:
                 raise ValidationError(
                     "Flexpart release dates aren't sorted in ascending order.",
                 )

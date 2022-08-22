@@ -97,15 +97,14 @@ class Station(models.Model):
     )
 
     class AltUnit(models.IntegerChoices):
-        METER = 1, _("m (ab. ground)")
-        PASCAL = 2, _("m (ab. sea level)")
+        METER = 1, _("m (a.g.l)")
+        PASCAL = 2, _("m (a.s.l)")
         HECTOPASCAL = 3, _("hPa")
 
     alt_lower = models.DecimalField(
         default=0,
         max_digits=6,
         decimal_places=2,
-        help_text="Lower altitude of the release",
     )
     alt_upper = models.DecimalField(
         default=0,
