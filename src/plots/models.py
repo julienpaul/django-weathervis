@@ -7,7 +7,6 @@ from django.utils.translation import gettext_lazy as _
 
 # Third-party app imports
 # Imports from my apps
-# from src.stations.models import Station
 
 User = get_user_model()
 
@@ -44,6 +43,14 @@ class StationsPlot(models.Model):
 
         download()
 
+    def delete(self, *args, **kwargs):
+        """ """
+        super().delete(*args, **kwargs)
+        # update weathervis config files
+        from .util import download
+
+        download()
+
 
 class DomainsPlot(models.Model):
     name = CICharField(
@@ -72,6 +79,14 @@ class DomainsPlot(models.Model):
     def save(self, *args, **kwargs):
         """ """
         super().save(*args, **kwargs)
+        # update weathervis config files
+        from .util import download
+
+        download()
+
+    def delete(self, *args, **kwargs):
+        """ """
+        super().delete(*args, **kwargs)
         # update weathervis config files
         from .util import download
 
