@@ -215,7 +215,7 @@ class StationForm(CrispyMixin, forms.ModelForm):
         self.fields["alt_lower"].label = "Lower altitude"
         self.fields["alt_upper"].label = "Upper altitude"
         self.fields["alt_unit"].label = "Unit"
-        self.fields["numb_part"].label = "Nb particles"
+        self.fields["numb_part"].label = "Particles"
         self.fields["xmass"].label = "Total mass"
         # fields not required
         self.fields["start_datetime"].required = False
