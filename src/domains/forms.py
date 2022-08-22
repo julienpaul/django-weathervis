@@ -30,15 +30,15 @@ class DomainForm(CrispyMixin, forms.ModelForm):
         min_value=-180,
         max_value=180,
         help_text=f"{deg}E",
-        max_digits=9,
-        decimal_places=6,
+        max_digits=5,
+        decimal_places=2,
     )
     south = forms.DecimalField(
         min_value=-90,
         max_value=90,
         help_text=f"{deg}N",
-        max_digits=8,
-        decimal_places=6,
+        max_digits=4,
+        decimal_places=2,
     )
 
     # upper left corner
@@ -46,22 +46,22 @@ class DomainForm(CrispyMixin, forms.ModelForm):
         min_value=-180,
         max_value=180,
         help_text=f"{deg}E",
-        max_digits=9,
-        decimal_places=6,
+        max_digits=5,
+        decimal_places=2,
     )
     north = forms.DecimalField(
         min_value=-90,
         max_value=90,
         help_text=f"{deg}N",
-        max_digits=8,
-        decimal_places=6,
+        max_digits=4,
+        decimal_places=2,
     )
 
     altitude = forms.DecimalField(
         min_value=0,
         help_text="m",
-        max_digits=11,
-        decimal_places=6,
+        max_digits=6,
+        decimal_places=1,
     )
 
     plots = forms.ModelMultipleChoiceField(
