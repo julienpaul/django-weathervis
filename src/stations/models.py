@@ -164,8 +164,8 @@ class Station(models.Model):
 
 
 @receiver(m2m_changed, sender=Station.plots.through)
-def update_station_m2m(sender, instance, action, *args, **kwargs):
-    """wait unitl change in Many2Many field get saved"""
+def update_station_m2m(sender, instance, action, reverse, *args, **kwargs):
+    """wait until change in Many2Many field get saved"""
     # https://stackoverflow.com/a/57308547
     if "post" in action:
         from .util import download

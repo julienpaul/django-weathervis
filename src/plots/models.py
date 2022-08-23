@@ -47,9 +47,12 @@ class StationsPlot(models.Model):
         """ """
         super().delete(*args, **kwargs)
         # update weathervis config files
+        from src.stations.util import download as download_station
+
         from .util import download
 
         download()
+        download_station()
 
 
 class DomainsPlot(models.Model):
@@ -88,6 +91,9 @@ class DomainsPlot(models.Model):
         """ """
         super().delete(*args, **kwargs)
         # update weathervis config files
+        from src.domains.util import download as download_domain
+
         from .util import download
 
         download()
+        download_domain()
