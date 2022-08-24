@@ -85,7 +85,7 @@ class Domain(models.Model):
 
     def delete(self, *args, **kwargs):
         """ """
-        super().save(*args, **kwargs)
+        super().delete(*args, **kwargs)
         from .util import download
 
         download()
