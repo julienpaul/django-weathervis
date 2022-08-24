@@ -81,3 +81,7 @@ sub {
 .list-group-item {
   display: list-item;
 }
+
+.list-group-inactive {
+  color:rgb(206, 18, 18);
+}
