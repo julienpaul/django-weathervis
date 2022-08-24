@@ -76,6 +76,11 @@ see also `bump2version documentation`_
 
 .. _`bump2version documentation`: https://github.com/c4urself/bump2version
 
+Then do not forget to push, in the github repo, the change in main branch and the new tag
+
+  $ git push origin main <tag>
+
+
 Live reloading and Sass CSS compilation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
