@@ -18,9 +18,15 @@
   <div class="list-group list-group-flush overflow-auto" style="max-height: 400px; width: 95%" id="list-tab"
     role="tablist">
     {% for domain in domains %}
+    {% if domain.is_active %}
     <a class="list-group-item list-group-item-action" data-bs-toggle="list" id="list-{{ domain.slug }}-list"
       data-bs-toggle="list" href="#list-{{ domain.slug }}" role="tab"
       aria-controls="list-{{ domain.slug }}">{{ domain.name }}</a>
+    {% else %}
+    <a class="list-group-item list-group-item-action list-group-inactive" data-bs-toggle="list"
+      id="list-{{ domain.slug }}-list" data-bs-toggle="list" href="#list-{{ domain.slug }}" role="tab"
+      aria-controls="list-{{ domain.slug }}">{{ domain.name }}</a>
+    {% endif %}
     {% endfor %}
   </div>
   <hr>
