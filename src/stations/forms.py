@@ -43,13 +43,17 @@ class StationForm(CrispyMixin, forms.ModelForm):
         help_text=f"{deg}N",
         max_digits=8,
         decimal_places=6,
+        # Pb: 'step' force the number of mandatory decimal
+        # widget=forms.NumberInput(
+        #     attrs={'step': 0.01,}
+        # ),
     )
 
     altitude = forms.DecimalField(
         min_value=0,
         help_text="m",
-        max_digits=6,
-        decimal_places=1,
+        max_digits=11,
+        decimal_places=6,
     )
 
     plots = forms.ModelMultipleChoiceField(
