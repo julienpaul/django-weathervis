@@ -134,7 +134,8 @@ function add_layer(map, controlLayers, tag) {
         style: style_layer,
         onEachFeature: function(feature, layer) {
           // layer.on('mouseover', function () {
-          layer.setStyle(style_layer('local'));
+          const _active=feature.properties.is_active
+          layer.setStyle(style_layer('local', active=_active));
           //   this.openPopup();
           // });
           // layer.on('mouseout', function () {
@@ -183,9 +184,10 @@ function add_layers(map, controlLayers, tag) {
     $.getJSON(all_data, function(data){
       // add GeoJSON layer to the map once the file is loaded
       var datalayers = L.geoJson(data ,{
-        style: style_layer(),
         onEachFeature: function(feature, layer) {
           const _id = feature.properties.slug
+          const _active=feature.properties.is_active
+          layer.setStyle(style_layer('default', active=_active));
           /*
           layer.on('mouseover', function () {
             this.setStyle(style_layer('highlight'));
@@ -220,8 +222,12 @@ function add_layers(map, controlLayers, tag) {
   }
 }
 
-function style_layer(tag) {
-    var _fillColor = "#fff700";
+function style_layer(tag, active=true) {
+    if (active) {
+      var _fillColor = "#fff700";
+    } else {
+      var _fillColor = "#ddd";
+    }
     var _color = "white";
     var _weight = 1.5;
     var _dashArray = "5, 5";

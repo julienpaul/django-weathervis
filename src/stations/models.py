@@ -161,6 +161,17 @@ class Station(models.Model):
 
         download()
 
+    @classmethod
+    def disable_all(cls):
+        cls.objects.update(is_active=False)
+        # for obj in cls.objects.all():
+        #     obj.is_active = False
+        #     obj.save()
+
+    @classmethod
+    def enable_all(cls):
+        cls.objects.update(is_active=True)
+
 
 @receiver(m2m_changed, sender=Station.plots.through)
 def update_station_m2m(sender, instance, action, reverse, *args, **kwargs):

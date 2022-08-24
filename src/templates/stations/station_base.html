@@ -21,7 +21,19 @@ Stations
 {% block content %}
 <h1>
   {% block header %}
-  {% translate "Stations:" %}
+  <div class="row">
+    <div class="column quarter">
+      Stations:
+    </div>
+    <div class="column quarter">
+      <a class="btn btn-dark" href="{% url 'stations:disable' %}" role="button">
+        <i class="bi bi-stop">disable all</i>
+      </a>
+      <a class="btn btn-light" href="{% url 'stations:enable' %}" role="button">
+        <i class="bi bi-stop-fill">enable all</i>
+      </a>
+    </div>
+  </div>
   {% endblock header %}
 </h1>
 <hr>

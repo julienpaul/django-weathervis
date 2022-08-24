@@ -43,6 +43,10 @@ a.disabled {
   padding: 10px;
 }
 
+.quarter {
+  width: 25%;
+}
+
 .left {
   width: 65%;
 }

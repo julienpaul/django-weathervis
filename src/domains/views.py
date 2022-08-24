@@ -1,12 +1,13 @@
 # Stdlib imports
 # Core Django imports
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.gis.geos import Polygon as GeoPolygon
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.serializers import serialize
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import (
@@ -41,6 +42,22 @@ def data_all_domains(request):
         Domain.objects.all(),
     )
     return HttpResponse(domain, content_type="json")
+
+
+@login_required
+@permission_required("domains.change_domain")
+def disable_all_domains(request):
+    """disable all domain and return list view"""
+    Domain.disable_all()
+    return redirect(reverse_lazy("domains:redirect"))
+
+
+@login_required
+@permission_required("domains.change_domain")
+def enable_all_domains(request):
+    """enable all domain and return list view"""
+    Domain.enable_all()
+    return redirect(reverse_lazy("domains:redirect"))
 
 
 class DomainDetailListView(LoginRequiredMixin, SuccessMessageMixin, ListView):
