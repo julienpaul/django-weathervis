@@ -25,7 +25,6 @@ function scroll_to_anchor(aid){
 }
 
 function highlight(aslug) {
-  console.log('highligh '+aslug)
   // animate marker
   bounce_marker(aslug);
   // animate domain

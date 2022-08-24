@@ -1,12 +1,13 @@
 # Stdlib imports
 # Core Django imports
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.gis.geos import Point as GeoPoint
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.serializers import serialize
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import (
@@ -44,6 +45,22 @@ def data_all_stations(request, slug=None):
     )
     # station = serialize("geojson", Station.objects.exclude(slug=slug))
     return HttpResponse(station, content_type="json")
+
+
+@login_required
+@permission_required("stations.change_station")
+def disable_all_stations(request):
+    """disable all station and return list view"""
+    Station.disable_all()
+    return redirect(reverse_lazy("stations:redirect"))
+
+
+@login_required
+@permission_required("stations.change_station")
+def enable_all_stations(request):
+    """enable all station and return list view"""
+    Station.enable_all()
+    return redirect(reverse_lazy("stations:redirect"))
 
 
 class StationDetailListView(LoginRequiredMixin, SuccessMessageMixin, ListView):

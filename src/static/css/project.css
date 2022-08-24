@@ -43,6 +43,10 @@ a.disabled {
   padding: 10px;
 }
 
+.quarter {
+  width: 25%;
+}
+
 .left {
   width: 65%;
 }
@@ -80,6 +84,10 @@ sub {
 
 .list-group-item {
   display: list-item;
+}
+
+.list-group-inactive {
+  color:rgb(206, 18, 18);
 }
 
 /* hide/remove arrows/spinners

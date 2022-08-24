@@ -7,6 +7,7 @@ from django.urls import path
 from .views import (
     data_all_domains,
     data_this_domain,
+    disable_all_domains,
     domain_confirm_delete_view,
     domain_create_view,
     domain_detail_list_view,
@@ -14,6 +15,7 @@ from .views import (
     domain_list_view,
     domain_redirect_view,
     domain_update_view,
+    enable_all_domains,
 )
 
 app_name = "domains"
@@ -21,7 +23,9 @@ urlpatterns = [
     path("~redirect/", view=domain_redirect_view, name="redirect"),
     path("~list/", view=domain_list_view, name="list"),
     path("~add/", view=domain_create_view, name="create"),
-    path("<slug>/", view=domain_detail_list_view, name="detail_list"),
+    path("~disable_all_domains/", disable_all_domains, name="disable"),
+    path("~enable_all_domains/", enable_all_domains, name="enable"),
+    path("@<slug>/", view=domain_detail_list_view, name="detail_list"),
     path("~detail/<slug>/", view=domain_detail_view, name="detail"),
     path("~update/<slug>/", view=domain_update_view, name="update"),
     path("~delete/<slug>/", view=domain_confirm_delete_view, name="delete"),

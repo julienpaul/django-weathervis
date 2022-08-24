@@ -21,10 +21,8 @@ Station create
 {% endblock map_leaflet %}
 
 {% block column %}
-<div class="col">
-  {% csrf_token %}
-  {% crispy form %}
-</div>
+{% csrf_token %}
+{% crispy form %}
 <!--
 <div class="col">
     <a class="btn btn-primary" href="{% url 'stations:list' %}" role="button">
