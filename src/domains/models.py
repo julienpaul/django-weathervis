@@ -90,6 +90,14 @@ class Domain(models.Model):
 
         download()
 
+    @classmethod
+    def disable_all(cls):
+        cls.objects.update(is_active=False)
+
+    @classmethod
+    def enable_all(cls):
+        cls.objects.update(is_active=True)
+
 
 @receiver(m2m_changed, sender=Domain.plots.through)
 def update_domain_m2m(sender, instance, action, reverse, *args, **kwargs):
