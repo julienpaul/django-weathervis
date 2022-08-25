@@ -36,6 +36,17 @@
           <i class="bi bi-trash"></i>
         </a>
         {% endif %}
+        <hr>
+        {% if plot.stations.all %}
+        <h5>Stations using this plot:</h5>
+        <ul>
+          {% for station in plot.stations.all %}
+          <li>{{ station.name }}</li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <h5>No Station is using this plot yet</h5>
+        {% endif %}
       </div>
     </div>
     <br>
