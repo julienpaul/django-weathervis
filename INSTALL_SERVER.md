@@ -513,7 +513,7 @@ You will need at least those parameters in the **.env** file:
 DJANGO_SECRET_KEY=<YOUR_SECRET_KEY>
 DATABASE_URL=postgis://u_weathervis:<YOUR_PASSWORD>@localhost:5432/weathervis
 REDIS_URL=redis://127.0.0.1:6379/1
-DJANGO_DADMINS=[("""Julien Paul""", "julien.paul@uib.no")]
+DJANGO_ADMINS=[("""Julien Paul""", "julien.paul@uib.no")]
 DJANGO_ALLOWED_HOSTS=.weathervis.uib.no,localhost,127.0.0.1
 DJANGO_ACCOUNT_ALLOW_REGISTRATION=False
 DJANGO_SECURE_SSL_REDIRECT=False
