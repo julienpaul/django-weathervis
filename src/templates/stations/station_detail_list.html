@@ -2,6 +2,22 @@
 {% load leaflet_tags %}
 {% load static %}
 
+{% block header %}
+<div class="row">
+  <div class="column quarter">
+    Stations:
+  </div>
+  <div class="column quarter">
+    <a class="btn btn-dark" href="{% url 'stations:disable' %}" role="button">
+      <i class="bi bi-stop">disable all</i>
+    </a>
+    <a class="btn btn-light" href="{% url 'stations:enable' %}" role="button">
+      <i class="bi bi-stop-fill">enable all</i>
+    </a>
+  </div>
+</div>
+{% endblock header %}
+
 {% block map_leaflet %}
 {{ station_url|json_script:"station_url" }}
 {{ station_data|json_script:"station_data" }}
@@ -37,9 +53,9 @@
 </div>
 <br>
 <div class="row">
-  {% if object_list %}
+  {% if stations %}
   <div class="tab-content" id="nav-tabContent" style="width: 95%">
-    {% for station in object_list %}
+    {% for station in stations %}
     <div class="tab-pane fade" id="list-{{ station.slug }}" role="tabpanel"
       aria-labelledby="list-{{ station.slug }}-list">
       {% include "stations/detail.html" %}

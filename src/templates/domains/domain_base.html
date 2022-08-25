@@ -21,19 +21,7 @@ Domains
 {% block content %}
 <h1>
   {% block header %}
-  <div class="row">
-    <div class="column quarter">
-      Domains:
-    </div>
-    <div class="column quarter">
-      <a class="btn btn-dark" href="{% url 'domains:disable' %}" role="button">
-        <i class="bi bi-stop">disable all</i>
-      </a>
-      <a class="btn btn-light" href="{% url 'domains:enable' %}" role="button">
-        <i class="bi bi-stop-fill">enable all</i>
-      </a>
-    </div>
-  </div>
+  Domains:
   {% endblock header %}
 </h1>
 <hr>
