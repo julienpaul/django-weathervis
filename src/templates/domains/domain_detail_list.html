@@ -2,6 +2,22 @@
 {% load leaflet_tags %}
 {% load static %}
 
+{% block header %}
+<div class="row">
+  <div class="column quarter">
+    Domains:
+  </div>
+  <div class="column quarter">
+    <a class="btn btn-dark" href="{% url 'domains:disable' %}" role="button">
+      <i class="bi bi-stop">disable all</i>
+    </a>
+    <a class="btn btn-light" href="{% url 'domains:enable' %}" role="button">
+      <i class="bi bi-stop-fill">enable all</i>
+    </a>
+  </div>
+</div>
+{% endblock header %}
+
 {% block map_leaflet %}
 {{ domain_url|json_script:"domain_url" }}
 {{ domain_data|json_script:"domain_data" }}
@@ -36,9 +52,9 @@
 </div>
 <br>
 <div class="row">
-  {% if object_list %}
+  {% if domains %}
   <div class="tab-content" id="nav-tabContent" style="width: 95%">
-    {% for domain in object_list %}
+    {% for domain in domains %}
     <div class="tab-pane fade" id="list-{{ domain.slug }}" role="tabpanel"
       aria-labelledby="list-{{ domain.slug }}-list">
       {% include "domains/detail.html" %}

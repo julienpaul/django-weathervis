@@ -21,7 +21,7 @@ from .views import (
 app_name = "stations"
 urlpatterns = [
     path("~redirect/", view=station_redirect_view, name="redirect"),
-    path("~list", view=station_list_view, name="list"),
+    path("~list/", view=station_list_view, name="list"),
     path("~add/", view=station_create_view, name="create"),
     path("~disable_all_stations/", disable_all_stations, name="disable"),
     path("~enable_all_stations/", enable_all_stations, name="enable"),
