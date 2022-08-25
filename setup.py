@@ -38,6 +38,6 @@ setup(
     maintainer="BCDC",
     packages=find_packages(include=["django-weathervis"]),
     url="https://github.com/julienpaul/django-weathervis",
-    version="version=0.4.4",
+    version="version=0.4.5",
     zip_safe=False,
 )
