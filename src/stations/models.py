@@ -10,6 +10,7 @@ from django_extensions.db.fields import AutoSlugField
 
 # Third-party app imports
 # Imports from my apps
+from src.campaigns.models import Campaign
 from src.margins.models import Margin
 from src.plots.models import StationsPlot
 
@@ -82,6 +83,15 @@ class Station(models.Model):
         related_name="stations",
     )
 
+    # list of campaigns associated with the station
+    campaigns = models.ManyToManyField(
+        Campaign,
+        blank=True,
+        related_name="stations",
+    )
+    # which campaign is currently active
+    active_campaign = models.IntegerField(blank=True, null=True)
+
     # Flexpart
     uses_flexpart = models.BooleanField(default=False)
 
@@ -150,6 +160,9 @@ class Station(models.Model):
     def save(self, *args, **kwargs):
         """ """
         super().save(*args, **kwargs)
+        #
+        if self.active_campaign:
+            self.campaigns.add(self.active_campaign)
         from .util import download
 
         download()
@@ -162,15 +175,25 @@ class Station(models.Model):
         download()
 
     @classmethod
-    def disable_all(cls):
-        cls.objects.update(is_active=False)
+    def disable_all(cls, campaign_id=None):
+        if campaign_id:
+            cls.objects.filter(campaigns=campaign_id).update(is_active=False)
+        else:
+            cls.objects.update(is_active=False)
         # for obj in cls.objects.all():
         #     obj.is_active = False
         #     obj.save()
 
     @classmethod
-    def enable_all(cls):
-        cls.objects.update(is_active=True)
+    def enable_all(cls, campaign_id=None):
+        if campaign_id:
+            cls.objects.filter(campaigns=campaign_id).update(is_active=True)
+        else:
+            cls.objects.update(is_active=True)
+
+    @classmethod
+    def active_campaign_is(cls, campaign_id=None):
+        cls.objects.update(active_campaign=campaign_id)
 
 
 @receiver(m2m_changed, sender=Station.plots.through)

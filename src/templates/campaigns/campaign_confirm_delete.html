@@ -1,0 +1,13 @@
+{% extends "campaigns/base.html" %}
+
+{% load static %}
+{% load i18n %}
+
+{% block container %}
+<h1>{% translate "Delete" %} Campaign</h1>
+<form method="post">{% csrf_token %}
+  <p>Are you sure you want to delete "{{ object }}"?</p>
+  <input type="submit" class="btn btn-danger" value="Confirm">
+  <a class="btn btn-primary" href="{% url 'campaigns:list' %}" role="button">Cancel</a>
+</form>
+{% endblock container %}

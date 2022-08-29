@@ -7,6 +7,7 @@ based on https://stackoverflow.com/a/58231725
 from django.contrib.auth.models import Group, Permission
 from django.core.management import BaseCommand
 
+from src.campaigns.models import Campaign
 from src.domains.models import Domain
 from src.margins.models import Margin
 from src.organisations.models import Organisation
@@ -20,6 +21,7 @@ GROUPS_PERMISSIONS = {
         Domain: ["add", "change", "view"],
         StationsPlot: ["add", "change", "view"],
         DomainsPlot: ["add", "change", "view"],
+        Campaign: ["add", "change", "view"],
     },
     "Staff": {
         Margin: ["add", "change", "delete", "view"],
@@ -28,6 +30,7 @@ GROUPS_PERMISSIONS = {
         Domain: ["add", "change", "delete", "view"],
         StationsPlot: ["add", "change", "delete", "view"],
         DomainsPlot: ["add", "change", "delete", "view"],
+        Campaign: ["add", "change", "delete", "view"],
         User: ["change", "view"],
     },
 }

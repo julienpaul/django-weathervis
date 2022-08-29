@@ -1,4 +1,5 @@
 {% extends 'domains/domain_base.html' %}
+{% load crispy_forms_tags %}
 {% load leaflet_tags %}
 {% load static %}
 
@@ -8,12 +9,21 @@
     Domains:
   </div>
   <div class="column quarter">
+    {% if perms.domains.change_domain %}
     <a class="btn btn-dark" href="{% url 'domains:disable' %}" role="button">
       <i class="bi bi-stop">disable all</i>
     </a>
     <a class="btn btn-light" href="{% url 'domains:enable' %}" role="button">
       <i class="bi bi-stop-fill">enable all</i>
     </a>
+    {% endif %}
+  </div>
+  <div class="column quarter-right">
+    Campaign:
+  </div>
+  <div class="column quarter">
+    {% csrf_token %}
+    {% crispy form %}
   </div>
 </div>
 {% endblock header %}
@@ -33,7 +43,7 @@
   {% if domains %}
   <div class="list-group list-group-flush overflow-auto" style="max-height: 400px; width: 95%" id="list-tab"
     role="tablist">
-    {% for domain in domains %}
+    {% for domain in domains|dictsort:"slug" %}
     {% if domain.is_active %}
     <a class="list-group-item list-group-item-action" data-bs-toggle="list" id="list-{{ domain.slug }}-list"
       data-bs-toggle="list" href="#list-{{ domain.slug }}" role="tab"
@@ -65,3 +75,11 @@
 
 </div>
 {% endblock column %}
+
+{% block second_row %}
+{% if perms.domains.change_domain %}
+<a class="btn btn-primary" href="{% url 'domains:download' %}" role="button">
+  <i class="bi bi-download"> Download config files</i>
+</a>
+{% endif %}
+{% endblock second_row %}

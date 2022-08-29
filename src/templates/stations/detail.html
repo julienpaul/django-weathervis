@@ -12,6 +12,18 @@
         <dd>&emsp;{{station.wmo_id|default:"No WMO ID yet."}}</dd>
         <dt>Description</dt>
         <dd>&emsp;{{station.description|default:"No description yet."}}</dd>
+        {% if request.path == "/stations/~detail/"|add:station.slug|add:"/" %}
+        <dt>Campaigns</dt>
+        {% if station.campaigns.all %}
+        <dd>
+          {% for campaign in station.campaigns.all|dictsort:"slug" %}
+          &emsp;{{campaign.name}}</br>
+          {% endfor %}
+          {% else %}
+          &emsp;No campaigns associated yet.
+          {% endif %}
+        </dd>
+        {% endif %}
       </dl>
       <div class="form-check">
         {% if station.is_active %}
@@ -103,9 +115,16 @@
 </div>
 </br>
 {% if request.path == "/stations/~detail/"|add:station.slug|add:"/" %}
+{% if station.active_campaign %}
+<a class="btn btn-primary" href="{% url 'stations:campaign_detail_list' pk=station.active_campaign slug=station.slug %}"
+  role="button">
+  back to list
+</a>
+{% else %}
 <a class="btn btn-primary" href="{% url 'stations:detail_list' slug=station.slug %}" role="button">
   back to list
 </a>
+{% endif %}
 {% else %}
 <a class="btn btn-primary" href="{% url 'stations:detail' slug=station.slug %}" role="button">
   <i class='bi bi-eye'>zoom</i>

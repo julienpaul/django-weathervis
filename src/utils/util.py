@@ -5,6 +5,7 @@ from urllib.parse import urlparse
 import yaml
 
 # Core Django imports
+from django import forms
 from django.conf import settings
 from django.contrib.gis.geos import Point as GeoPoint
 from django.contrib.gis.geos import Polygon as GeoPolygon
@@ -12,6 +13,10 @@ from django.contrib.gis.geos import Polygon as GeoPolygon
 # Imports from my apps
 
 degree_sign = "\N{DEGREE SIGN}"
+
+
+class M2MSelect(forms.SelectMultiple):
+    allow_multiple_selected = False
 
 
 def margin2polygon(lon, lat, alt, margin):

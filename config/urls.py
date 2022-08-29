@@ -51,10 +51,14 @@ urlpatterns = [
         "model_grids/",
         include("src.model_grids.urls", namespace="model_grids"),
     ),
+    # path(
+    #     "charts/",
+    #     TemplateView.as_view(template_name="pages/charts.html"),
+    #     name="charts",
+    # ),
     path(
-        "charts/",
-        TemplateView.as_view(template_name="pages/charts.html"),
-        name="charts",
+        "campaigns/",
+        include("src.campaigns.urls", namespace="campaigns"),
     ),
     path(
         "vmeteograms/",

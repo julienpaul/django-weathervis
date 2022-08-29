@@ -1,17 +1,17 @@
-{% extends 'plots/stations/base.html' %}
+{% extends 'campaigns/base.html' %}
 {% load crispy_forms_tags %}
 {% load i18n %}
 
 {% block title %}
-Add Stations Plot
+Add Campaign
 {% endblock title %}
 
 {% block header %}
-{% translate "Create" %} Stations Plot
+{% translate "Create" %} Campaign
 {% endblock header %}
 
 {% block container %}
-<h1>{% translate "Create" %} Plot and settings for Stations:</h1>
+<h1>{% translate "Create" %} Campaign:</h1>
 <div class="row">
   <div class="col-sm">
     {% csrf_token %}

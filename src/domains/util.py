@@ -8,6 +8,7 @@ import yaml
 from django.contrib.gis.geos import Polygon as GeoPolygon
 
 # Imports from my apps
+from src.campaigns.models import Campaign
 from src.stations.util import MyDumper
 
 from .models import Domain
@@ -79,11 +80,23 @@ def upload(fparam_=domain_data_path / "domains.ini.yaml"):
 def download(fparam_=domain_data_path / "domains.yaml"):
     """download domain from database and write domains.yaml
 
-    Note: only active domains are downloaded.
+    Note:
+        - only active domains are downloaded.
+        - only domains from the active campaign are downloaded.
     """
     dic = {}
+    _pk = Domain.objects.all().first().active_campaign
+    if _pk:
+        campaign = Campaign.objects.get(pk=_pk)
+    else:
+        campaign = "any or none"
+
     for domain in Domain.objects.all():
-        if domain.is_active:
+        if domain.is_active and (
+            not domain.active_campaign
+            or domain.active_campaign
+            in domain.campaigns.all().values_list("id", flat=True)
+        ):
             dic[domain.name] = {
                 "west": domain.west,
                 "north": domain.north,
@@ -94,7 +107,10 @@ def download(fparam_=domain_data_path / "domains.yaml"):
                 "plots": [p.name for p in domain.plots.all()],
             }
 
-    header = """
+    header = f"""
+#
+# Domains from campaign "{campaign}"
+# ------
 # <domain name>:
 #   north: <domain latitude north (degree_north)>
 #   south: <domain latitude south (degree_north)>

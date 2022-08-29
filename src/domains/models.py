@@ -10,6 +10,7 @@ from django_extensions.db.fields import AutoSlugField
 
 # Third-party app imports
 # Imports from my apps
+from src.campaigns.models import Campaign
 from src.plots.models import DomainsPlot
 
 User = get_user_model()
@@ -41,12 +42,21 @@ class Domain(models.Model):
     )
     is_active = models.BooleanField(default=True)
 
-    # list of plots available for the station
+    # list of plots available for the domain
     plots = models.ManyToManyField(
         DomainsPlot,
         blank=True,
         related_name="domains",
     )
+
+    # list of campaigns associated with the domain
+    campaigns = models.ManyToManyField(
+        Campaign,
+        blank=True,
+        related_name="domains",
+    )
+    # which campaign is currently active
+    active_campaign = models.IntegerField(blank=True, null=True)
 
     # model = model to use for plot or list of model who contains this station ??
     class Meta:
@@ -79,6 +89,8 @@ class Domain(models.Model):
     def save(self, *args, **kwargs):
         """ """
         super().save(*args, **kwargs)
+        if self.active_campaign:
+            self.campaigns.add(self.active_campaign)
         from .util import download
 
         download()
@@ -91,12 +103,22 @@ class Domain(models.Model):
         download()
 
     @classmethod
-    def disable_all(cls):
-        cls.objects.update(is_active=False)
+    def disable_all(cls, campaign_id=None):
+        if campaign_id:
+            cls.objects.filter(campaigns=campaign_id).update(is_active=False)
+        else:
+            cls.objects.update(is_active=False)
 
     @classmethod
-    def enable_all(cls):
-        cls.objects.update(is_active=True)
+    def enable_all(cls, campaign_id=None):
+        if campaign_id:
+            cls.objects.filter(campaigns=campaign_id).update(is_active=True)
+        else:
+            cls.objects.update(is_active=True)
+
+    @classmethod
+    def active_campaign_is(cls, campaign_id=None):
+        cls.objects.update(active_campaign=campaign_id)
 
 
 @receiver(m2m_changed, sender=Domain.plots.through)

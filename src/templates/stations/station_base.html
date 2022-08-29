@@ -10,6 +10,7 @@
 
 {% block extra_javascript %}
 {% leaflet_js%}
+<script defer src="{% static 'js/stations/navigation.js' %}"></script>
 {% endblock %}
 
 {% block nav_stations%}active{% endblock %}
@@ -37,6 +38,11 @@ Stations
       {% block column %}
       {% endblock column %}
     </div>
+  </div>
+  </br>
+  <div class="row">
+    {% block second_row %}
+    {% endblock second_row %}
   </div>
 </div>
 {% endblock content %}

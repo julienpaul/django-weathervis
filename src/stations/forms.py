@@ -19,9 +19,11 @@ from django.utils.http import urlencode
 
 # Third-party app imports
 # Imports from my apps
+from src.campaigns.models import Campaign
 from src.model_grids.models import ModelGrid
 from src.plots.models import StationsPlot
 from src.utils.mixins import CrispyMixin
+from src.utils.util import M2MSelect
 from src.utils.util import degree_sign as deg
 
 from .models import Station
@@ -64,6 +66,14 @@ class StationForm(CrispyMixin, forms.ModelForm):
         ),
     )
 
+    campaigns = forms.ModelMultipleChoiceField(
+        required=False,
+        queryset=Campaign.objects.all(),
+        widget=forms.CheckboxSelectMultiple(
+            attrs={"class": "form-check", "style": "list-style:none;"}
+        ),
+    )
+
     start_datetime = forms.DateTimeField(
         widget=forms.widgets.DateTimeInput(attrs={"placeholder": "YYYY-MM-DD HH:MM"})
     )
@@ -84,6 +94,7 @@ class StationForm(CrispyMixin, forms.ModelForm):
             "description",
             "margin",
             "plots",
+            "campaigns",
             "uses_flexpart",
             "start_datetime",
             "end_datetime",
@@ -147,6 +158,10 @@ class StationForm(CrispyMixin, forms.ModelForm):
             Field("is_active"),
             Field("uses_flexpart"),
             Field("description", rows="4"),
+            HTML("<div id=campaigns>"),
+            HTML("<hr>"),
+            Field("campaigns"),
+            HTML("</div>"),
             HTML("<div id=plots>"),
             HTML("<hr>"),
             Field("plots"),
@@ -311,3 +326,46 @@ class StationUpdateForm(StationForm):
         super()._custom_helper()
         # change some field
         self.fields["name"].disabled = True
+
+
+class StationCampaignForm(CrispyMixin, forms.ModelForm):
+    current_url = "stations:redirect"
+
+    campaigns = forms.ModelMultipleChoiceField(
+        required=False,
+        queryset=Campaign.objects.all(),
+        widget=M2MSelect,
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["campaigns"].empty_label = "---------"
+
+    class Meta:
+        model = Station
+        fields = [
+            "campaigns",
+        ]
+
+    def _init_helper_layout(self):
+        """initialise crispy layout"""
+        self.helper.attrs = {
+            "data-change-campaign-url": reverse_lazy("stations:change_campaign"),
+        }
+        self.helper.error_text_inline = False
+        self.helper.form_show_labels = False
+        self.helper.layout = Layout(
+            Hidden("next", "{{ request.GET.path }}"),
+            FieldWithButtons(
+                "campaigns",
+                StrictButton(
+                    "<i class='bi bi-plus-lg'></i>",
+                    css_class="btn-success",
+                    onclick='window.location.href = "{}?{}";'.format(
+                        reverse_lazy("campaigns:list"),
+                        urlencode({"next": reverse_lazy(self.current_url)}),
+                    ),
+                ),
+                css_id="change_campaign_id",
+            ),
+        )
