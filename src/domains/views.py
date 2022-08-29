@@ -6,9 +6,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMix
 from django.contrib.gis.geos import Polygon as GeoPolygon
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.serializers import serialize
-from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, redirect
-from django.urls import reverse_lazy
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse, reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import (
     CreateView,
@@ -21,8 +21,21 @@ from django.views.generic import (
 
 # Third-party app imports
 # Imports from my apps
-from .forms import DomainForm, DomainUpdateForm
+from src.campaigns.models import Campaign
+from src.stations.models import Station
+
+from .forms import DomainCampaignForm, DomainForm, DomainUpdateForm
 from .models import Domain
+
+
+def get_my_queryset(request):
+    campaign_id = request.session.get("campaign_id")
+    if campaign_id:
+        qs = Domain.objects.filter(campaigns=campaign_id)
+    else:
+        qs = Domain.objects.all()
+
+    return qs
 
 
 def data_this_domain(request, slug):
@@ -39,7 +52,7 @@ def data_all_domains(request):
     """this uses the serializer to convert the data 'Domain.objects.all()' to 'geojson' data"""
     domain = serialize(
         "geojson",
-        Domain.objects.all(),
+        get_my_queryset(request),
     )
     return HttpResponse(domain, content_type="json")
 
@@ -48,7 +61,8 @@ def data_all_domains(request):
 @permission_required("domains.change_domain")
 def disable_all_domains(request):
     """disable all domain and return list view"""
-    Domain.disable_all()
+    campaign_id = request.session.get("campaign_id", None)
+    Domain.disable_all(campaign_id)
     return redirect(reverse_lazy("domains:redirect"))
 
 
@@ -56,7 +70,19 @@ def disable_all_domains(request):
 @permission_required("domains.change_domain")
 def enable_all_domains(request):
     """enable all domain and return list view"""
-    Domain.enable_all()
+    campaign_id = request.session.get("campaign_id", None)
+    Domain.enable_all(campaign_id)
+    return redirect(reverse_lazy("domains:redirect"))
+
+
+@login_required
+@permission_required("domains.change_domain")
+def download_config(request):
+    """download config files for Domain and return list view"""
+    qs = get_my_queryset(request)
+    domain = qs.order_by("name").first()
+    domain.save()
+    messages.info(request, "Domains config file successfully downloaded")
     return redirect(reverse_lazy("domains:redirect"))
 
 
@@ -72,7 +98,7 @@ class DomainDetailListView(LoginRequiredMixin, SuccessMessageMixin, ListView):
         return super().get(request, *args, **kwargs)
 
     def get_queryset_for_object(self):
-        qs = Domain.objects.all()
+        qs = self.get_queryset()
         return qs
         # raise NotImplementedError('You need to provide the queryset for the object')
 
@@ -84,6 +110,18 @@ class DomainDetailListView(LoginRequiredMixin, SuccessMessageMixin, ListView):
         return get_object_or_404(queryset, slug=slug)
 
     def get_context_data(self, **kwargs):
+        _pk = self.request.session.get("campaign_id", None)
+        if _pk:
+            _campaign = Campaign.objects.get(pk=_pk)
+            data = {
+                "campaigns": [
+                    _campaign,
+                ]
+            }
+            form = DomainCampaignForm(data)
+        else:
+            form = DomainCampaignForm()
+
         context = super().get_context_data(**kwargs)
         domain_url = {
             "domain-add": reverse_lazy("domains:create"),
@@ -102,10 +140,20 @@ class DomainDetailListView(LoginRequiredMixin, SuccessMessageMixin, ListView):
         context["domain_data"] = domain_data
         context["grid_data"] = grid_data
         context[self.detail_context_object_name] = self.object
+        context["form"] = form
         return context
 
 
 domain_detail_list_view = DomainDetailListView.as_view()
+
+
+class DomainCampaignDetailListView(DomainDetailListView):
+    def get_queryset(self):
+        return get_my_queryset(self.request)
+        # raise NotImplementedError('You need to provide the queryset for the object')
+
+
+domain_campaign_detail_list_view = DomainCampaignDetailListView.as_view()
 
 
 class DomainListView(
@@ -256,9 +304,20 @@ class DomainUpdateView(
 
     def get_success_url(self):
         obj = self.object
-        url = reverse_lazy("domains:detail_list", kwargs={"slug": obj.slug})
+        # url = reverse_lazy("domains:detail_list", kwargs={"slug": obj.slug})
+        pk = obj.active_campaign
+        if pk:
+            url = reverse_lazy(
+                "domains:campaign_detail_list", kwargs={"pk": pk, "slug": obj.slug}
+            )
+        else:
+            url = reverse_lazy("domains:detail_list", kwargs={"slug": obj.slug})
 
         return url
+
+    def get_success_message(self, clean_data):
+        messages.info(self.request, "Domains config file successfully updtaed")
+        return super().get_success_message(clean_data)
 
 
 domain_update_view = DomainUpdateView.as_view()
@@ -312,12 +371,14 @@ class DomainCreateView(
         else:
             _alt = 0.0
 
+        active_campaign = self.request.session.get("campaign_id", None)
         data = {
             "west": _west,
             "east": _east,
             "north": _north,
             "south": _south,
             "altitude": _alt,
+            "campaigns": active_campaign,
         }
         initial.update(data)
         return initial
@@ -362,13 +423,30 @@ class DomainCreateView(
         )
         instance.geom = GeoPolygon(coords)
 
+        # add active campaign
+        _campaign_id = self.request.session.get("campaign_id", None)
+        if not _campaign_id:
+            _campaign_id = None
+        instance.active_campaign = _campaign_id
+
         return super().form_valid(form)
 
     def get_success_url(self):
         obj = self.object
-        url = reverse_lazy("domains:detail_list", kwargs={"slug": obj.slug})
+
+        pk = obj.active_campaign
+        if pk:
+            url = reverse_lazy(
+                "domains:campaign_detail_list", kwargs={"pk": pk, "slug": obj.slug}
+            )
+        else:
+            url = reverse_lazy("domains:detail_list", kwargs={"slug": obj.slug})
 
         return url
+
+    def get_success_message(self, clean_data):
+        messages.info(self.request, "Domains config file successfully updated")
+        return super().get_success_message(clean_data)
 
 
 domain_create_view = DomainCreateView.as_view()
@@ -394,6 +472,7 @@ class DomainDeleteView(
         # which is not present on DeleteView to push its message to the user.
         # see https://stackoverflow.com/questions/24822509/success-message-in-deleteview-not-shown
         obj = self.get_object()
+        messages.info(self.request, "Domains config file successfully updated")
         messages.success(self.request, self.success_message % obj.__dict__)
         return super().delete(request, *args, **kwargs)
 
@@ -431,13 +510,31 @@ class DomainRedirectView(
     def get_redirect_url(self, *args, **kwargs):
         obj = None
 
-        if not obj:
-            try:
-                obj = Domain.objects.order_by("name").first()
-                self.pattern_name = "domains:detail_list"
-                kwargs["slug"] = obj.slug
-            except Exception:
-                self.pattern_name = "domains:create"
+        # look for session variable
+        _campaign_id = self.request.session.get("campaign_id", None)
+        if _campaign_id:
+            if not obj:
+                try:
+                    self.pattern_name = "domains:campaign_detail_list"
+                    obj = (
+                        Domain.objects.filter(campaigns=_campaign_id)
+                        .order_by("name")
+                        .first()
+                    )
+                    kwargs["slug"] = obj.slug
+                except Exception:
+                    self.pattern_name = "domains:create"
+                else:
+                    kwargs["pk"] = _campaign_id
+
+        else:
+            if not obj:
+                try:
+                    self.pattern_name = "domains:detail_list"
+                    obj = Domain.objects.order_by("name").first()
+                    kwargs["slug"] = obj.slug
+                except Exception:
+                    self.pattern_name = "domains:create"
 
         return super().get_redirect_url(*args, **kwargs)
 
@@ -476,3 +573,33 @@ class DomainRedirectView(
 
 
 domain_redirect_view = DomainRedirectView.as_view()
+
+
+def change_campaign(request):
+    """ """
+    _campaign = None
+    try:
+        campaign_id = request.GET.get("campaigns", None)
+        if campaign_id:
+            _campaign = Campaign.objects.get(pk=campaign_id)
+    except Campaign.DoesNotExist:
+        pass
+
+    data = {"campaign": _campaign}
+    form = DomainCampaignForm(data)
+    if form.is_valid():
+        data = {}
+        # save location, and date
+        request.session["campaign_id"] = campaign_id
+        # update active campaign in database
+        if campaign_id:
+            Domain.active_campaign_is(campaign_id)
+            Station.active_campaign_is(campaign_id)
+        else:
+            Domain.active_campaign_is(None)
+            Station.active_campaign_is(None)
+
+        data["url"] = reverse("domains:redirect")
+        return JsonResponse(data)
+    else:
+        return render(request, "domains/domain_detail_list.html", {"form": form})

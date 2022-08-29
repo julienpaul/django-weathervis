@@ -38,14 +38,14 @@
         {% endif %}
         <hr>
         {% if plot.domains.all %}
-        <h5>Domains using this plot:</h5>
+        <h5>Domains associated with</h5>
         <ul>
           {% for domain in plot.domains.all %}
           <li>{{ domain.name }}</li>
           {% endfor %}
         </ul>
         {% else %}
-        <h5>No Domain is using this plot yet</h5>
+        <h5>No Domain is associated with this plot yet</h5>
         {% endif %}
       </div>
     </div>

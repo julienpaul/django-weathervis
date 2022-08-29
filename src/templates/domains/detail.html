@@ -2,8 +2,8 @@
   <div class=" card">
     <div class="card-body">
       <dl>
-        <dt>Name</dt>
-        <dd>&emsp;{{domain.name}}</dd>
+        <!-- dt>Name</dt>
+        <dd>&emsp;{{domain.name}}</dd-->
         <dt>Boundary Box Coordinates</dt>
         <dd>
           <table style="width:100%">
@@ -50,6 +50,18 @@
         </dd>
         <dt>Description</dt>
         <dd>&emsp;{{domain.description|default:"No description yet."}}</dd>
+        {% if request.path == "/domains/~detail/"|add:domain.slug|add:"/" %}
+        <dt>Campaigns</dt>
+        {% if domain.campaigns.all %}
+        <dd>
+          {% for campaign in domain.campaigns.all|dictsort:"slug" %}
+          &emsp;{{campaign.name}}</br>
+          {% endfor %}
+          {% else %}
+          &emsp;No campaigns associated yet.
+          {% endif %}
+        </dd>
+        {% endif %}
       </dl>
       <div class="form-check">
         {% if domain.is_active %}
@@ -94,9 +106,16 @@
 </div>
 <br>
 {% if request.path == "/domains/~detail/"|add:domain.slug|add:"/" %}
+{% if domain.active_campaign %}
+<a class="btn btn-primary" href="{% url 'domains:campaign_detail_list' pk=domain.active_campaign slug=domain.slug %}"
+  role="button">
+  back to list
+</a>
+{% else %}
 <a class="btn btn-primary" href="{% url 'domains:detail_list' slug=domain.slug %}" role="button">
   back to list
 </a>
+{% endif %}
 {% else %}
 <a class="btn btn-primary" href="{% url 'domains:detail' slug=domain.slug %}" role="button">
   <i class='bi bi-eye'>zoom</i>

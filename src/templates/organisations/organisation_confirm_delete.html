@@ -6,7 +6,7 @@
 {% block title %}Organisations{% endblock %}
 
 {% block content %}
-<h1>Delete organisation</h1>
+<h1>{% translate "Delete" %} Organisation</h1>
 <form method="post">{% csrf_token %}
   <p>Are you sure you want to delete "{{ object }}"?</p>
   <input type="submit" class="btn btn-danger" value="Confirm">

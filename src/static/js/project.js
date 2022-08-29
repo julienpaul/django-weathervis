@@ -21,7 +21,7 @@ $(document).ready(function (e) {
 function scroll_to_anchor(aid){
   // scroll down to active anchor
   var aTag = $("a[id='"+ aid +"']");
-  $('.list-group').animate({scrollTop: aTag.offset().top - 200},'slow');
+  $('.list-group').animate({scrollTop: aTag.offset().top - 250},'slow');
 }
 
 function highlight(aslug) {
@@ -30,3 +30,21 @@ function highlight(aslug) {
   // animate domain
   highlight_domain(aslug);
 }
+
+/* to make messages disappear */
+// Get all info messages
+var info_messages = document.getElementsByClassName('alert-info');
+setTimeout(function(){
+    for (var i = 0; i < info_messages.length; i ++) {
+        // Set display attribute as !important, neccessary when using bootstrap
+        info_messages[i].setAttribute('style', 'display:none !important');
+    }
+}, 3000);
+
+var success_messages = document.getElementsByClassName('alert-success');
+setTimeout(function(){
+    for (var i = 0; i < success_messages.length; i ++) {
+        // Set display attribute as !important, neccessary when using bootstrap
+        success_messages[i].setAttribute('style', 'display:none !important');
+    }
+}, 4000);

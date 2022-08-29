@@ -1,4 +1,5 @@
 {% extends 'stations/station_base.html' %}
+{% load crispy_forms_tags %}
 {% load leaflet_tags %}
 {% load static %}
 
@@ -8,12 +9,21 @@
     Stations:
   </div>
   <div class="column quarter">
+    {% if perms.stations.change_station %}
     <a class="btn btn-dark" href="{% url 'stations:disable' %}" role="button">
       <i class="bi bi-stop">disable all</i>
     </a>
     <a class="btn btn-light" href="{% url 'stations:enable' %}" role="button">
       <i class="bi bi-stop-fill">enable all</i>
     </a>
+    {% endif %}
+  </div>
+  <div class="column quarter-right">
+    Campaign:
+  </div>
+  <div class="column quarter">
+    {% csrf_token %}
+    {% crispy form %}
   </div>
 </div>
 {% endblock header %}
@@ -34,7 +44,7 @@
   {% if stations %}
   <div class="list-group list-group-flush overflow-auto" style="max-height: 400px; width: 95%" id="list-tab"
     role="tablist">
-    {% for station in stations %}
+    {% for station in stations|dictsort:"slug" %}
     {% if station.is_active %}
     <a class="list-group-item list-group-item-action" data-bs-toggle="list" id="list-{{ station.slug }}-list"
       data-bs-toggle="list" href="#list-{{ station.slug }}" role="tab"
@@ -66,3 +76,11 @@
 
 </div>
 {% endblock column %}
+
+{% block second_row %}
+{% if perms.stations.change_station %}
+<a class="btn btn-primary" href="{% url 'stations:download' %}" role="button">
+  <i class="bi bi-download"> Download config files</i>
+</a>
+{% endif %}
+{% endblock second_row %}

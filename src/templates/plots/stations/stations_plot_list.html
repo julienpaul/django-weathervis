@@ -38,20 +38,20 @@
         {% endif %}
         <hr>
         {% if plot.stations.all %}
-        <h5>Stations using this plot:</h5>
+        <h5>Stations associated with</h5>
         <ul>
           {% for station in plot.stations.all %}
           <li>{{ station.name }}</li>
           {% endfor %}
         </ul>
         {% else %}
-        <h5>No Station is using this plot yet</h5>
+        <h5>No Station is associated with this Plot yet</h5>
         {% endif %}
       </div>
     </div>
     <br>
     {% empty %}
-    No plot yet.
+    No Plot yet.
     {% endfor %}
   </div>
 </div>

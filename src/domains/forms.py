@@ -1,6 +1,6 @@
 # Stdlib imports
 # Core Django imports
-from crispy_forms.bootstrap import Field
+from crispy_forms.bootstrap import Field, FieldWithButtons, StrictButton
 from crispy_forms.layout import (
     HTML,
     Button,
@@ -12,11 +12,15 @@ from crispy_forms.layout import (
     Submit,
 )
 from django import forms
+from django.urls import reverse_lazy
+from django.utils.http import urlencode
 
 # Third-party app imports
 # Imports from my apps
+from src.campaigns.models import Campaign
 from src.plots.models import DomainsPlot
 from src.utils.mixins import CrispyMixin
+from src.utils.util import M2MSelect
 from src.utils.util import degree_sign as deg
 
 from .models import Domain
@@ -72,6 +76,14 @@ class DomainForm(CrispyMixin, forms.ModelForm):
         ),
     )
 
+    campaigns = forms.ModelMultipleChoiceField(
+        required=False,
+        queryset=Campaign.objects.all(),
+        widget=forms.CheckboxSelectMultiple(
+            attrs={"class": "form-check", "style": "list-style:none;"}
+        ),
+    )
+
     class Meta:
         model = Domain
         fields = [
@@ -79,6 +91,7 @@ class DomainForm(CrispyMixin, forms.ModelForm):
             "is_active",
             "description",
             "plots",
+            "campaigns",
         ]
 
     def _init_helper_layout(self):
@@ -145,6 +158,10 @@ class DomainForm(CrispyMixin, forms.ModelForm):
             # Fieldset("Coordinates", "latitude", "longitude", "altitude"),
             Field("is_active"),
             Field("description", rows="4"),
+            HTML("<div id=campaigns>"),
+            HTML("<hr>"),
+            Field("campaigns"),
+            HTML("</div>"),
             HTML("<div id=plots>"),
             HTML("<hr>"),
             Field("plots"),
@@ -174,3 +191,46 @@ class DomainUpdateForm(DomainForm):
         super()._custom_helper()
         # change some field
         self.fields["name"].disabled = True
+
+
+class DomainCampaignForm(CrispyMixin, forms.ModelForm):
+    current_url = "domains:redirect"
+
+    campaigns = forms.ModelMultipleChoiceField(
+        required=False,
+        queryset=Campaign.objects.all(),
+        widget=M2MSelect,
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["campaigns"].empty_label = "---------"
+
+    class Meta:
+        model = Domain
+        fields = [
+            "campaigns",
+        ]
+
+    def _init_helper_layout(self):
+        """initialise crispy layout"""
+        self.helper.attrs = {
+            "data-change-campaign-url": reverse_lazy("domains:change_campaign"),
+        }
+        self.helper.error_text_inline = False
+        self.helper.form_show_labels = False
+        self.helper.layout = Layout(
+            Hidden("next", "{{ request.GET.path }}"),
+            FieldWithButtons(
+                "campaigns",
+                StrictButton(
+                    "<i class='bi bi-plus-lg'></i>",
+                    css_class="btn-success",
+                    onclick='window.location.href = "{}?{}";'.format(
+                        reverse_lazy("campaigns:list"),
+                        urlencode({"next": reverse_lazy(self.current_url)}),
+                    ),
+                ),
+                css_id="change_campaign_id",
+            ),
+        )

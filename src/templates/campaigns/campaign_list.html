@@ -1,0 +1,75 @@
+{% extends "campaigns/base.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load i18n %}
+
+{% block container %}
+<h1>Campaigns:</h1>
+<div class="row">
+  <div class="col-sm">
+    {% for campaign in campaigns|dictsort:"name" %}
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">{{ campaign.name }}</h5>
+        <h6 class="card-subtitle mb-2 text-muted">{{ campaign.description }}</h6>
+        <!-- p class="card-text">{{ plot.description }}</p-->
+        {% if perms.campaigns.change_campaign %}
+        <a class="btn btn-success" href="{% url 'campaigns:update' pk=campaign.id %}" role="button">
+          <i class="bi bi-pencil"></i>
+        </a>
+        {% else %}
+        <a class="btn btn-secondary disabled" href="#" role="button">
+          <i class="bi bi-pencil"></i>
+        </a>
+        {% endif %}
+        {% if perms.campaigns.delete_campaign %}
+        <a class="btn btn-danger" href="{% url 'campaigns:delete' pk=campaign.id %}" role="button">
+          <i class="bi bi-trash"></i>
+        </a>
+        {% else %}
+        <a class="btn btn-secondary disabled" href="#" role="button">
+          <i class="bi bi-trash"></i>
+        </a>
+        {% endif %}
+        <hr>
+        {% if campaign.stations.all %}
+        <h5>Stations associated with</h5>
+        <ul>
+          {% for station in campaign.stations.all|dictsort:"name" %}
+          <li>{{ station.name }}</li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <h5>No Station is associated with this Campaign yet</h5>
+        {% endif %}
+        <hr>
+        {% if campaign.domains.all %}
+        <h5>Domains associated with</h5>
+        <ul>
+          {% for domain in campaign.domains.all|dictsort:"name" %}
+          <li>{{ domain.name }}</li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <h5>No Domain is associated with this Campaign yet</h5>
+        {% endif %}
+      </div>
+    </div>
+    <br>
+    {% empty %}
+    No Campaign yet.
+    {% endfor %}
+  </div>
+</div>
+
+<hr>
+<div class="row">
+  {% if perms.campaigns.change_campaign %}
+  <a class="btn btn-primary" href="{% url 'campaigns:create' %}" role="button">
+    {% else %}
+    <a class="btn btn-secondary disabled" href="#" role="button">
+      {% endif %}
+      Add Campaign
+    </a>
+</div>
+{% endblock container %}

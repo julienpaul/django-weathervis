@@ -89,6 +89,7 @@ LOCAL_APPS = [
     "src.plots.apps.StationsPlotsConfig",
     "src.domains.apps.DomainsConfig",
     "src.margins.apps.MarginsConfig",
+    "src.campaigns.apps.CampaignsConfig",
     "src.vertical_meteograms.apps.VerticalMeteogramsConfig",
     "src.surface_meteograms.apps.SurfaceMeteogramsConfig",
     # Your stuff: custom apps go here

@@ -8,6 +8,7 @@ import yaml
 from django.contrib.gis.geos import Point as geoPoint
 
 # Imports from my apps
+from src.campaigns.models import Campaign
 from src.margins.models import Margin
 from src.utils import util
 
@@ -108,10 +109,21 @@ def download_stations(fparam_=station_data_path / "stations.yaml"):
 
     Note:
         - only active stations are downloaded to 'stations.yaml'.
+        - only stations from the active campaign are downloaded to 'stations.yaml'.
     """
     dic = {}
+    _pk = Station.objects.all().first().active_campaign
+    if _pk:
+        campaign = Campaign.objects.get(pk=_pk)
+    else:
+        campaign = "any or none"
+
     for station in Station.objects.all():
-        if station.is_active:
+        if station.is_active and (
+            not station.active_campaign
+            or station.active_campaign
+            in station.campaigns.all().values_list("id", flat=True)
+        ):
             dic[station.name] = {
                 "lat": station.latitude,
                 "lon": station.longitude,
@@ -128,7 +140,10 @@ def download_stations(fparam_=station_data_path / "stations.yaml"):
                 "plots": [p.name for p in station.plots.all()],
             }
 
-    header = """
+    header = f"""
+#
+# Stations from campaign "{campaign}"
+# ------
 # <location name>:
 #   lat: <location latitude (degree_north)>
 #   lon: <location longitude (degree_east)>
@@ -162,11 +177,16 @@ def download_releases(fparam_=station_data_path / "releases.csv"):
 
     Note:
         - only stations using flexpart are downloaded to 'releases.csv'.
+        - only stations from the active campaign are downloaded to 'stations.yaml'.
     """
     dic = {}
     for station in Station.objects.all():
 
-        if station.uses_flexpart:
+        if station.uses_flexpart and (
+            not station.active_campaign
+            or station.active_campaign
+            in station.campaigns.all().values_list("id", flat=True)
+        ):
             dic[station.name] = {
                 "lat": station.latitude,
                 "lon": station.longitude,

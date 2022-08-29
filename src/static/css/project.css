@@ -47,6 +47,11 @@ a.disabled {
   width: 25%;
 }
 
+.quarter-right {
+  width: 25%;
+  text-align: right;
+}
+
 .left {
   width: 65%;
 }
