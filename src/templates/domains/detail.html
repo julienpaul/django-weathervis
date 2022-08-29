@@ -121,7 +121,7 @@
   <i class='bi bi-eye'>zoom</i>
 </a>
 {% endif %}
-{% if perms.domains.delete_domain %}
+{% if perms.domains.change_domain %}
 <a class="btn btn-success" href="{% url 'domains:update' slug=domain.slug %}" role="button">
   <i class="bi bi-pencil">edit</i>
 </a>
